@@ -1,0 +1,7 @@
+.git
+.claude
+.output
+node_modules
+coverage
+dist
+.DS_Store
