@@ -71,10 +71,10 @@ function Languages({ compact = false, onSelect }: {
 }
 
 const menuArt = {
-  home: '/media/signal.webp',
-  cases: '/media/team-app.webp',
-  hosting: '/media/connections.webp',
-}
+  home: ['/media/signal.webp', 1620, 1000],
+  cases: ['/media/menu-use-cases.webp', 1024, 1024],
+  hosting: ['/media/menu-self-hosted.webp', 1024, 1024],
+} as const
 
 function setMenuOrigin(panel: HTMLDialogElement) {
   panel.closest<HTMLElement>('.site-shell')?.style.setProperty('--menu-origin-y', `${window.scrollY + window.innerHeight / 2}px`)
@@ -161,7 +161,10 @@ function Header() {
             </button>
           </div>
           <div className="menu-art" aria-hidden="true">
-            {pageNames.map((name) => <img key={name} data-art={name} src={menuArt[name]} alt="" width="1152" height="648" loading="lazy" />)}
+            {pageNames.map((name) => {
+              const [src, width, height] = menuArt[name]
+              return <img key={name} data-art={name} src={src} alt="" width={width} height={height} loading="lazy" />
+            })}
           </div>
           <div className="menu-content">
             <nav aria-label={copy.nav.primary} className="menu-nav"
