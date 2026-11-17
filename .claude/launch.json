@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["exec", "vite", "--host", "127.0.0.1", "--port", "18733"],
+      "port": 18733
+    }
+  ]
+}

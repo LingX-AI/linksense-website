@@ -9,9 +9,9 @@ export const ja = {
   },
   home: {
     description: 'LinkSense は、チーム向けのオープンソースのエージェント作業環境です。ファイルの作成やスキルの共有を、自組織のインフラで行えます。',
-    titleOne: '仕事を仕上げる。', titleTwo: 'やり方を分かち合う。',
-    introOne: '調べる、ファイルを作る、仕事を前に進める。',
-    introTwo: 'チームで使えるオープンソースのエージェント作業環境。',
+    titleOne: 'WorkBuddy / ChatGPT Enterprise', titleTwo: 'のオープンソース代替',
+    introOne: 'LinkSense は、タスクの実行、再利用できるナレッジ・スキル・プラグイン・アプリの共有、',
+    introTwo: 'メンバーに認証情報を渡さずに業務システムへ接続できる、統制された作業環境を組織に提供します。',
     scroll: '作業環境を見る',
     overview: 'ひとつの依頼から、ひとつの成果へ。',
     overviewBody: 'タスクと必要な資料やツールを LinkSense に渡します。作業を確認して成果物を受け取り、うまくいった方法をチームと共有できます。',

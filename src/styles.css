@@ -91,7 +91,7 @@ main:focus { outline: none; }
 .hero-content { @apply w-full; padding-block: calc(var(--header-h) + 5rem) 5rem; }
 .hero--home .hero-content { @apply text-center; }
 .hero-intro { @apply mt-7 max-w-2xl text-[clamp(1rem,1.5vw,1.22rem)] leading-relaxed text-muted-inverse; }
-.hero--home .hero-intro { @apply mx-auto; }
+.hero--home .hero-intro { @apply mx-auto; max-width: 52rem; }
 .hero-intro .line-mask { padding-block: .06em; }
 .hero-title {
   @apply font-normal;
@@ -100,8 +100,11 @@ main:focus { outline: none; }
   letter-spacing: -.066em;
   text-wrap: balance;
 }
+.hero--home .hero-title { font-size: min(5.4rem, 5.4vw); }
 .line-mask { display: block; overflow: clip; padding: .02em .06em .14em .04em; margin: -.02em -.06em -.12em -.04em; }
 .line-mask > span { display: block; transform-origin: left center; }
+.line-mask > .word-mask { display: inline-block; overflow: clip; padding-block: .08em; margin-block: -.08em; vertical-align: top; }
+.word-mask > span { display: inline-block; transform-origin: 50% 100%; }
 .hero-title .line-mask + .line-mask { margin-block-start: .045em; }
 :lang(ja) .hero-title, :lang(zh-CN) .hero-title { letter-spacing: -.055em; }
 .hero-bottom { @apply mt-8 flex flex-wrap items-end justify-between gap-7; }
@@ -435,7 +438,7 @@ main:focus { outline: none; }
   .hero-canvas img { object-position: 63% 50%; }
   .hero-canvas::after { background: linear-gradient(0deg, rgb(5 10 19 / .84) 5%, rgb(5 10 19 / .35) 56%, transparent); }
   .hero-title { font-size: clamp(2.5rem, 11.7vw, 5.3rem); letter-spacing: -.065em; }
-  :lang(en) .hero--home .hero-title { font-size: clamp(2.05rem, 10.3vw, 5.3rem); }
+  .hero--home .hero-title { font-size: clamp(1.95rem, 8.2vw, 3.2rem); }
   .hero-bottom { flex-direction: row-reverse; justify-content: space-between; gap: .75rem; align-items: center; }
   .hero-actions { flex: 1; gap: .55rem 1rem; }
   .hero--home .hero-actions { gap: .75rem; }
@@ -460,11 +463,14 @@ main:focus { outline: none; }
   [data-line-reveal] > .line-mask:nth-child(2) > span { animation-delay: .095s; }
   .hero [data-line-reveal] > .line-mask > span { animation-delay: .09s; }
   .hero [data-line-reveal] > .line-mask:nth-child(2) > span { animation-delay: .19s; }
-  .hero-title[data-line-reveal] > .line-mask > span { animation-delay: .18s; }
-  .hero-title[data-line-reveal] > .line-mask:nth-child(2) > span { animation-delay: .28s; }
+  [data-line-reveal] .word-mask > span { animation: word-in 1.7s var(--ease-reveal) both; }
   @keyframes line-in {
     from { opacity: 0; transform: translateY(100%) rotate(7deg); }
     to { opacity: 1; transform: translateY(0) rotate(0); }
+  }
+  @keyframes word-in {
+    from { transform: translateY(120%); }
+    to { transform: translateY(0); }
   }
 
   @media (hover: hover) and (pointer: fine) {

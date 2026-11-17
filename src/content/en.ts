@@ -7,9 +7,9 @@ export const en = {
   },
   home: {
     description: 'LinkSense is an open-source agent workspace. Deliver files, share skills with your team, and run it on your own infrastructure.',
-    titleOne: 'Finish the work.', titleTwo: 'Share the method.',
-    introOne: 'Research, create files, and move work forward.',
-    introTwo: 'One open-source agent workspace for your team.',
+    titleOne: 'The open‑source alternative', titleTwo: 'to WorkBuddy / ChatGPT Enterprise.',
+    introOne: 'LinkSense gives organizations one governed place to run agent tasks, share reusable Knowledge, Skills, Plugins, and Applications,',
+    introTwo: 'and connect business systems without handing members the underlying credentials.',
     scroll: 'Explore the workspace',
     overview: 'One workspace. From request to result.',
     overviewBody: 'Give LinkSense a task and the files or tools it needs. Review the work, take the deliverables, and share the methods worth keeping.',

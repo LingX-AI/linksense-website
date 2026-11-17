@@ -1,18 +1,44 @@
 import { ArrowDown, ArrowUpRight, FileSpreadsheet, FileText } from 'lucide-react'
 import { useInView } from 'motion/react'
-import { useRef } from 'react'
+import { Fragment, useRef } from 'react'
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
-export function MaskedLines({ as: Element, className, id, lines, enter = false }: {
+// Word masks for the hero title: each word (or CJK character) rises from below its own mask,
+// staggered across every line — the Cuberto entrance (y 120% -> 0, expo-out, .6s total stagger).
+function wordTokens(line: string): string[] {
+  return line.includes(' ') ? line.split(/(\s+)/) : Array.from(line)
+}
+
+export function MaskedLines({ as: Element, className, id, lines, enter = false, words = true }: {
   as: 'h1' | 'h2' | 'p'
   className?: string
   id?: string
   lines: readonly string[]
   enter?: boolean
+  words?: boolean
 }) {
   const target = useRef<HTMLElement | null>(null)
   const visible = useInView(target, { once: true, margin: '0px 0px -12% 0px' })
+
+  if (!words) {
+    return (
+      <Element
+        ref={(node) => { target.current = node }}
+        className={className}
+        id={id}
+        data-line-reveal={enter || visible ? '' : undefined}
+      >
+        {lines.map((line) => <span className="line-mask" key={line}><span>{line}</span></span>)}
+      </Element>
+    )
+  }
+
+  const lineTokens = lines.map(wordTokens)
+  const spacesIn = lines.map((line) => line.includes(' '))
+  const total = lineTokens.reduce((count, tokens) => count + tokens.filter((token) => token.trim()).length, 0)
+  const stagger = total > 1 ? 0.6 / (total - 1) : 0
+  let index = 0
 
   return (
     <Element
@@ -21,7 +47,20 @@ export function MaskedLines({ as: Element, className, id, lines, enter = false }
       id={id}
       data-line-reveal={enter || visible ? '' : undefined}
     >
-      {lines.map((line) => <span className="line-mask" key={line}><span>{line}</span></span>)}
+      {lineTokens.map((tokens, line) => (
+        <span className="line-mask" key={lines[line]}>
+          {tokens.map((token, tokenIndex) => token.trim() === ''
+            ? ' '
+            : (
+                <Fragment key={tokenIndex}>
+                  <span className="word-mask">
+                    <span style={{ animationDelay: `${(index++ * stagger).toFixed(3)}s` }}>{token}</span>
+                  </span>
+                  {!spacesIn[line] && tokenIndex < tokens.length - 1 && '​'}
+                </Fragment>
+              ))}
+        </span>
+      ))}
     </Element>
   )
 }
@@ -49,7 +88,7 @@ export function Hero({ kind, title, intro, children, target }: {
       </div>
       <div className="hero-content site-gutter">
         <MaskedLines as="h1" className="hero-title" lines={title} enter />
-        <MaskedLines as="p" className="hero-intro" lines={intro} enter />
+        <MaskedLines as="p" className="hero-intro" lines={intro} enter words={false} />
         <div className="hero-bottom">
           {target && <a className="down-link" href={`#${target}`} aria-label={targetLabel}>
             <ArrowDown size={22} strokeWidth={1.35} aria-hidden="true" />

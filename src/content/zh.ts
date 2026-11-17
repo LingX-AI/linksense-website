@@ -9,9 +9,9 @@ export const zh = {
   },
   home: {
     description: 'LinkSense 是开源团队 Agent 工作空间。交付文件、与团队共享技能，也能部署在自己的基础设施上。',
-    titleOne: '把工作做完。', titleTwo: '把方法留下。',
-    introOne: '查资料、做文件，把工作向前推进。',
-    introTwo: '团队共用的开源 Agent 工作空间。',
+    titleOne: 'WorkBuddy / ChatGPT Enterprise', titleTwo: '的开源替代方案',
+    introOne: 'LinkSense 为组织提供统一、可治理的 Agent 工作空间。',
+    introTwo: '成员可以执行任务，按权限共享知识库、技能、插件和应用，并通过受控连接访问业务系统，无需获取底层凭据。',
     scroll: '探索工作空间',
     overview: '从一项请求，到一份成果。',
     overviewBody: '把任务连同需要的资料和工具交给 LinkSense。查看过程，拿到成果，把值得复用的办法分享出去。',

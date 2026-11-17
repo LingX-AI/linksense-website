@@ -17,7 +17,8 @@ Native scrolling replaces the reference's custom scroll controller. The pointer 
 ## Media
 
 - The LinkSense lockup and icon are existing product brand assets. See the [brand policy](../../linksense/TRADEMARK.md).
-- The introduction film and workspace recording are reused from the [existing website's first-party media](../../linksense-site/public/media/README.md). The workspace posters and hover clips are cuts from that recording. The film has English on-screen text and no spoken dialogue. Music: **Sonor #2**, Eugenio Mininni, under the [Mixkit Stock Music Free License](https://mixkit.co/license/modal/musicFree/).
+- The introduction film is reused from the [existing website's first-party media](../../linksense-site/public/media/README.md). The workspace demo (`product-demo.mp4`), its hover clip, and its poster are a code-built motion reconstruction of the real workspace captures (source project: `~/c/linksense-motion`): the interface is traced from `workspace.webp`/the previous recording, and all copy comes from the product capture or this site. Its score is generated, quiet electronic; no spoken dialogue.
+- The introduction film has English on-screen text. Its music is **Sonor #2**, Eugenio Mininni, under the [Mixkit Stock Music Free License](https://mixkit.co/license/modal/musicFree/).
 - The blue signal artwork was created for this site. `node scripts/signal-art.mjs` emits its SVG source; `signal.webp` is the web rendition. Deliverable illustrations use example data. No Raycast or Exo Ape artwork, fonts, or site code is bundled.
 - The bundled Inter font includes its [OFL license](../public/fonts/Inter-LICENSE.txt).
 
