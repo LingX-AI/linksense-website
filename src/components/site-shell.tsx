@@ -3,7 +3,7 @@ import { ArrowDownRight, ArrowRight, ArrowUpRight, Globe2, Plus, X } from 'lucid
 import { useEffect, useRef } from 'react'
 import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 import {
-  defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales, sitePath,
+  defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales,
 } from '../lib/site'
 import type { SiteLocale, SitePage } from '../lib/site'
 import { useSite } from '../lib/use-site'
@@ -16,10 +16,11 @@ const routeTargets = {
   hosting: '/{-$lang}/self-hosted',
 } as const
 
-export function SiteLink({ page, language, hash, children, ...props }: {
+export function SiteLink({ page, language, hash, viewTransition, children, ...props }: {
   page: SitePage
   language?: SiteLocale
   hash?: string
+  viewTransition?: boolean
   children: ReactNode
 } & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'onPointerMove'>) {
   const { locale } = useSite()
@@ -29,6 +30,7 @@ export function SiteLink({ page, language, hash, children, ...props }: {
       to={routeTargets[page]}
       params={{ lang: lang === defaultLocale ? undefined : lang }}
       hash={hash}
+      viewTransition={viewTransition}
       activeOptions={{ exact: true }}
       {...props}
     >{children}</Link>
@@ -56,6 +58,7 @@ function Languages({ compact = false, onSelect }: {
           <SiteLink
             page={page}
             language={language}
+            viewTransition={compact ? false : undefined}
             className={language === locale ? 'language-current' : undefined}
             onClick={onSelect ? (event) => onSelect(event, language) : undefined}
           >
@@ -73,36 +76,35 @@ const menuArt = {
   hosting: '/media/connections.webp',
 }
 
+function setMenuOrigin(panel: HTMLDialogElement) {
+  panel.closest<HTMLElement>('.site-shell')?.style.setProperty('--menu-origin-y', `${window.scrollY + window.innerHeight / 2}px`)
+}
+
 function Header() {
   const { copy, locale, page } = useSite()
   const router = useRouter()
   const dialog = useRef<HTMLDialogElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
-  const transitionId = useRef(0)
-  const navigating = useRef(false)
+  const closingForNavigation = useRef(false)
 
-  useEffect(() => router.subscribe('onBeforeNavigate', ({ pathChanged }) => {
-    if (pathChanged) {
-      ++transitionId.current
-      if (dialog.current?.open) dialog.current.close()
+  useEffect(() => router.subscribe('onRendered', ({ pathChanged, fromLocation, toLocation }) => {
+    if (!pathChanged || !fromLocation) return
+    const panel = dialog.current
+    if (panel?.open) {
+      // Reveal the committed route and use the destination's restored scroll position.
+      closingForNavigation.current = true
+      setMenuOrigin(panel)
+      panel.close()
+    }
+    if (!toLocation.hash) {
+      document.getElementById('main-content')?.focus({ preventScroll: true })
     }
   }), [router])
 
-  function follow(event: MouseEvent<HTMLAnchorElement>, target: SitePage, language: SiteLocale = locale) {
-    if (!ordinaryClick(event)) return
+  function dismissIfCurrent(event: MouseEvent<HTMLAnchorElement>, target: SitePage, language: SiteLocale = locale) {
+    if (!ordinaryClick(event) || target !== page || language !== locale) return
     event.preventDefault()
-    const panel = dialog.current
-    if (!panel?.open) return
-    const id = ++transitionId.current
-    navigating.current = target !== page || language !== locale
-    panel.close()
-    if (!navigating.current) return
-    const finish = () => {
-      if (transitionId.current === id) void router.navigate({ href: sitePath(target, language) })
-    }
-    const exit = panel.getAnimations()
-    if (exit.length) void Promise.allSettled(exit.map((motion) => motion.finished)).then(finish)
-    else finish()
+    dialog.current?.close()
   }
 
   return (
@@ -127,10 +129,9 @@ function Header() {
             onClick={() => {
               const panel = dialog.current
               if (!panel || panel.open) return
-              ++transitionId.current
-              navigating.current = false
+              closingForNavigation.current = false
               panel.dataset.art = page
-              panel.closest<HTMLElement>('.site-shell')?.style.setProperty('--menu-origin-y', `${window.scrollY + window.innerHeight / 2}px`)
+              setMenuOrigin(panel)
               panel.showModal()
               trigger.current?.setAttribute('aria-expanded', 'true')
               panel.querySelector<HTMLElement>('.menu-close')?.focus()
@@ -148,13 +149,13 @@ function Header() {
         onClose={() => {
           if (dialog.current?.open) return
           trigger.current?.setAttribute('aria-expanded', 'false')
-          if (!navigating.current) trigger.current?.focus({ preventScroll: true })
+          if (!closingForNavigation.current) trigger.current?.focus({ preventScroll: true })
         }}
         onPointerLeave={() => { if (dialog.current) dialog.current.dataset.art = page }}
       >
         <div className="menu-scene site-gutter">
           <div className="menu-top flex items-center justify-between">
-            <SiteLink page="home" onClick={(event) => follow(event, 'home')}><Brand /></SiteLink>
+            <SiteLink page="home" viewTransition={false} onClick={(event) => dismissIfCurrent(event, 'home')}><Brand /></SiteLink>
             <button type="button" className="menu-trigger menu-close" onClick={() => dialog.current?.close()}>
               <span>{copy.nav.close}</span><X size={23} strokeWidth={1.35} aria-hidden="true" />
             </button>
@@ -170,7 +171,8 @@ function Header() {
                   <SiteLink
                     page={name}
                     className="menu-link"
-                    onClick={(event) => follow(event, name)}
+                    viewTransition={false}
+                    onClick={(event) => dismissIfCurrent(event, name)}
                     onPointerEnter={() => { if (dialog.current) dialog.current.dataset.art = name }}
                     onFocus={() => { if (dialog.current) dialog.current.dataset.art = name }}
                   >
@@ -188,7 +190,7 @@ function Header() {
               </div>
               <div className="mt-7 flex items-start gap-3">
                 <Globe2 size={16} aria-hidden="true" className="mt-1 shrink-0" />
-                <Languages compact onSelect={(event, language) => follow(event, page, language)} />
+                <Languages compact onSelect={(event, language) => dismissIfCurrent(event, page, language)} />
               </div>
             </div>
           </div>
@@ -236,7 +238,6 @@ function Footer() {
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const { copy, locale } = useSite()
-  const router = useRouter()
 
   useEffect(() => {
     document.documentElement.dataset.ready = ''
@@ -244,12 +245,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => { document.documentElement.lang = siteLocales[locale].code }, [locale])
-
-  useEffect(() => router.subscribe('onRendered', ({ pathChanged, fromLocation, toLocation }) => {
-    if (pathChanged && fromLocation && !toLocation.hash) {
-      document.getElementById('main-content')?.focus({ preventScroll: true })
-    }
-  }), [router])
 
   return (
     <div className="site-shell">
