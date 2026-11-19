@@ -154,11 +154,11 @@ function FilmSection() {
   const { copy } = useSite()
   const home = copy.home
   return (
-    <section className="section section--night" aria-labelledby="film-title">
+    <section className="section section--film" aria-labelledby="film-title">
       <div className="container film-grid">
         <div className="film-copy">
           <p className="eyebrow">{home.film}</p>
-          <h2 className="h2" id="film-title">{home.reelOne}<br /><span className="text-night-accent">{home.reelTwo}</span></h2>
+          <h2 className="h2" id="film-title">{home.reelOne}<br /><span className="text-accent">{home.reelTwo}</span></h2>
           <p>{home.filmNote}</p>
         </div>
         <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film} label={home.play}
