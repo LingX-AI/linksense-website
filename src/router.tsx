@@ -7,12 +7,6 @@ export function getRouter() {
     defaultPreload: 'intent',
     scrollRestoration: true,
     trailingSlash: 'never',
-    defaultViewTransition: {
-      types: ({ pathChanged }) =>
-        pathChanged && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-          ? ['site-navigation']
-          : false,
-    },
   })
 }
 

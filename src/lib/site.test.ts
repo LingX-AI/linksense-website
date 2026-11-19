@@ -2,6 +2,21 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getCopy } from '../content'
 import { pageHead } from './head'
 import { docsPath, locales, localeFromPath, pageFromPath, publicSiteOrigin, sitePath } from './site'
+import { nextColorOverride } from './theme'
+
+describe('color scheme toggle', () => {
+  it.each([
+    ['light dark', false, 'dark'],
+    ['light dark', true, 'light'],
+    ['dark', false, null],
+    ['light', true, null],
+    ['dark', true, 'light'],
+    ['light', false, 'dark'],
+    ['invalid', true, 'light'],
+  ] as const)('toggles %s (system dark: %s) to %s', (preference, systemDark, expected) => {
+    expect(nextColorOverride(preference, systemDark)).toBe(expected)
+  })
+})
 
 describe('localized routes and copy', () => {
   it.each(locales)('keeps page identity when switching to %s and uses the corresponding documentation', (locale) => {

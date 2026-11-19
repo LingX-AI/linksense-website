@@ -27,12 +27,12 @@ try {
 
   const request = (path) => fetch(`${origin}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
   const locales = [
-    ['', 'en-US', 'Finish the work.', 'a real task.', 'on your terms.'],
-    ['/zh', 'zh-CN', '把工作做完。', '具体的事开始。', '由你决定。'],
-    ['/es', 'es-ES', 'Termina el trabajo.', 'una tarea real.', 'a tu manera.'],
-    ['/pt', 'pt-BR', 'Conclua o trabalho.', 'uma tarefa real.', 'seu jeito.'],
-    ['/fr', 'fr-FR', 'Menez le travail à bien.', 'une tâche réelle.', 'à votre façon.'],
-    ['/ja', 'ja-JP', '仕事を仕上げる。', '始めよう。', '自分たちで決める。'],
+    ['', 'en-US', 'On your infrastructure.', 'a real task.', 'on your terms.'],
+    ['/zh', 'zh-CN', '部署和权限，你做主', '具体的事开始。', '由你决定。'],
+    ['/es', 'es-ES', 'En tu infraestructura.', 'una tarea real.', 'a tu manera.'],
+    ['/pt', 'pt-BR', 'Na sua infraestrutura.', 'uma tarefa real.', 'seu jeito.'],
+    ['/fr', 'fr-FR', 'Sur votre infrastructure.', 'une tâche réelle.', 'à votre façon.'],
+    ['/ja', 'ja-JP', '自社の環境で運用。', '始めよう。', '自分たちで決める。'],
   ]
   for (const [prefix, locale, home, cases, hosting] of locales) {
     const docs = locale === 'en-US' ? 'https://linksense.org/doc/' : `https://linksense.org/doc/${locale}/`
@@ -46,12 +46,15 @@ try {
       assert.ok(title.includes(heading), `SSR heading missing on ${path}`)
       assert.ok(html.includes(`href="${docs}"`), `Documentation link missing on ${path}`)
       assert.ok(html.includes('name="description"'), path)
+      assert.ok(html.includes('name="color-scheme" content="light dark"'), `System theme default missing on ${path}`)
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
+        assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
+        assert.ok(html.includes('src="/media/workspace-result.webp"'), `Workspace still missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
-        const story = ['workspace-section', 'scenario-section', 'team-section', 'ownership-section'].map((name) => html.indexOf(name))
+        const story = ['id="workspace"', 'id="scenarios-title"', 'id="team-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
         assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
       }
       if (suffix === '/use-cases') {

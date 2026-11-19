@@ -1,14 +1,13 @@
-import { Link, useRouter } from '@tanstack/react-router'
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Globe2, Plus, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { ArrowRight, ArrowUpRight, Globe2, Menu, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 import {
   defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales,
 } from '../lib/site'
 import type { SiteLocale, SitePage } from '../lib/site'
+import { colorSchemeKey, nextColorOverride, systemColorScheme } from '../lib/theme'
 import { useSite } from '../lib/use-site'
-import { ordinaryClick } from './media'
-import { MaskedLines } from './visuals'
 
 const routeTargets = {
   home: '/{-$lang}',
@@ -16,13 +15,12 @@ const routeTargets = {
   hosting: '/{-$lang}/self-hosted',
 } as const
 
-export function SiteLink({ page, language, hash, viewTransition, children, ...props }: {
+export function SiteLink({ page, language, hash, children, ...props }: {
   page: SitePage
   language?: SiteLocale
   hash?: string
-  viewTransition?: boolean
   children: ReactNode
-} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'onPointerMove'>) {
+} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'aria-label'>) {
   const { locale } = useSite()
   const lang = language ?? locale
   return (
@@ -30,35 +28,67 @@ export function SiteLink({ page, language, hash, viewTransition, children, ...pr
       to={routeTargets[page]}
       params={{ lang: lang === defaultLocale ? undefined : lang }}
       hash={hash}
-      viewTransition={viewTransition}
       activeOptions={{ exact: true }}
       {...props}
     >{children}</Link>
   )
 }
 
-export function CircleArrow({ diagonal = false }: { diagonal?: boolean }) {
-  const Icon = diagonal ? ArrowUpRight : ArrowRight
-  return <span className="circle-arrow" aria-hidden="true"><Icon size={20} strokeWidth={1.5} /></span>
-}
-
 function Brand() {
-  return <img src="/brand/lockup-dark.svg" alt="LinkSense" width="122" height="33" />
+  return (
+    <>
+      <img className="only-light brand-lockup" src="/brand/linksense-lockup-light.svg" alt="LinkSense" width="520" height="100" />
+      <img className="only-dark brand-lockup" src="/brand/linksense-lockup-dark.svg" alt="LinkSense" width="393" height="76" />
+    </>
+  )
 }
 
-function Languages({ compact = false, onSelect }: {
-  compact?: boolean
-  onSelect?: (event: MouseEvent<HTMLAnchorElement>, language: SiteLocale) => void
-}) {
+function ThemeToggle() {
+  const { copy } = useSite()
+
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
+    if (!meta) return
+    function sync(event: StorageEvent) {
+      if (meta && (event.key === colorSchemeKey || event.key === null)) {
+        const mode = event.newValue
+        meta.content = mode === 'light' || mode === 'dark' ? mode : 'light dark'
+      }
+    }
+    window.addEventListener('storage', sync)
+    return () => window.removeEventListener('storage', sync)
+  }, [])
+
+  function toggle() {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
+    if (!meta) return
+    const next = nextColorOverride(meta.content, window.matchMedia(systemColorScheme).matches)
+    meta.content = next ?? 'light dark'
+    try {
+      if (next) localStorage.setItem(colorSchemeKey, next)
+      else localStorage.removeItem(colorSchemeKey)
+    } catch {
+      return
+    }
+  }
+
+  return (
+    <button className="header-icon theme-toggle" type="button" onClick={toggle}>
+      <span className="only-light"><Moon size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.darkMode}</span></span>
+      <span className="only-dark"><Sun size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.lightMode}</span></span>
+    </button>
+  )
+}
+
+function Languages({ onSelect }: { onSelect?: (event: MouseEvent<HTMLAnchorElement>, language: SiteLocale) => void }) {
   const { locale, page, copy } = useSite()
   return (
-    <ul className={compact ? 'flex flex-wrap items-center gap-x-4 gap-y-1' : 'language-options'} aria-label={copy.nav.language}>
+    <ul className="language-options" aria-label={copy.nav.language}>
       {locales.map((language) => (
         <li key={language} lang={siteLocales[language].code}>
           <SiteLink
             page={page}
             language={language}
-            viewTransition={compact ? false : undefined}
             className={language === locale ? 'language-current' : undefined}
             onClick={onSelect ? (event) => onSelect(event, language) : undefined}
           >
@@ -70,131 +100,69 @@ function Languages({ compact = false, onSelect }: {
   )
 }
 
-const menuArt = {
-  home: ['/media/signal.webp', 1620, 1000],
-  cases: ['/media/menu-use-cases.webp', 1024, 1024],
-  hosting: ['/media/menu-self-hosted.webp', 1024, 1024],
-} as const
-
-function setMenuOrigin(panel: HTMLDialogElement) {
-  panel.closest<HTMLElement>('.site-shell')?.style.setProperty('--menu-origin-y', `${window.scrollY + window.innerHeight / 2}px`)
-}
-
 function Header() {
-  const { copy, locale, page } = useSite()
-  const router = useRouter()
+  const { copy, locale } = useSite()
   const dialog = useRef<HTMLDialogElement>(null)
-  const trigger = useRef<HTMLButtonElement>(null)
-  const closingForNavigation = useRef(false)
 
-  useEffect(() => router.subscribe('onRendered', ({ pathChanged, fromLocation, toLocation }) => {
-    if (!pathChanged || !fromLocation) return
-    const panel = dialog.current
-    if (panel?.open) {
-      // Reveal the committed route and use the destination's restored scroll position.
-      closingForNavigation.current = true
-      setMenuOrigin(panel)
-      panel.close()
-    }
-    if (!toLocation.hash) {
-      document.getElementById('main-content')?.focus({ preventScroll: true })
-    }
-  }), [router])
-
-  function dismissIfCurrent(event: MouseEvent<HTMLAnchorElement>, target: SitePage, language: SiteLocale = locale) {
-    if (!ordinaryClick(event) || target !== page || language !== locale) return
-    event.preventDefault()
-    dialog.current?.close()
-  }
+  const close = () => dialog.current?.close()
 
   return (
     <>
       <header className="site-header">
-        <SiteLink page="home" className="site-brand"><Brand /></SiteLink>
-        <nav aria-label={copy.nav.primary} className="header-links">
-          <SiteLink page="cases">{copy.nav.cases}</SiteLink>
-          <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-          <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={12} /></a>
-        </nav>
-        <div className="flex items-center gap-4 md:gap-6">
-          <noscript><a href={docsPath(locale)} className="inline-flex min-h-11 items-center text-sm md:hidden">{copy.nav.docs}</a></noscript>
-          <a href={productLinks.demo} className="header-demo">{copy.nav.demo}<ArrowUpRight aria-hidden="true" size={15} /></a>
-          <button
-            type="button"
-            className="menu-trigger"
-            ref={trigger}
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            aria-controls="main-menu"
-            onClick={() => {
-              const panel = dialog.current
-              if (!panel || panel.open) return
-              closingForNavigation.current = false
-              panel.dataset.art = page
-              setMenuOrigin(panel)
-              panel.showModal()
-              trigger.current?.setAttribute('aria-expanded', 'true')
-              panel.querySelector<HTMLElement>('.menu-close')?.focus()
-            }}
-          >
-            <span>{copy.nav.menu}</span><Plus size={23} strokeWidth={1.35} aria-hidden="true" />
-          </button>
+        <div className="container header-inner">
+          <SiteLink page="home" className="site-brand" aria-label="LinkSense"><Brand /></SiteLink>
+          <nav aria-label={copy.nav.primary} className="header-links">
+            <SiteLink page="cases">{copy.nav.cases}</SiteLink>
+            <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
+            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={12} /></a>
+            <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} /></a>
+          </nav>
+          <div className="header-actions">
+            <a href={productLinks.demo} className="btn btn--compact" aria-label={copy.nav.demo}>
+              <span className="hidden md:inline">{copy.nav.demo}</span>
+              <span className="md:hidden">{copy.nav.demoShort}</span>
+              <ArrowUpRight aria-hidden="true" size={15} />
+            </a>
+            <ThemeToggle />
+            <button
+              type="button"
+              className="header-icon menu-button"
+              aria-haspopup="dialog"
+              aria-label={copy.nav.menu}
+              onClick={() => dialog.current?.showModal()}
+            >
+              <Menu size={21} strokeWidth={1.65} aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </header>
       <dialog
-        id="main-menu"
-        className="site-menu"
+        className="mobile-menu"
         ref={dialog}
         aria-label={copy.nav.menu}
-        onClose={() => {
-          if (dialog.current?.open) return
-          trigger.current?.setAttribute('aria-expanded', 'false')
-          if (!closingForNavigation.current) trigger.current?.focus({ preventScroll: true })
-        }}
-        onPointerLeave={() => { if (dialog.current) dialog.current.dataset.art = page }}
+        onClick={(event) => { if (event.target === dialog.current) close() }}
       >
-        <div className="menu-scene site-gutter">
-          <div className="menu-top flex items-center justify-between">
-            <SiteLink page="home" viewTransition={false} onClick={(event) => dismissIfCurrent(event, 'home')}><Brand /></SiteLink>
-            <button type="button" className="menu-trigger menu-close" onClick={() => dialog.current?.close()}>
-              <span>{copy.nav.close}</span><X size={23} strokeWidth={1.35} aria-hidden="true" />
+        <div className="mobile-menu-panel">
+          <div className="mobile-menu-top">
+            <SiteLink page="home" className="site-brand" aria-label="LinkSense" onClick={close}><Brand /></SiteLink>
+            <button type="button" className="mobile-menu-close" onClick={close}>
+              <span>{copy.nav.close}</span><X size={22} aria-hidden="true" />
             </button>
           </div>
-          <div className="menu-art" aria-hidden="true">
-            {pageNames.map((name) => {
-              const [src, width, height] = menuArt[name]
-              return <img key={name} data-art={name} src={src} alt="" width={width} height={height} loading="lazy" />
-            })}
-          </div>
-          <div className="menu-content">
-            <nav aria-label={copy.nav.primary} className="menu-nav"
-              onPointerLeave={() => { if (dialog.current) dialog.current.dataset.art = page }}>
-              {pageNames.map((name, index) => (
-                <div className="menu-mask" key={name}>
-                  <SiteLink
-                    page={name}
-                    className="menu-link"
-                    viewTransition={false}
-                    onClick={(event) => dismissIfCurrent(event, name)}
-                    onPointerEnter={() => { if (dialog.current) dialog.current.dataset.art = name }}
-                    onFocus={() => { if (dialog.current) dialog.current.dataset.art = name }}
-                  >
-                    <span className="menu-index" aria-hidden="true">0{index + 1}</span>
-                    {copy.nav[name]}<ArrowDownRight className="menu-arrow" aria-hidden="true" strokeWidth={1} />
-                  </SiteLink>
-                </div>
-              ))}
-            </nav>
-            <div className="menu-aside">
-              <div className="flex flex-wrap gap-x-5 gap-y-3">
-                <a href={docsPath(locale)}>{copy.nav.docs} ↗</a>
-                <a href={productLinks.github}>{copy.nav.github} ↗</a>
-                <a href={productLinks.demo}>{copy.nav.demo} ↗</a>
-              </div>
-              <div className="mt-7 flex items-start gap-3">
-                <Globe2 size={16} aria-hidden="true" className="mt-1 shrink-0" />
-                <Languages compact onSelect={(event, language) => dismissIfCurrent(event, page, language)} />
-              </div>
+          <nav aria-label={copy.nav.primary} className="mobile-menu-nav">
+            {pageNames.map((name) => (
+              <SiteLink key={name} page={name} onClick={close}>
+                {copy.nav[name]}<ArrowRight size={18} aria-hidden="true" />
+              </SiteLink>
+            ))}
+          </nav>
+          <div className="mobile-menu-meta">
+            <a href={docsPath(locale)} onClick={close}>{copy.nav.docs} ↗</a>
+            <a href={productLinks.github} onClick={close}>{copy.nav.github} ↗</a>
+            <a href={productLinks.demo} onClick={close}>{copy.nav.demo} ↗</a>
+            <div className="flex items-start gap-2 pt-1">
+              <Globe2 size={15} aria-hidden="true" className="mt-2 shrink-0" />
+              <Languages onSelect={close} />
             </div>
           </div>
         </div>
@@ -206,34 +174,30 @@ function Header() {
 function Footer() {
   const { copy, locale } = useSite()
   return (
-    <footer className="site-footer site-gutter">
-      <div className="footer-feature">
-        <MaskedLines as="h2" className="footer-title" lines={[copy.footer.titleOne, copy.footer.titleTwo]} />
-        <a className="text-action w-fit self-end" href={productLinks.demo}>
-          <span>{copy.nav.demo}</span><CircleArrow diagonal />
-        </a>
-      </div>
-      <div className="footer-grid">
-        <div className="space-y-5">
-          <SiteLink page="home" className="inline-block"><Brand /></SiteLink>
-          <p className="text-sm text-muted-inverse">{copy.footer.source}</p>
+    <footer className="site-footer">
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <SiteLink page="home" aria-label="LinkSense"><Brand /></SiteLink>
+            <p>{copy.footer.source}</p>
+          </div>
+          <nav className="footer-nav" aria-label={copy.nav.footer}>
+            <SiteLink page="cases">{copy.nav.cases}</SiteLink>
+            <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
+            <a href={docsPath(locale)}>{copy.nav.docs}</a>
+            <a href={productLinks.github}>{copy.nav.github}</a>
+            <a href={productLinks.community}>{copy.footer.community}</a>
+            <a href={productLinks.contact}>{copy.nav.contact}</a>
+          </nav>
+          <div className="footer-languages">
+            <p><Globe2 size={14} aria-hidden="true" />{copy.nav.language}</p>
+            <Languages />
+          </div>
         </div>
-        <nav className="footer-nav" aria-label={copy.nav.footer}>
-          <SiteLink page="cases">{copy.nav.cases}</SiteLink>
-          <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-          <a href={docsPath(locale)}>{copy.nav.docs}</a>
-          <a href={productLinks.github}>{copy.nav.github}</a>
-          <a href={productLinks.community}>{copy.footer.community}</a>
-          <a href={productLinks.contact}>{copy.nav.contact}</a>
-        </nav>
-        <div className="footer-languages">
-          <p><Globe2 size={16} aria-hidden="true" />{copy.nav.language}</p>
-          <Languages />
+        <div className="footer-base">
+          <span>© {copy.footer.company}</span>
+          <a href={productLinks.license}>{copy.footer.license}</a>
         </div>
-      </div>
-      <div className="footer-base">
-        <span>© {copy.footer.company}</span>
-        <a href={productLinks.license}>{copy.footer.license}</a>
       </div>
     </footer>
   )
@@ -242,21 +206,14 @@ function Footer() {
 export function SiteShell({ children }: { children: ReactNode }) {
   const { copy, locale } = useSite()
 
-  useEffect(() => {
-    document.documentElement.dataset.ready = ''
-    return () => { delete document.documentElement.dataset.ready }
-  }, [])
-
   useEffect(() => { document.documentElement.lang = siteLocales[locale].code }, [locale])
 
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content">{copy.nav.skip}</a>
       <Header />
-      <div className="menu-displace">
-        <main id="main-content" tabIndex={-1}>{children}</main>
-        <Footer />
-      </div>
+      <main id="main-content" tabIndex={-1}>{children}</main>
+      <Footer />
     </div>
   )
 }

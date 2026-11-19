@@ -36,6 +36,7 @@
     "eslint": "10.15.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "nitro": "npm:nitro-nightly@3.0.1-20261111-232659-0f2a7f49",
+    "shadcn": "^4.23.0",
     "tailwindcss": "4.3.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2",
