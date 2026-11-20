@@ -1,0 +1,114 @@
+/* finesse · register=brand · A=existing-blue+bright-white · B=homepage-type-scale · C=topology+comparison+governance
+ * D=SVG-connection-reveal · E=deployment-boundary · SOUL=6 SPECTACLE=3 DENSITY=4 */
+.self-hosted-page {
+  --hosting-space: 5rem;
+  --hosting-block-gap: 2.5rem;
+  --hosting-rule: color-mix(in srgb, var(--color-line) 80%, transparent);
+  --hosting-ink: #1b1d20;
+  --hosting-on-ink: #f5f8fc;
+}
+.self-hosted-page .hero--hosting { background: var(--color-paper); }
+.self-hosted-page .hero-inner { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2.5rem, 6vw, 5rem); padding-block: 3.5rem var(--hosting-space); }
+/* Opening typography inherits the shared homepage scale, including its short-screen and phone rules. */
+.self-hosted-page .hero-lead { max-width: 28rem; margin-block-start: 1.25rem; font-size: 1rem; line-height: 1.65; }
+.self-hosted-page .hero-actions { gap: 1rem 1.5rem; margin-block-start: 1.75rem; }
+.self-hosted-page .btn { min-height: 3rem; padding-inline: 1.25rem; }
+.self-hosted-page .hosting-source { color: var(--color-ink); font-size: .875rem; }
+.self-hosted-page > .section { padding-block: var(--hosting-space); }
+.self-hosted-page .section-head { gap: 1rem; margin-block-end: var(--hosting-block-gap); }
+.self-hosted-page .section-head > p { font-size: 1rem; line-height: 1.65; }
+
+.hosting-architecture { position: relative; max-width: 34rem; margin-inline: auto; padding: 1rem 1rem 0 0; }
+.hosting-environment { position: relative; isolation: isolate; padding: 1.75rem 2rem 2rem; border: 1px solid var(--color-trace); border-radius: var(--radius-frame); background: var(--color-panel); }
+.hosting-environment::before { content: ''; position: absolute; z-index: -2; inset: 1rem -1rem -1rem 1rem; border-radius: inherit; background: var(--color-stage); }
+.hosting-environment::after { content: ''; position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: var(--color-panel); }
+.hosting-environment-title { display: flex; align-items: center; gap: .625rem; padding-block-end: 1.25rem; border-block-end: 1px solid var(--hosting-rule); color: var(--color-muted); font-size: .875rem; font-weight: 550; line-height: 1.5; }
+.hosting-environment-title > svg { flex: none; color: var(--color-accent); }
+.hosting-topology { display: grid; grid-template-columns: minmax(0, 1fr) 3.5rem minmax(0, 1fr); align-items: center; padding-block-start: 1.75rem; }
+.hosting-node { display: grid; justify-items: center; align-content: center; gap: 1rem; min-width: 0; }
+.hosting-node > span { display: grid; width: 4rem; height: 4rem; place-items: center; border-radius: 1rem; background: var(--color-accent-soft); color: var(--color-accent); }
+.hosting-node--shared > span { background: var(--color-action); color: var(--color-on-action); }
+.hosting-node strong { font-size: 1rem; font-weight: 550; line-height: 1.5; text-align: center; text-wrap: balance; overflow-wrap: anywhere; }
+.hosting-node-link { display: block; width: 100%; height: 1.5rem; margin-block-start: -2.5rem; color: var(--color-accent); }
+.hosting-node-link path, .hosting-endpoint-link path { stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hosting-endpoint-link { position: relative; display: block; width: 1.5rem; height: 3.5rem; margin-inline: auto; color: var(--color-accent); }
+.hosting-endpoint { position: relative; display: flex; align-items: center; justify-content: center; gap: .75rem; width: fit-content; min-height: 3rem; max-width: 100%; margin-inline: auto; padding: .75rem 1.25rem; border-radius: .75rem; background: var(--hosting-ink); color: var(--hosting-on-ink); }
+.hosting-endpoint > svg { flex: none; }
+.hosting-endpoint strong { font-size: .9375rem; font-weight: 550; line-height: 1.5; text-align: center; }
+
+.hosting-profiles { border-block: 1px solid var(--hosting-rule); background: var(--color-warm); }
+.hosting-profiles .section-head { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: .75rem; text-align: center; }
+.hosting-profiles .section-head .h2 { max-width: none; }
+.hosting-profiles .section-head > p { max-width: 48rem; margin: 0; }
+.hosting-profile-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: clip; border: 1px solid var(--hosting-rule); border-radius: var(--radius-frame); background: var(--color-panel); }
+.hosting-profile { display: flex; flex-direction: column; min-width: 0; padding: 2.5rem; }
+.hosting-profile--full { border-inline-start: 1px solid var(--hosting-rule); background: color-mix(in srgb, var(--color-accent-soft) 55%, var(--color-panel)); }
+.hosting-profile-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.hosting-profile-heading h3 { font-size: 2rem; font-weight: 600; letter-spacing: -.03em; line-height: 1.2; }
+.hosting-profile-heading > svg { flex: none; color: var(--color-accent); }
+.hosting-profile-title { margin-block-start: 1.25rem; font-size: 1.125rem; font-weight: 600; line-height: 1.5; text-wrap: pretty; }
+.hosting-profile-body { max-width: 65ch; margin-block: .625rem 1.5rem; color: var(--color-muted); font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
+.hosting-profile-composition { display: flex; flex-wrap: wrap; align-items: center; gap: .625rem; margin-block: auto 1.5rem; padding-block-start: .5rem; color: var(--color-muted); }
+.hosting-profile-composition > span { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.25rem; padding: .375rem .75rem; border: 1px solid var(--hosting-rule); border-radius: .5rem; font-size: .8125rem; font-weight: 500; line-height: 1.5; }
+.hosting-profile-composition > span > svg { flex: none; color: var(--color-accent); }
+.hosting-guide { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 100%; min-height: 3rem; padding-block: .75rem; border-block-start: 1px solid var(--hosting-rule); color: var(--color-accent); font-size: .875rem; font-weight: 600; line-height: 1.5; text-decoration: none; }
+.hosting-guide > svg { flex: none; }
+.hosting-guide:hover { text-decoration: underline; }
+.hosting-guide:active { color: var(--color-action-hover); }
+.hosting-platform { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-block-start: 1.25rem; color: var(--color-muted); font-size: .875rem; line-height: 1.5; }
+.hosting-platform > svg { flex: none; }
+
+.hosting-governance-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1fr); align-items: start; gap: clamp(2.5rem, 7vw, 6rem); }
+.hosting-governance .section-head { grid-template-columns: minmax(0, 1fr); margin-block-end: 2rem; }
+.hosting-boundary { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: 1rem .75rem; padding: 1.5rem; border-radius: .75rem; background: var(--color-warm); }
+.hosting-boundary > svg { color: var(--color-accent); }
+.hosting-boundary h3 { font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+.hosting-boundary p { grid-column: 1 / -1; color: var(--color-muted); font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
+.hosting-boundary .arrow-link { grid-column: 1 / -1; justify-self: start; font-size: .875rem; }
+.hosting-governance .governance-list { border-block: 0; }
+.hosting-governance .governance-list > div { padding-block: 1.5rem; }
+.hosting-governance .governance-list > div:first-child { padding-block-start: 0; }
+.hosting-governance .governance-list > div:last-child { padding-block-end: 0; }
+.hosting-governance .governance-list > div + div { border-color: var(--hosting-rule); }
+.hosting-governance .governance-list dt { gap: .875rem; font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+.hosting-governance .governance-list dd { margin: .75rem 0 0 2.125rem; font-size: 1rem; line-height: 1.65; text-wrap: pretty; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .hosting-node-link path, .hosting-endpoint-link path { stroke-dasharray: 1; animation: hosting-connect .8s var(--ease-out) both; }
+  @keyframes hosting-connect { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .hosting-guide > svg { transition: translate .2s var(--ease-out); }
+  .hosting-guide:hover > svg { translate: .2rem 0; }
+}
+@media (max-width: 60rem) {
+  .self-hosted-page { --hosting-space: 4rem; --hosting-block-gap: 2rem; }
+  .self-hosted-page .hero-inner { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; padding-block-start: 2.5rem; }
+  .self-hosted-page .hero-copy { max-width: 40rem; margin-inline: auto; text-align: center; }
+  .self-hosted-page .hero-lead { max-width: 36rem; margin-inline: auto; }
+  .self-hosted-page .hero-actions { justify-content: center; }
+  .self-hosted-page .hero-visual { width: 100%; max-width: 38rem; margin-inline: auto; }
+  .hosting-profile { padding: 1.75rem; }
+  .hosting-governance-grid { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .hosting-governance-copy { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1fr); gap: 2rem; }
+}
+@media (max-width: 40rem) {
+  .self-hosted-page { --hosting-space: 3.5rem; --hosting-block-gap: 1.5rem; }
+  .self-hosted-page .hero-inner { gap: 2rem; }
+  .self-hosted-page .hero-actions { flex-direction: column; gap: .75rem; margin-block-start: 1.25rem; }
+  .self-hosted-page .hero-lead { margin-block-start: 1rem; }
+  .hosting-environment { padding: 1.125rem; }
+  .hosting-environment-title { padding-block-end: 1rem; }
+  .hosting-topology { grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr); padding-block-start: 1.25rem; }
+  .hosting-node { gap: .75rem; }
+  .hosting-node > span { width: 3.25rem; height: 3.25rem; border-radius: .75rem; }
+  .hosting-node > span > svg { width: 28px; height: 28px; }
+  .hosting-node strong { font-size: .875rem; }
+  .hosting-node-link { margin-block-start: -2.25rem; }
+  .hosting-profile-pair { grid-template-columns: minmax(0, 1fr); }
+  .hosting-profile { padding: 1.5rem; }
+  .hosting-profile--full { border-inline-start: 0; border-block-start: 1px solid var(--hosting-rule); }
+  .hosting-profile-heading h3 { font-size: 1.75rem; }
+  .hosting-platform { font-size: .8125rem; }
+  .hosting-governance-copy { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .hosting-governance .section-head { margin-block-end: 1.5rem; }
+  .hosting-boundary { padding: 1.25rem; }
+}

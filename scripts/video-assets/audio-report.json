@@ -1,0 +1,117 @@
+{
+  "engine": "huashu-motion local composer and SFX",
+  "duration": 27.6,
+  "targetLufs": -16,
+  "measuredLufs": -16,
+  "effects": [
+    {
+      "name": "whoosh",
+      "at": 1.15,
+      "dur": 0.35,
+      "gain": 0.18
+    },
+    {
+      "name": "type",
+      "at": 3.1,
+      "dur": 1.15,
+      "gain": 0.35
+    },
+    {
+      "name": "click",
+      "at": 7.75,
+      "gain": 0.42
+    },
+    {
+      "name": "whoosh",
+      "at": 8.7,
+      "dur": 0.32,
+      "gain": 0.22
+    },
+    {
+      "name": "paper",
+      "at": 9.9,
+      "gain": 0.32,
+      "pan": -0.15
+    },
+    {
+      "name": "ding",
+      "at": 11.55,
+      "gain": 0.2,
+      "note": 5,
+      "pan": 0.15
+    },
+    {
+      "name": "whoosh",
+      "at": 14.3,
+      "dur": 0.35,
+      "gain": 0.17
+    },
+    {
+      "name": "click",
+      "at": 16.25,
+      "gain": 0.38
+    },
+    {
+      "name": "whoosh",
+      "at": 19.2,
+      "dur": 0.4,
+      "gain": 0.18
+    },
+    {
+      "name": "tick",
+      "at": 20.5,
+      "gain": 0.28
+    },
+    {
+      "name": "chime",
+      "at": 24.25,
+      "gain": 0.2
+    }
+  ],
+  "score": {
+    "title": "LinkSense — Clear connections",
+    "notes": 117,
+    "voices": [
+      "ME:marimba",
+      "HA:rhodes",
+      "BA:sinebass"
+    ],
+    "end": 27.56433278897633,
+    "marks": [
+      "hook 0.00s",
+      "files 8.20s",
+      "logo 23.70s"
+    ],
+    "points": [
+      {
+        "name": "hook",
+        "at": 0
+      },
+      {
+        "name": "files",
+        "at": 8.200000000000138
+      },
+      {
+        "name": "logo",
+        "at": 23.69999999999878
+      }
+    ],
+    "unmatched": [],
+    "warnings": [],
+    "stretches": [
+      {
+        "from": "hook",
+        "to": "files",
+        "qpm": 88.04725706064025,
+        "bend": -0.04296459716695389
+      },
+      {
+        "from": "files",
+        "to": "logo",
+        "qpm": 93.15967843836064,
+        "bend": 0.012605200416963447
+      }
+    ],
+    "start": 0
+  }
+}

@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, ArrowUpRight, Globe2, Menu, Moon, Sun, X } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Globe2, Menu, Moon, Sun, X } from 'lucide-react'
+import { motion, useReducedMotion } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
 import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 import {
   defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales,
@@ -18,9 +19,9 @@ const routeTargets = {
 export function SiteLink({ page, language, hash, children, ...props }: {
   page: SitePage
   language?: SiteLocale
-  hash?: string
+  hash?: string | true
   children: ReactNode
-} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'aria-label'>) {
+} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onBlur' | 'onPointerEnter' | 'onPointerLeave' | 'aria-label'>) {
   const { locale } = useSite()
   const lang = language ?? locale
   return (
@@ -37,8 +38,8 @@ export function SiteLink({ page, language, hash, children, ...props }: {
 function Brand() {
   return (
     <>
-      <img className="only-light brand-lockup" src="/brand/linksense-lockup-light.svg" alt="LinkSense" width="520" height="100" />
-      <img className="only-dark brand-lockup" src="/brand/linksense-lockup-dark.svg" alt="LinkSense" width="393" height="76" />
+      <img className="only-light brand-lockup" src="/brand/figma-lockup-light.svg" alt="LinkSense" width="120" height="29" />
+      <img className="only-dark brand-lockup" src="/brand/figma-lockup-dark.svg" alt="LinkSense" width="120" height="29" />
     </>
   )
 }
@@ -89,10 +90,12 @@ function Languages({ onSelect }: { onSelect?: (event: MouseEvent<HTMLAnchorEleme
           <SiteLink
             page={page}
             language={language}
+            hash
             className={language === locale ? 'language-current' : undefined}
             onClick={onSelect ? (event) => onSelect(event, language) : undefined}
           >
             {siteLocales[language].label}
+            {language === locale && <Check size={15} aria-hidden="true" />}
           </SiteLink>
         </li>
       ))}
@@ -100,30 +103,139 @@ function Languages({ onSelect }: { onSelect?: (event: MouseEvent<HTMLAnchorEleme
   )
 }
 
+function LanguagePicker() {
+  const { copy, locale, page } = useSite()
+  const disclosure = useRef<HTMLDetailsElement>(null)
+
+  useEffect(() => {
+    const panel = disclosure.current
+    if (!panel) return
+    function dismiss(event: Event) {
+      if (panel?.open && event.target instanceof Node && !panel.contains(event.target)) panel.open = false
+    }
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'Escape' && panel?.open) {
+        panel.open = false
+        panel.querySelector('summary')?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', dismiss)
+    document.addEventListener('focusin', dismiss)
+    panel.addEventListener('keydown', onKey)
+    return () => {
+      panel.open = false
+      document.removeEventListener('pointerdown', dismiss)
+      document.removeEventListener('focusin', dismiss)
+      panel.removeEventListener('keydown', onKey)
+    }
+  }, [locale, page])
+
+  return (
+    <details className="language-picker" ref={disclosure}>
+      <summary className="header-icon language-trigger" aria-label={`${copy.nav.language}: ${siteLocales[locale].label}`}>
+        <Globe2 size={18} strokeWidth={1.65} aria-hidden="true" />
+        <span aria-hidden="true">{locale.toUpperCase()}</span>
+        <ChevronDown size={12} aria-hidden="true" />
+      </summary>
+      <div className="language-panel">
+        <Languages onSelect={() => {
+          if (disclosure.current) disclosure.current.open = false
+          disclosure.current?.querySelector('summary')?.focus()
+        }} />
+      </div>
+    </details>
+  )
+}
+
+function NavigationDock() {
+  const { copy, locale, page } = useSite()
+  const [hovered, setHovered] = useState<string | null>(null)
+  const [focused, setFocused] = useState<string | null>(null)
+  const reducedMotion = useReducedMotion()
+  const selected = focused ?? hovered ?? (page === 'home' ? null : page)
+  const items = [
+    { id: 'cases', label: copy.nav.cases, page: 'cases' as const },
+    { id: 'hosting', label: copy.nav.hosting, page: 'hosting' as const },
+    { id: 'docs', label: copy.nav.docs, href: docsPath(locale) },
+    { id: 'github', label: copy.nav.github, href: productLinks.github },
+  ]
+
+  return (
+    <motion.nav
+      layout={reducedMotion ? false : 'position'}
+      transition={{ layout: reducedMotion ? { duration: 0 } : { duration: .42, ease: [.22, 1, .36, 1] } }}
+      className="header-links"
+      aria-label={copy.nav.primary}
+      onPointerLeave={() => setHovered(null)}
+    >
+      {items.map((item) => {
+        const content = <>
+          {selected === item.id && <motion.span
+            className="nav-highlight"
+            layoutId="navigation-highlight"
+            aria-hidden="true"
+            transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 440, damping: 35 }}
+          />}
+          <span className="nav-label">{item.label}</span>
+          {item.href && <ArrowUpRight aria-hidden="true" size={12} />}
+        </>
+        const events = {
+          onPointerEnter: () => { setHovered(item.id); setFocused(null) },
+          onFocus: () => { setFocused(item.id); setHovered(null) },
+          onBlur: () => setFocused(null),
+        }
+        return item.page
+          ? <SiteLink key={item.id} page={item.page} {...events}>{content}</SiteLink>
+          : <a key={item.id} href={item.href} {...events}>{content}</a>
+      })}
+    </motion.nav>
+  )
+}
+
 function Header() {
   const { copy, locale } = useSite()
   const dialog = useRef<HTMLDialogElement>(null)
+  const scrollMarker = useRef<HTMLSpanElement>(null)
+  const [condensed, setCondensed] = useState(false)
+  const reducedMotion = useReducedMotion()
+  const transition = reducedMotion
+    ? { duration: 0 }
+    : { duration: .42, ease: [.22, 1, .36, 1] as const }
+
+  useEffect(() => {
+    const marker = scrollMarker.current
+    if (!marker) return
+    // The marker belongs to the document, so the fixed header never moves its own threshold.
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) setCondensed(entry.boundingClientRect.top < 0)
+    })
+    observer.observe(marker)
+    return () => observer.disconnect()
+  }, [])
 
   const close = () => dialog.current?.close()
 
   return (
     <>
-      <header className="site-header">
-        <div className="container header-inner">
-          <SiteLink page="home" className="site-brand" aria-label="LinkSense"><Brand /></SiteLink>
-          <nav aria-label={copy.nav.primary} className="header-links">
-            <SiteLink page="cases">{copy.nav.cases}</SiteLink>
-            <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={12} /></a>
-            <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} /></a>
-          </nav>
-          <div className="header-actions">
-            <a href={productLinks.demo} className="btn btn--compact" aria-label={copy.nav.demo}>
-              <span className="hidden md:inline">{copy.nav.demo}</span>
-              <span className="md:hidden">{copy.nav.demoShort}</span>
-              <ArrowUpRight aria-hidden="true" size={15} />
-            </a>
+      <span className="nav-scroll-marker" ref={scrollMarker} aria-hidden="true" />
+      <motion.header
+        className="site-header"
+        data-condensed={condensed || undefined}
+        animate={{ y: condensed ? -8 : 0 }}
+        initial={false}
+        transition={transition}
+      >
+        <motion.div layout={!reducedMotion} layoutDependency={condensed} transition={{ layout: transition }} className="container header-inner">
+          <motion.div layout={reducedMotion ? false : 'position'} transition={{ layout: transition }} className="header-brand">
+            <SiteLink page="home" className="site-brand" aria-label="LinkSense"><Brand /></SiteLink>
+          </motion.div>
+          <NavigationDock />
+          <motion.div layout={reducedMotion ? false : 'position'} transition={{ layout: transition }} className="header-actions">
+            <LanguagePicker />
             <ThemeToggle />
+            <a href={productLinks.demo} className="btn btn--compact header-demo">
+              {copy.nav.demo}<ArrowUpRight aria-hidden="true" size={15} />
+            </a>
             <button
               type="button"
               className="header-icon menu-button"
@@ -133,9 +245,9 @@ function Header() {
             >
               <Menu size={21} strokeWidth={1.65} aria-hidden="true" />
             </button>
-          </div>
-        </div>
-      </header>
+          </motion.div>
+        </motion.div>
+      </motion.header>
       <dialog
         className="mobile-menu"
         ref={dialog}
@@ -145,8 +257,8 @@ function Header() {
         <div className="mobile-menu-panel">
           <div className="mobile-menu-top">
             <SiteLink page="home" className="site-brand" aria-label="LinkSense" onClick={close}><Brand /></SiteLink>
-            <button type="button" className="mobile-menu-close" onClick={close}>
-              <span>{copy.nav.close}</span><X size={22} aria-hidden="true" />
+            <button type="button" className="header-icon mobile-menu-close" onClick={close}>
+              <X size={20} aria-hidden="true" /><span className="sr-only">{copy.nav.close}</span>
             </button>
           </div>
           <nav aria-label={copy.nav.primary} className="mobile-menu-nav">
@@ -157,13 +269,9 @@ function Header() {
             ))}
           </nav>
           <div className="mobile-menu-meta">
-            <a href={docsPath(locale)} onClick={close}>{copy.nav.docs} ↗</a>
-            <a href={productLinks.github} onClick={close}>{copy.nav.github} ↗</a>
-            <a href={productLinks.demo} onClick={close}>{copy.nav.demo} ↗</a>
-            <div className="flex items-start gap-2 pt-1">
-              <Globe2 size={15} aria-hidden="true" className="mt-2 shrink-0" />
-              <Languages onSelect={close} />
-            </div>
+            <a href={docsPath(locale)} onClick={close}>{copy.nav.docs}<ArrowUpRight size={15} aria-hidden="true" /></a>
+            <a href={productLinks.github} onClick={close}>{copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" /></a>
+            <a href={productLinks.demo} className="btn" onClick={close}>{copy.nav.demo}<ArrowUpRight size={15} aria-hidden="true" /></a>
           </div>
         </div>
       </dialog>
@@ -204,7 +312,7 @@ function Footer() {
 }
 
 export function SiteShell({ children }: { children: ReactNode }) {
-  const { copy, locale } = useSite()
+  const { copy, locale, page } = useSite()
 
   useEffect(() => { document.documentElement.lang = siteLocales[locale].code }, [locale])
 
@@ -212,7 +320,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
     <div className="site-shell">
       <a className="skip-link" href="#main-content">{copy.nav.skip}</a>
       <Header />
-      <main id="main-content" tabIndex={-1}>{children}</main>
+      <main id="main-content" className={`site-main${page === 'home' ? ' site-main--home' : ''}`} tabIndex={-1}>{children}</main>
       <Footer />
     </div>
   )

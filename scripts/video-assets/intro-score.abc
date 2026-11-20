@@ -1,0 +1,18 @@
+X:1
+T:LinkSense — Clear connections
+M:4/4
+L:1/8
+Q:1/4=92
+K:D
+V:ME inst=marimba role=melody gain=0.55
+!mark:hook! !mp! F A d z A F E z | E A B z A E D z | F A d e d A F z |
+!mark:files! !mf! A d e z d A F E | G B e z d B G E | F A d z e d A F | E G B z A G E D | F A d e f e d A | G B e d B A G z |
+[M:3/4] !mark:logo! !mp! F A d2 z2 | A F D4 |
+V:HA inst=rhodes gain=0.35
+[M:4/4] !p! [DFA]8 | [CEG]8 | [DFA]8 |
+!mp! [FAd]8 | [EGB]8 | [DFA]8 | [CEG]8 | [DFA]8 | [EGA]8 |
+[M:3/4] !p! [DFA]6 | [DFA]6 |
+V:BA inst=sinebass gain=0.35
+[M:4/4] !p! D,,4 z4 | A,,4 z4 | D,,4 z4 |
+!mp! D,,4 A,,4 | E,,4 B,,4 | F,,4 D,,4 | A,,4 E,,4 | D,,4 A,,4 | A,,4 z4 |
+[M:3/4] !p! D,,3 z3 | D,,6 |

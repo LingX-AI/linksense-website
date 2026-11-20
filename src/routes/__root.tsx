@@ -15,7 +15,7 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: 'stylesheet', href: stylesheet },
-      { rel: 'icon', type: 'image/svg+xml', href: '/brand/linksense-icon.svg' },
+      { rel: 'icon', type: 'image/svg+xml', href: '/brand/figma-icon.svg' },
       { rel: 'preload', as: 'font', href: '/fonts/Inter-Latin.woff2', type: 'font/woff2', crossOrigin: 'anonymous' },
     ],
   }),

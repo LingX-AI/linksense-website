@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { HostingPage } from '../../components/detail-pages'
+import { HostingPage } from '../../components/hosting-page'
 import { pageHead } from '../../lib/head'
 import { defaultLocale, isSiteLocale } from '../../lib/site'
 

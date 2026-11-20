@@ -50,7 +50,8 @@ try {
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.ok(html.includes('src="/media/workspace-result.webp"'), `Workspace still missing on ${path}`)
+        assert.ok(html.includes('class="workspace-demo"') && html.includes('data-demo-phase='), `Interactive workspace missing on ${path}`)
+        assert.ok(html.includes('src="/brand/figma-lockup-light.svg"'), `Figma logo missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
@@ -75,12 +76,13 @@ try {
   const brandArt = await request('/media/social.jpg')
   assert.equal(brandArt.status, 200)
   assert.equal(brandArt.headers.get('content-type'), 'image/jpeg')
-  const film = await fetch(`${origin}/media/linksense-intro-v6.mp4`, {
-    headers: { Range: 'bytes=0-255' }, signal: AbortSignal.timeout(5000),
-  })
-  assert.equal(film.status, 206)
-  assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; homepage story, example links, redirect, 404, social image, and video range request passed.')
+  for (const name of ['workspace', 'overview', 'skills', 'connections', 'apps']) {
+    const image = await request(`/media/figma-${name}.webp`)
+    assert.equal(image.status, 200)
+    assert.equal(image.headers.get('content-type'), 'image/webp')
+    assert.ok((await image.arrayBuffer()).byteLength > 1000)
+  }
+  console.log('18 localized pages verified in SSR HTML; homepage story, example links, redirect, 404, Figma logo, sharing card, and five design images passed.')
 } finally {
   server.kill()
   await closed
