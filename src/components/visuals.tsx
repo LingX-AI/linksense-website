@@ -2,23 +2,27 @@ import { ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Laye
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
-export function Hero({ kind, title, intro, children }: {
+export function Hero({ kind, title, intro, source, children }: {
   kind: 'cases' | 'hosting'
   title: [string, string]
   intro: [string, string]
+  source?: ReactNode
   children?: ReactNode
 }) {
   return (
-    <section className={`hero hero--${kind}`}>
-      <div className="container hero-inner">
-        <div className="hero-copy">
-          <h1 className="h1 hero-title">
+    <section className={`bit-hero detail-hero detail-hero--${kind}`}>
+      <div className="container bit-hero-grid detail-hero-grid">
+        <div className="detail-hero-lead">
+          {source && <div className="detail-hero-source">{source}</div>}
+          <h1 className="h1 bit-title detail-hero-title">
             <span className="block">{title[0]}</span>{' '}
             <span className="block text-accent">{title[1]}</span>
           </h1>
-          <p className="lead hero-lead">{intro[0]} {intro[1]}</p>
-          <div className="hero-actions">{children}</div>
         </div>
+        <div className="bit-intro detail-hero-intro self-end">
+          <p className="text-pretty text-muted">{intro[0]} {intro[1]}</p>
+        </div>
+        <div className="bit-hero-actions detail-hero-actions">{children}</div>
       </div>
     </section>
   )
