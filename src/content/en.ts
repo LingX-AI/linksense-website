@@ -72,6 +72,7 @@ export const en = {
     introOne: 'Your infrastructure. Your model choices.',
     introTwo: 'One workspace for your organization.',
     compare: 'Compare Core and Full',
+    contents: 'On this page',
     core: 'The agent workspace', coreBody: 'For task execution, file deliverables, reusable capabilities, business connections and administration.',
     full: 'Workspace with knowledge processing', fullBody: 'Everything in Core, plus built-in document parsing, indexing and knowledge retrieval. Full needs additional resources and a configured retrieval model.',
     coreDocs: 'Core deployment guide', fullDocs: 'Full deployment guide',

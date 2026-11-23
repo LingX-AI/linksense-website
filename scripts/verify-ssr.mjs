@@ -245,27 +245,30 @@ try {
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.match(html, /class="bit-stage [^"]*"[\s\S]+?<img\b(?=[^>]*src="\/media\/workspace-result\.webp")(?=[^>]*fetchPriority="high")[^>]*>/i, `Workspace still isn't prioritized in the stage on ${path}`)
+        assert.ok(html.includes('class="workbench-frame"'), `Workbench frame missing on ${path}`)
+        assert.match(html, /class="workbench-frame"[\s\S]+?<img\b(?=[^>]*src="\/media\/workspace-result\.webp")(?=[^>]*fetchPriority="high")[^>]*>/i, `Workspace still isn't prioritized in the workbench on ${path}`)
         assert.match(html, /href="\/media\/product-demo\.mp4"/, `Workspace recording fallback missing on ${path}`)
         assert.ok(!html.includes('src="/media/workspace-teaser.mp4"'), `Workspace recording shouldn't autoplay on ${path}`)
-        assert.match(html, /<p\b[^>]* id="deliverables-title"[^>]*>.*?<\/p>\s*<ul\b[^>]* aria-labelledby="deliverables-title"/s, `Deliverables list name missing on ${path}`)
+        assert.ok(html.includes('id="deliverables-title"') && html.includes('aria-labelledby="deliverables-title"'), `Deliverables inspector name missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
-        const story = ['id="workspace"', 'id="scenarios-title"', 'id="team-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
-        assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
+        const story = ['id="workspace"', 'id="team-title"', 'id="scenarios-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
+        assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage workbench-to-library order is wrong on ${path}`)
+        assert.ok(html.includes(`href="${docs}deploy/core/"`) && html.includes(`href="${docs}deploy/full/"`), `Homepage deployment guides missing on ${path}`)
       }
       if (suffix === '/use-cases') {
         const expected = detail.cases
         for (const anchor of ['examples', 'procurement', 'reporting', 'knowledge', 'capability-sharing']) {
           assert.ok(html.includes(`id="${anchor}"`), `Linked example is missing on ${path}`)
         }
-        assert.ok(html.includes('class="bit-hero detail-hero detail-hero--cases"'), `Split use-case lead missing on ${path}`)
-        assert.ok(html.includes('class="bit-source detail-source-chip"'), `Use-case source chip missing on ${path}`)
+        assert.ok(html.includes('class="page-intro page-intro--cases"'), `Compact use-case lead missing on ${path}`)
+        assert.ok(html.includes('class="source-chip"'), `Use-case source chip missing on ${path}`)
         assert.ok(html.includes(expected.note), `Example-data note missing on ${path}`)
-        assert.equal(count(html, /class="chip detail-audience"/g), 3, `Audience labels missing on ${path}`)
+        assert.equal(count(html, /class="chip"/g), 3, `Audience labels missing on ${path}`)
         for (const audience of expected.audiences) assert.ok(html.includes(audience), `Audience ${audience} missing on ${path}`)
-        assert.equal(count(html, /class="bit-stage detail-case detail-case--/g), 3, `Use-case stages missing on ${path}`)
+        assert.ok(html.includes('class="catalog-layout"') && html.includes('class="catalog-rail"'), `Catalogue navigation missing on ${path}`)
+        assert.equal(count(html, /class="case-entry case-entry--/g), 3, `Use-case catalogue entries missing on ${path}`)
         for (const heading of expected.titles) assert.ok(html.includes(heading), `Use-case title ${heading} missing on ${path}`)
         for (const deliverable of expected.deliverables) assert.ok(html.includes(deliverable), `Deliverable ${deliverable} missing on ${path}`)
         assert.ok(html.includes(expected.brief), `Brief panel missing on ${path}`)
@@ -274,30 +277,32 @@ try {
         for (const output of expected.outputs) assert.ok(html.includes(output), `Use-case output missing on ${path}`)
         assert.ok(html.includes(expected.handoff) && html.includes(expected.handoffBody), `Capability-sharing copy missing on ${path}`)
         for (const kind of ['procurement', 'reporting', 'knowledge']) {
-          assert.ok(html.includes(`detail-inspector--${kind}`), `Distinct ${kind} inspector missing on ${path}`)
+          assert.ok(html.includes(`case-artifact--${kind}`), `Distinct ${kind} artifact missing on ${path}`)
         }
-        assert.ok(html.includes('class="detail-inspector-body detail-brief"'), `Brief layout missing on ${path}`)
-        assert.ok(html.includes('class="detail-inspector-body detail-reference"'), `Reference layout missing on ${path}`)
-        assert.ok(html.includes('class="bit-stage detail-sharing-stage"'), `Framed sharing stage missing on ${path}`)
+        assert.ok(html.includes('class="brief-document"'), `Brief document artifact missing on ${path}`)
+        assert.ok(html.includes('class="qa-thread"'), `Reference artifact missing on ${path}`)
+        assert.ok(html.includes('class="deliverable-art"'), `Deliverable sheet artifact missing on ${path}`)
+        assert.ok(html.includes('class="sharing-panel"'), `Sharing panel missing on ${path}`)
         assert.ok(html.includes('src="/media/team-app.webp"'), `Sharing product media missing on ${path}`)
         assert.ok(html.includes('href="https://explore.linksense.org/"'), `Demo target missing on ${path}`)
-        assert.ok(!html.includes('detail-compare'), `Use-case layout contains the hosting comparison on ${path}`)
+        assert.ok(!html.includes('class="docs-layout"'), `Use-case layout contains the hosting workbench on ${path}`)
       }
       if (suffix === '/self-hosted') {
         const expected = detail.hosting
-        for (const anchor of ['profiles', 'governance']) {
+        for (const anchor of ['profiles', 'governance', 'boundaries', 'core', 'full']) {
           assert.ok(html.includes(`id="${anchor}"`), `Hosting anchor ${anchor} missing on ${path}`)
         }
-        assert.ok(html.includes('id="profiles-title"') && html.includes('id="governance-title"'), `Hosting title IDs missing on ${path}`)
-        assert.ok(html.includes('class="bit-hero detail-hero detail-hero--hosting"'), `Split hosting lead missing on ${path}`)
-        assert.ok(html.includes('class="bit-source detail-source-chip"'), `Hosting source chip missing on ${path}`)
+        assert.ok(html.includes('id="profiles-title"') && html.includes('id="governance-title"') && html.includes('id="boundaries-title"'), `Hosting title IDs missing on ${path}`)
+        assert.ok(html.includes('class="page-intro page-intro--hosting"'), `Compact hosting lead missing on ${path}`)
+        assert.ok(html.includes('class="source-chip"'), `Hosting source chip missing on ${path}`)
         assert.ok(html.includes(expected.source), `GitHub source label missing on ${path}`)
-        assert.ok(html.includes('class="bit-stage detail-compare"'), `Core and Full panels missing on ${path}`)
-        assert.equal(count(html, /class="bit-stage-panel detail-profile/g), 2, `Hosting profiles incomplete on ${path}`)
+        assert.ok(html.includes('class="docs-layout"') && html.includes('class="docs-rail"'), `Documentation workbench missing on ${path}`)
+        assert.equal(count(html, /class="profile-card(?: profile-card--full)?"/g), 2, `Hosting profiles incomplete on ${path}`)
+        assert.ok(html.includes('profile-card profile-card--full'), `Full profile role missing on ${path}`)
         for (const item of [expected.core, expected.coreBody, expected.full, expected.fullBody, expected.platform, expected.compareBody]) {
           assert.ok(html.includes(item), `Hosting profile content missing on ${path}: ${item}`)
         }
-        assert.ok(html.includes('class="bit-stage detail-governance"'), `Governance stage missing on ${path}`)
+        assert.ok(html.includes('class="governance-workbench"'), `Governance workbench missing on ${path}`)
         for (const item of [expected.governance, expected.model, expected.modelBody, expected.boundaries, expected.boundaryBody, expected.deployment, expected.workers, expected.capabilities, expected.models]) {
           assert.ok(html.includes(item), `Governance content missing on ${path}: ${item}`)
         }
@@ -305,8 +310,8 @@ try {
         assert.ok(html.includes(`href="${docs}deploy/full/"`), `Full deployment path missing on ${path}`)
         assert.ok(html.includes('href="https://github.com/LingX-AI/LinkSense"'), `GitHub target missing on ${path}`)
         assert.ok(html.includes('href="https://github.com/LingX-AI/LinkSense/security/policy"'), `Security policy target missing on ${path}`)
-        assert.ok(html.includes('class="boundary detail-boundary"'), `Data-boundary panel missing on ${path}`)
-        assert.ok(!html.includes('detail-case'), `Hosting layout contains the use-case inspector on ${path}`)
+        assert.ok(html.includes('class="boundary-panel"'), `Data-boundary panel missing on ${path}`)
+        assert.ok(!html.includes('class="case-entry '), `Hosting layout contains the use-case catalogue on ${path}`)
       }
     }
   }
@@ -326,7 +331,7 @@ try {
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; homepage story, both detail bodies and anchors, split detail leads, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; workbench, library order, catalogue artifacts, hosting docs, anchors, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed

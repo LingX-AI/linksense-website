@@ -74,6 +74,7 @@ export const ja = {
     introOne: '自組織のインフラと、選べるモデル。',
     introTwo: '組織全体で使えるひとつの作業環境。',
     compare: 'Core と Full を比較',
+    contents: 'このページの内容',
     core: 'エージェント作業環境', coreBody: 'タスク実行、ファイルの作成、共有リソースの活用、業務システムとの連携、管理機能を備えます。',
     full: 'ナレッジ処理を備えた作業環境', fullBody: 'Core の機能に、組み込みの文書解析、索引作成、検索を追加します。追加のリソースと検索用モデルの設定が必要です。',
     coreDocs: 'Core の導入ガイド', fullDocs: 'Full の導入ガイド',

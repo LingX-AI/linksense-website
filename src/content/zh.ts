@@ -74,6 +74,7 @@ export const zh = {
     introOne: '用自己的基础设施，选择适合的模型。',
     introTwo: '为整个组织提供一个工作空间。',
     compare: '比较 Core 和 Full',
+    contents: '本页内容',
     core: 'Agent 工作空间', coreBody: '支持执行任务、交付文件、复用能力、连接业务系统及日常管理。',
     full: '带知识处理的工作空间', fullBody: '包含 Core 的全部能力，增加内置的文档解析、索引与知识检索。Full 需要额外资源并配置检索模型。',
     coreDocs: 'Core 部署指南', fullDocs: 'Full 部署指南',

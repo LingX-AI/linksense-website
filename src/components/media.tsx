@@ -73,7 +73,6 @@ export function MediaLink({ source, poster, title, label = title, subtitle, clas
 }) {
   const { copy } = useSite()
   const dialog = useRef<HTMLDialogElement>(null)
-  const trigger = useRef<HTMLAnchorElement>(null)
   const video = useRef<HTMLVideoElement>(null)
   const [failed, setFailed] = useState(false)
 
@@ -98,7 +97,6 @@ export function MediaLink({ source, poster, title, label = title, subtitle, clas
     if (!clip.hasAttribute('src') || clip.error) clip.src = source
     else if (clip.readyState > 0) clip.currentTime = 0
     panel.showModal()
-    panel.querySelector<HTMLElement>('button')?.focus()
     void clip.play().catch(() => { if (clip.error && panel.open) setFailed(true) })
   }
 
@@ -109,7 +107,7 @@ export function MediaLink({ source, poster, title, label = title, subtitle, clas
 
   return (
     <>
-      <a href={source} ref={trigger} className={className} aria-label={label} onClick={open}>
+      <a href={source} className={className} aria-label={label} onClick={open}>
         {children}
       </a>
       <dialog
@@ -117,15 +115,12 @@ export function MediaLink({ source, poster, title, label = title, subtitle, clas
         ref={dialog}
         aria-label={title}
         onCancel={() => video.current?.pause()}
-        onClose={() => {
-          video.current?.pause()
-          if (trigger.current?.isConnected) trigger.current.focus({ preventScroll: true })
-        }}
+        onClose={() => { video.current?.pause() }}
       >
         <div className="film-window">
           <div className="film-top">
             <div><p>{title}</p>{subtitle && <p className="film-muted">{subtitle}</p>}</div>
-            <button className="film-close" onClick={close} type="button"><span>{copy.nav.close}</span><X size={22} aria-hidden="true" /></button>
+            <button className="film-close" onClick={close} type="button" autoFocus><span>{copy.nav.close}</span><X size={22} aria-hidden="true" /></button>
           </div>
           <video ref={video} preload="none" controls playsInline aria-label={title} onError={() => setFailed(true)} />
           {failed && <p className="film-muted mt-3" role="status">{copy.home.loadError} <a className="underline" href={source}>{copy.home.openVideo}</a></p>}

@@ -38,3 +38,16 @@ export function getUseCases(copy: SiteCopy['cases']) {
     { id: 'knowledge', audience: copy.enablement, title: copy.knowledge, body: copy.knowledgeBody, output: copy.knowledgeOutput },
   ] as const
 }
+
+export function getDeploymentProfiles(copy: SiteCopy['hosting']) {
+  return [
+    {
+      id: 'core', name: 'Core', title: copy.core, body: copy.coreBody,
+      docs: copy.coreDocs, path: 'deploy/core/', full: false,
+    },
+    {
+      id: 'full', name: 'Full', title: copy.full, body: copy.fullBody,
+      docs: copy.fullDocs, path: 'deploy/full/', full: true,
+    },
+  ] as const
+}

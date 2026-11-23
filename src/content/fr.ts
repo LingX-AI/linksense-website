@@ -74,6 +74,7 @@ export const fr = {
     introOne: 'Votre infrastructure. Les modèles de votre choix.',
     introTwo: 'Un espace de travail pour votre organisation.',
     compare: 'Comparez Core et Full',
+    contents: 'Sur cette page',
     core: 'L’espace de travail avec agents', coreBody: 'Exécutez des tâches, livrez des fichiers, réutilisez des ressources, connectez vos systèmes métier et administrez l’ensemble.',
     full: 'Avec traitement des connaissances', fullBody: 'Toutes les fonctions de Core, avec analyse de documents, indexation et recherche intégrées. Full requiert davantage de ressources et un modèle de recherche configuré.',
     coreDocs: 'Guide de déploiement de Core', fullDocs: 'Guide de déploiement de Full',

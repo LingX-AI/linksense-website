@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getCopy } from '../content'
+import { getCopy, getDeploymentProfiles, getUseCases } from '../content'
 import { pageHead } from './head'
 import { docsPath, locales, localeFromPath, pageFromPath, publicSiteOrigin, sitePath } from './site'
 import { nextColorOverride } from './theme'
@@ -47,6 +47,42 @@ describe('localized routes and copy', () => {
       expect(groups.map(([group, messages]) => [group, Object.keys(messages).sort()])).toEqual(expectedKeys)
       expect(groups.flatMap(([, messages]) => Object.values(messages)).every((message) => message.trim())).toBe(true)
     }
+  })
+})
+
+describe('library and deployment content contracts', () => {
+  it('keeps the catalogue in stable anchor order with its audience and output', () => {
+    const cases = getCopy('en').cases
+    expect(getUseCases(cases).map(({ id, audience, title, output }) => ({ id, audience, title, output }))).toEqual([
+      {
+        id: 'procurement',
+        audience: 'Procurement',
+        title: 'Compare supplier quotes',
+        output: 'A comparison spreadsheet and a decision brief.',
+      },
+      {
+        id: 'reporting',
+        audience: 'Operations',
+        title: 'Prepare the weekly brief',
+        output: 'A report that shows changes, open issues and next steps.',
+      },
+      {
+        id: 'knowledge',
+        audience: 'Team enablement',
+        title: 'Find the rule with its source',
+        output: 'An answer with references you can inspect.',
+      },
+    ])
+  })
+
+  it('keeps Core and Full as distinct profiles with real deployment guides', () => {
+    const profiles = getDeploymentProfiles(getCopy('en').hosting)
+    expect(profiles.map(({ id, name, path, full }) => ({ id, name, path, full }))).toEqual([
+      { id: 'core', name: 'Core', path: 'deploy/core/', full: false },
+      { id: 'full', name: 'Full', path: 'deploy/full/', full: true },
+    ])
+    expect(docsPath('fr', profiles[1].path)).toBe('https://linksense.org/doc/fr-FR/deploy/full/')
+    expect(profiles[1].body).toContain('document parsing, indexing and knowledge retrieval')
   })
 })
 

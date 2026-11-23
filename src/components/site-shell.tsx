@@ -73,9 +73,9 @@ function ThemeToggle() {
   }
 
   return (
-    <button className="header-icon theme-toggle" type="button" onClick={toggle}>
-      <span className="only-light"><Moon size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.darkMode}</span></span>
-      <span className="only-dark"><Sun size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.lightMode}</span></span>
+    <button className="icon-button theme-toggle" type="button" onClick={toggle}>
+      <span className="only-light"><Moon size={17} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.darkMode}</span></span>
+      <span className="only-dark"><Sun size={17} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.lightMode}</span></span>
     </button>
   )
 }
@@ -113,25 +113,29 @@ function Header() {
           <SiteLink page="home" className="site-brand" aria-label="LinkSense"><Brand /></SiteLink>
           <nav aria-label={copy.nav.primary} className="header-links">
             <SiteLink page="cases">{copy.nav.cases}</SiteLink>
+            <span className="header-divider" aria-hidden="true">/</span>
             <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={12} /></a>
-            <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} /></a>
+            <span className="header-divider" aria-hidden="true">/</span>
+            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={11} /></a>
           </nav>
           <div className="header-actions">
-            <a href={productLinks.demo} className="btn btn--accent btn--compact" aria-label={copy.nav.demo}>
-              <span className="hidden md:inline">{copy.nav.demo}</span>
-              <span className="md:hidden">{copy.nav.demoShort}</span>
-              <ArrowUpRight aria-hidden="true" size={15} />
+            <a className="header-utility header-github" href={productLinks.github}>
+              {copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} />
             </a>
             <ThemeToggle />
+            <a href={productLinks.demo} className="btn btn--accent btn--compact header-demo" aria-label={copy.nav.demo}>
+              <span className="demo-long">{copy.nav.demo}</span>
+              <span className="demo-short">{copy.nav.demoShort}</span>
+              <ArrowUpRight aria-hidden="true" size={14} />
+            </a>
             <button
               type="button"
-              className="header-icon menu-button"
+              className="icon-button menu-button"
               aria-haspopup="dialog"
               aria-label={copy.nav.menu}
               onClick={() => dialog.current?.showModal()}
             >
-              <Menu size={21} strokeWidth={1.65} aria-hidden="true" />
+              <Menu size={20} strokeWidth={1.65} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -146,7 +150,7 @@ function Header() {
           <div className="mobile-menu-top">
             <SiteLink page="home" className="site-brand" aria-label="LinkSense" onClick={close}><Brand /></SiteLink>
             <button type="button" className="mobile-menu-close" onClick={close}>
-              <span>{copy.nav.close}</span><X size={22} aria-hidden="true" />
+              <span>{copy.nav.close}</span><X size={20} aria-hidden="true" />
             </button>
           </div>
           <nav aria-label={copy.nav.primary} className="mobile-menu-nav">
@@ -157,11 +161,11 @@ function Header() {
             ))}
           </nav>
           <div className="mobile-menu-meta">
-            <a href={docsPath(locale)} onClick={close}>{copy.nav.docs} ↗</a>
-            <a href={productLinks.github} onClick={close}>{copy.nav.github} ↗</a>
-            <a href={productLinks.demo} onClick={close}>{copy.nav.demo} ↗</a>
-            <div className="flex items-start gap-2 pt-1">
-              <Globe2 size={15} aria-hidden="true" className="mt-2 shrink-0" />
+            <a href={docsPath(locale)} onClick={close}>{copy.nav.docs} <ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={productLinks.github} onClick={close}>{copy.nav.github} <ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={productLinks.demo} onClick={close}>{copy.nav.demo} <ArrowUpRight size={13} aria-hidden="true" /></a>
+            <div className="mobile-menu-languages">
+              <Globe2 size={15} aria-hidden="true" />
               <Languages onSelect={close} />
             </div>
           </div>
@@ -174,29 +178,44 @@ function Header() {
 function Footer() {
   const { copy, locale } = useSite()
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" id="site-footer">
       <div className="container">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <SiteLink page="home" aria-label="LinkSense"><Brand /></SiteLink>
-            <p>{copy.footer.source}</p>
+        <div className="footer-top">
+          <div className="footer-cta">
+            <p className="mono-label">LinkSense</p>
+            <h2>{copy.footer.titleOne}<br /><span>{copy.footer.titleTwo}</span></h2>
+            <div className="footer-actions">
+              <a className="btn btn--accent" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={15} aria-hidden="true" /></a>
+              <a className="btn btn--secondary" href={productLinks.github}>{copy.nav.github}<ArrowUpRight size={14} aria-hidden="true" /></a>
+            </div>
           </div>
-          <nav className="footer-nav" aria-label={copy.nav.footer}>
-            <SiteLink page="cases">{copy.nav.cases}</SiteLink>
-            <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-            <a href={docsPath(locale)}>{copy.nav.docs}</a>
-            <a href={productLinks.github}>{copy.nav.github}</a>
-            <a href={productLinks.community}>{copy.footer.community}</a>
-            <a href={productLinks.contact}>{copy.nav.contact}</a>
-          </nav>
-          <div className="footer-languages">
-            <p><Globe2 size={14} aria-hidden="true" />{copy.nav.language}</p>
-            <Languages />
+          <div className="footer-directory">
+            <div className="footer-group">
+              <p className="footer-label">{copy.nav.primary}</p>
+              <nav aria-label={copy.nav.footer}>
+                <SiteLink page="cases">{copy.nav.cases}</SiteLink>
+                <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
+                <a href={docsPath(locale)}>{copy.nav.docs}</a>
+                <a href={productLinks.github}>{copy.nav.github}</a>
+                <a href={productLinks.community}>{copy.footer.community}</a>
+                <a href={productLinks.contact}>{copy.nav.contact}</a>
+              </nav>
+            </div>
+            <div className="footer-group footer-languages">
+              <p className="footer-label"><Globe2 size={13} aria-hidden="true" />{copy.nav.language}</p>
+              <Languages />
+            </div>
           </div>
         </div>
         <div className="footer-base">
-          <span>© {copy.footer.company}</span>
-          <a href={productLinks.license}>{copy.footer.license}</a>
+          <div className="footer-brand">
+            <SiteLink page="home" aria-label="LinkSense"><Brand /></SiteLink>
+            <span>{copy.footer.source}</span>
+          </div>
+          <div className="footer-legal">
+            <span>© {copy.footer.company}</span>
+            <a href={productLinks.license}>{copy.footer.license}</a>
+          </div>
         </div>
       </div>
     </footer>
