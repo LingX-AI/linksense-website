@@ -36,6 +36,7 @@ export const pt = {
     reelOne: 'Veja', reelTwo: 'em ação.',
     play: 'Reproduzir vídeo', film: 'Conheça o LinkSense', filmNote: '30 segundos · Texto na tela em inglês',
     recording: 'Assistir à demonstração', loadError: 'Não foi possível reproduzir este vídeo aqui.', openVideo: 'Abrir o arquivo de vídeo',
+    pauseBackground: 'Pausar o fundo', playBackground: 'Animar o fundo',
     ownership: 'Decida onde o trabalho roda.',
     ownershipBody: 'Rode o LinkSense nos seus servidores ou na sua nuvem privada. Escolha modelos hospedados ou locais compatíveis e gerencie acesso, uso e registros de auditoria.',
     hostingLink: 'Conhecer a hospedagem própria',

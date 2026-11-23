@@ -50,7 +50,10 @@ try {
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.ok(html.includes('src="/media/workspace-result.webp"'), `Workspace still missing on ${path}`)
+        assert.match(html, /class="bit-stage [^"]*"[\s\S]+?<img\b(?=[^>]*src="\/media\/workspace-result\.webp")(?=[^>]*fetchPriority="high")[^>]*>/i, `Workspace still isn't prioritized in the stage on ${path}`)
+        assert.match(html, /href="\/media\/product-demo\.mp4"/, `Workspace recording fallback missing on ${path}`)
+        assert.ok(!html.includes('src="/media/workspace-teaser.mp4"'), `Workspace recording shouldn't autoplay on ${path}`)
+        assert.match(html, /<p\b[^>]* id="deliverables-title"[^>]*>.*?<\/p>\s*<ul\b[^>]* aria-labelledby="deliverables-title"/s, `Deliverables list name missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }

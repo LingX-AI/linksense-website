@@ -20,32 +20,25 @@ export function stopPreview(event: PointerEvent<HTMLElement>) {
   event.currentTarget.querySelector('video')?.pause()
 }
 
-export function Poster({ name, alt, preview, playOnView = false }: {
+export function Poster({ name, alt, preview, priority = false }: {
   name: string
   alt: string
   preview?: string
-  playOnView?: boolean
+  priority?: boolean
 }) {
   const clip = useRef<HTMLVideoElement>(null)
   useEffect(() => {
     const video = clip.current
     if (!video) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const threshold = playOnView ? .5 : 0
     let visible = false
     function sync() {
-      if (!video) return
-      if (!visible || reduced.matches || document.hidden) {
-        video.pause()
-      } else if (playOnView && video.paused && !video.ended) {
-        video.muted = true
-        void video.play().catch(() => undefined)
-      }
+      if (!visible || reduced.matches || document.hidden) video?.pause()
     }
     const observer = new IntersectionObserver(([entry]) => {
-      visible = !!entry?.isIntersecting && entry.intersectionRatio >= threshold
+      visible = !!entry?.isIntersecting
       sync()
-    }, { threshold })
+    })
     observer.observe(video)
     reduced.addEventListener('change', sync)
     document.addEventListener('visibilitychange', sync)
@@ -55,15 +48,15 @@ export function Poster({ name, alt, preview, playOnView = false }: {
       document.removeEventListener('visibilitychange', sync)
       video.pause()
     }
-  }, [playOnView])
+  }, [])
   return (
     <div className="poster-stack">
-      <img src={`/media/${name}.webp`} alt={alt} className="poster-still" width="1152" height="548" loading="lazy" decoding="async" />
+      <img src={`/media/${name}.webp`} alt={alt} className="poster-still" width="1152" height="548"
+        loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : undefined} decoding="async" />
       {preview && <video ref={clip} aria-hidden="true" tabIndex={-1} src={`/media/${preview}.mp4`}
-        width="1152" height="548" preload="none" muted loop={!playOnView} playsInline className="poster-preview"
+        width="1152" height="548" preload="none" muted loop playsInline className="poster-preview"
         onPlaying={({ currentTarget }) => { currentTarget.dataset.playing = '' }}
         onPause={({ currentTarget }) => { delete currentTarget.dataset.playing }}
-        onEnded={({ currentTarget }) => { delete currentTarget.dataset.playing }}
         onError={({ currentTarget }) => { delete currentTarget.dataset.playing }} />}
     </div>
   )

@@ -34,6 +34,7 @@ export const en = {
     reelOne: 'See it', reelTwo: 'at work.',
     play: 'Play the film', film: 'Introducing LinkSense', filmNote: '30 seconds · English on-screen text',
     recording: 'Watch the workspace demo', loadError: 'This video could not play here.', openVideo: 'Open the video file',
+    pauseBackground: 'Pause background', playBackground: 'Animate background',
     ownership: 'Keep control of where work runs.',
     ownershipBody: 'Run LinkSense on your servers or private cloud. Choose hosted or compatible local models, and manage access, usage and audit records.',
     hostingLink: 'Explore self-hosting',

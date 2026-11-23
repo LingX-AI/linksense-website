@@ -36,6 +36,7 @@ export const ja = {
     reelOne: '使い方を', reelTwo: '見る。',
     play: '動画を再生', film: 'LinkSense の紹介', filmNote: '30 秒・画面内のテキストは英語',
     recording: '操作デモを見る', loadError: 'ここでは動画を再生できませんでした。', openVideo: '動画ファイルを開く',
+    pauseBackground: '背景アニメーションを停止', playBackground: '背景アニメーションを再生',
     ownership: 'どこで作業を実行するかは、自分たちで決める。',
     ownershipBody: '自社サーバーやプライベートクラウドに LinkSense を導入できます。ホスト型または対応するローカルモデルを選び、アクセス、使用量、監査ログを管理できます。',
     hostingLink: 'セルフホストの詳細を見る',

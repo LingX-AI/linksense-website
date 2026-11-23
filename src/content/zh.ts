@@ -36,6 +36,7 @@ export const zh = {
     reelOne: '看看它', reelTwo: '如何工作。',
     play: '播放影片', film: 'LinkSense 产品短片', filmNote: '30 秒 · 英文画面文字',
     recording: '观看工作空间演示', loadError: '此处无法播放该视频。', openVideo: '打开视频文件',
+    pauseBackground: '暂停背景动效', playBackground: '播放背景动效',
     ownership: '工作在哪里运行，由你决定。',
     ownershipBody: '在自己的服务器或私有云上运行 LinkSense。选择云端或兼容的本地模型，管理权限、用量和审计记录。',
     hostingLink: '了解自托管',

@@ -36,6 +36,7 @@ export const fr = {
     reelOne: 'Voyez-le', reelTwo: 'en action.',
     play: 'Lancer la vidéo', film: 'Présentation de LinkSense', filmNote: '30 secondes · Texte à l’écran en anglais',
     recording: 'Voir la démonstration', loadError: 'La vidéo ne peut pas être lue ici.', openVideo: 'Ouvrir le fichier vidéo',
+    pauseBackground: 'Mettre le fond en pause', playBackground: 'Animer le fond',
     ownership: 'Choisissez où le travail s’exécute.',
     ownershipBody: 'Hébergez LinkSense sur vos serveurs ou votre cloud privé. Choisissez des modèles hébergés ou locaux compatibles et gérez l’accès, l’usage et les journaux d’audit.',
     hostingLink: 'Découvrir l’auto-hébergement',
