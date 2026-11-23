@@ -1,6 +1,15 @@
-import { ArrowDown, ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
+import { ArrowUpRight, ClipboardCheck, Eye, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
+
+export function EyeLink({ href, label, className }: { href: string; label: string; className?: string }) {
+  return (
+    <a className={className ? `eye-link ${className}` : 'eye-link'} href={href} aria-label={label}>
+      <span className="eye-link-ring" aria-hidden="true"><Eye size={30} strokeWidth={1.35} /></span>
+      <span className="eye-link-caption">{label}</span>
+    </a>
+  )
+}
 
 export function Hero({ kind, title, intro, index, children }: {
   kind: 'cases' | 'hosting'
@@ -10,23 +19,18 @@ export function Hero({ kind, title, intro, index, children }: {
   children?: ReactNode
 }) {
   return (
-    <section className={`hero hero--${kind}`} aria-labelledby={`${kind}-title`}>
-      <div className="container qclay-wrap qclay-detail-hero">
-        <div className="qclay-hero-heading qclay-detail-heading">
-          <h1 className="h1 qclay-title qclay-detail-title" id={`${kind}-title`}>
-            <span className="block">{title[0]}</span>{' '}
-            <span className="block text-accent">{title[1]}</span>
+    <section className={`page-hero page-hero--${kind}`} aria-labelledby={`${kind}-title`}>
+      <div className="container qclay-wrap">
+        <div className="page-hero-head">
+          <h1 className="page-title" id={`${kind}-title`}>
+            <span>{title[0]}</span>{' '}
+            <span>{title[1]}</span>
           </h1>
-          {index && (
-            <a className="qclay-index" href={index.href}>
-              <span className="qclay-index-orbit" aria-hidden="true"><ArrowDown size={34} strokeWidth={1.4} /></span>
-              <span>{index.label}</span>
-            </a>
-          )}
+          {index && <EyeLink href={index.href} label={index.label} />}
         </div>
-        <div className="qclay-hero-meta qclay-detail-meta">
+        <div className="page-hero-meta">
           <p className="lead">{intro[0]} {intro[1]}</p>
-          <div className="hero-actions qclay-detail-actions">{children}</div>
+          {children && <div className="page-hero-actions">{children}</div>}
         </div>
       </div>
     </section>

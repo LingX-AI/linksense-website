@@ -56,8 +56,20 @@ try {
       assert.ok(html.includes('name="description"'), path)
       assert.ok(html.includes('name="color-scheme" content="light dark"'), `System theme default missing on ${path}`)
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
+      const menu = tagWith(html, 'dialog', { id: 'site-menu', 'aria-labelledby': 'site-menu-title' })
+      assert.ok(menu && !/\sopen(?=\s|\/?>)/.test(menu), `Native menu dialog missing or open before interaction on ${path}`)
+      assert.ok(tagWith(html, 'button', { 'aria-haspopup': 'dialog', 'aria-controls': 'site-menu' }), `Menu trigger missing on ${path}`)
+      assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo CTA missing from shell on ${path}`)
+      assert.ok(html.includes(`/media/${suffix === '/self-hosted' ? 'menu-self-hosted' : 'menu-use-cases'}.webp`), `Menu artwork missing on ${path}`)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
+        assert.ok(tagWith(html, 'h1', { id: 'home-title', class: 'home-intro-title' }), `Homepage narrative heading missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: '#showreel' }), `Eye/index link to the film missing on ${path}`)
+        if (locale === 'en-US') {
+          assert.ok(tagWith(html, 'a', { class: 'eye-link', href: '#showreel', 'aria-label': 'Introducing LinkSense' }), `English eye/index link is not named for the film on ${path}`)
+        }
+        assert.ok(html.includes('class="chapter-head"') && html.includes('class="chapter-number"'), `Numbered work passage missing on ${path}`)
+        assert.ok(!html.includes('scenario-card'), `Repeated card grid returned on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)
         assert.ok(tagWith(html, 'a', { href: '/media/linksense-intro-v6.mp4' }), `Product film fallback missing on ${path}`)
         assert.ok(tagWith(html, 'img', { src: '/media/qclay-reel.svg', alt: '' }), `Decorative product film cover missing on ${path}`)
@@ -87,6 +99,8 @@ try {
         }
         assert.ok(tagWith(html, 'section', { id: 'capability-sharing' }), `Capability sharing section missing on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'handoff-title' }), `Capability sharing heading missing on ${path}`)
+        assert.ok(html.includes('case-story--procurement') && html.includes('case-story--reporting') && html.includes('case-story--knowledge'), `Editorial case sequence missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/workspace.webp' }), `Full-size procurement workspace media missing on ${path}`)
         assert.ok(tagWith(html, 'img', { src: '/media/team-app.webp' }), `Sharing app screen missing on ${path}`)
         assert.ok(tagWith(html, 'img', { src: '/media/skills.webp' }), `Sharing skills screen missing on ${path}`)
         assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo link missing on ${path}`)
@@ -98,6 +112,8 @@ try {
         assert.ok(tagWith(html, 'section', { id: 'profiles' }), `Hosting profiles section missing on ${path}`)
         assert.ok(tagWith(html, 'article', { 'data-profile': 'core' }), `Core profile missing on ${path}`)
         assert.ok(tagWith(html, 'article', { 'data-profile': 'full' }), `Full profile missing on ${path}`)
+        assert.ok(html.includes('service-chapter--core') && html.includes('service-chapter--full'), `Distinct Core and Full compositions missing on ${path}`)
+        assert.ok(!html.includes('profile-pair'), `Repeated profile grid returned on ${path}`)
         for (const profile of ['core', 'full']) {
           assert.ok(tagWith(html, 'a', { href: `${docs}deploy/${profile}/` }), `Localized ${profile} deployment guide missing on ${path}`)
         }
@@ -132,7 +148,7 @@ try {
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; film-first homepage story, detail-page headers and chapters, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; native menu shell, QClay-style homepage chapters, editorial case sequence, distinct Core/Full compositions, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed
