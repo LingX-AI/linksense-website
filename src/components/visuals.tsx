@@ -2,24 +2,34 @@ import { ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Laye
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
-export function Hero({ kind, title, intro, children }: {
+export function Hero({ kind, title, intro, media, children }: {
   kind: 'cases' | 'hosting'
   title: [string, string]
   intro: [string, string]
+  media?: { src: string; alt: string; width: number; height: number; caption: string }
   children?: ReactNode
 }) {
   return (
     <section className={`exo-page-hero exo-page-hero--${kind}`}>
       <div className="exo-frame exo-page-hero-inner">
-        <h1 className="exo-page-hero-title">
-          <span className="exo-mask"><span className="exo-mask-in">{title[0]}{' '}</span></span>
-          <span className="exo-mask"><span className="exo-mask-in">{title[1]}</span></span>
-        </h1>
-        <p className="exo-page-hero-intro">
-          <span className="exo-mask"><span className="exo-mask-in">{intro[0]}{' '}</span></span>
-          <span className="exo-mask"><span className="exo-mask-in">{intro[1]}</span></span>
-        </p>
-        <div className="exo-page-hero-actions">{children}</div>
+        <div className="exo-page-hero-copy">
+          <h1 className="exo-page-hero-title">
+            <span className="exo-mask"><span className="exo-mask-in">{title[0]}{' '}</span></span>
+            <span className="exo-mask"><span className="exo-mask-in">{title[1]}</span></span>
+          </h1>
+          <p className="exo-page-hero-intro">
+            <span className="exo-mask"><span className="exo-mask-in">{intro[0]}{' '}</span></span>
+            <span className="exo-mask"><span className="exo-mask-in">{intro[1]}</span></span>
+          </p>
+          <div className="exo-page-hero-actions">{children}</div>
+        </div>
+        {media && (
+          <figure className={`exo-page-hero-media exo-page-hero-media--${kind}`}>
+            <img src={media.src} alt={media.alt} width={media.width} height={media.height}
+              fetchPriority="high" decoding="async" />
+            <figcaption>{media.caption}</figcaption>
+          </figure>
+        )}
       </div>
     </section>
   )

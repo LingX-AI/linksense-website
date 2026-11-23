@@ -239,7 +239,9 @@
 }
 
 .exo-detail-shot--wide img { aspect-ratio: 1440 / 684; }
-.exo-detail-shot--tall img { aspect-ratio: 16 / 9; }
+/* The second story runs taller so the three project spreads keep changing
+   visual scale instead of reading as equal cards. */
+.exo-detail-shot--tall img { aspect-ratio: 4 / 3; }
 
 /* ProjectMediaText: a wide product result with a document inset. */
 .exo-detail-visual--procurement {
@@ -428,9 +430,14 @@
   border: 1px solid var(--xd-hairline);
 }
 
+/* Core is an open editorial column, not a card. Full keeps the offset dark
+   edition panel so the two profiles read as a spread with unequal weight. */
 .exo-detail-profile--core {
   grid-column: 1 / span 7;
-  background: var(--xd-paper);
+  padding-inline: 0;
+  border: 0;
+  border-block: 1px solid var(--xd-hairline);
+  background: transparent;
   color: var(--xd-ink);
 }
 

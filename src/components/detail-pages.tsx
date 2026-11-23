@@ -69,7 +69,8 @@ export function CasesPage() {
 
   return (
     <>
-      <Hero kind="cases" title={[cases.titleOne, cases.titleTwo]} intro={[cases.introOne, cases.introTwo]}>
+      <Hero kind="cases" title={[cases.titleOne, cases.titleTwo]} intro={[cases.introOne, cases.introTwo]}
+        media={{ src: '/media/team-app.webp', alt: cases.appAlt, width: 1152, height: 548, caption: home.exampleTask }}>
         <a className="btn" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={17} aria-hidden="true" /></a>
       </Hero>
 
@@ -140,7 +141,8 @@ export function HostingPage() {
 
   return (
     <>
-      <Hero kind="hosting" title={[hosting.titleOne, hosting.titleTwo]} intro={[hosting.introOne, hosting.introTwo]}>
+      <Hero kind="hosting" title={[hosting.titleOne, hosting.titleTwo]} intro={[hosting.introOne, hosting.introTwo]}
+        media={{ src: '/media/signal.webp', alt: '', width: 1620, height: 1000, caption: hosting.deployment }}>
         <a className="btn" href="#profiles">{hosting.compare}<ArrowRight size={17} aria-hidden="true" /></a>
         <a className="btn btn--secondary" href={productLinks.github}>{hosting.source}<ArrowUpRight size={15} aria-hidden="true" /></a>
       </Hero>

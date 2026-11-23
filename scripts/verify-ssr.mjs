@@ -55,6 +55,11 @@ try {
       assert.ok(html.includes(`href="${docs}"`), `Documentation link missing on ${path}`)
       assert.ok(html.includes('name="description"'), path)
       assert.ok(html.includes('name="color-scheme" content="light dark"'), `System theme default missing on ${path}`)
+      assert.ok(html.includes('exo-menu-trigger'), `Menu trigger missing on ${path}`)
+      assert.ok(!html.includes('header-links'), `Conventional header row returned on ${path}`)
+      assert.ok(/class="exo-intro"[^>]*aria-hidden="true"/.test(html), `First-visit curtain missing on ${path}`)
+      assert.ok(html.includes('exo-intro-glyph'), `Brand glyph missing from the curtain on ${path}`)
+      assert.ok(html.includes('linksense-intro-seen'), `First-visit session boot script missing on ${path}`)
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(h1.includes(homeOne) && h1.includes(homeTwo), `Localized hero heading missing on ${path}`)

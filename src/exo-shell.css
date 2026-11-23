@@ -7,107 +7,138 @@
   position: relative;
 }
 
-/* Header and sparse top navigation */
-.exo-header.site-header {
-  z-index: 60;
+/* First-visit curtain. The pre-paint script adds `.exo-intro-active`; the
+   default is nothing at all, so no-JS, failed hydration and storage failures
+   leave the page immediately visible. The inline safety timer and the exit
+   animation both end with the curtain out of the way. */
+.exo-intro {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
 }
-.exo-header .exo-header-inner {
-  max-width: none;
-  padding-inline: var(--exo-frame);
+.exo-intro-active .exo-intro { display: grid; place-items: center; }
+.exo-intro-curtain {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--exo-night);
+  transform-origin: 50% 0;
 }
-@media (max-width: 51.999rem) {
-  .exo-header .exo-header-inner { padding-inline: var(--page-gutter); }
+.exo-intro-mark {
+  position: relative;
+  width: clamp(3.25rem, 7.5vh, 5.25rem);
+  aspect-ratio: 52 / 100;
 }
-.exo-header .header-links {
-  gap: clamp(.9rem, 2.1vw, 1.75rem);
-  font-size: .78rem;
-  letter-spacing: .015em;
+.exo-intro-glyph {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
 }
-.exo-header .exo-cta {
-  min-height: 2.3rem;
-  padding: .35rem .85rem;
-  font-size: .78rem;
+.exo-intro-glyph-base { fill: rgb(248 248 248 / .16); }
+.exo-intro-glyph-ink { fill: var(--exo-white); }
+.exo-intro-fill {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(100% 0 0 0);
+  animation: exo-intro-fill 760ms var(--exo-ease-out) 100ms forwards;
+}
+.exo-intro-active.exo-intro-skip .exo-intro-curtain {
+  animation: exo-intro-away 1s var(--exo-ease) forwards;
 }
 
-.exo-header--overlay.site-header {
+@keyframes exo-intro-fill {
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes exo-intro-away {
+  from { transform: none; opacity: 1; visibility: visible; }
+  to {
+    transform: translate3d(0, -108%, 0) rotate(-7deg) scale(1.06);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Hero copy waits for the curtain instead of rising behind it. */
+.exo-intro-active:not(.exo-intro-skip) .exo-home-hero .exo-mask-in,
+.exo-intro-active:not(.exo-intro-skip) .exo-page-hero .exo-mask-in {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exo-intro-active .exo-intro { display: none; }
+  .exo-intro-fill { animation: none; clip-path: none; }
+  .exo-intro-active.exo-intro-skip .exo-intro-curtain { animation: none; }
+}
+
+/* Header: a floating wordmark and one Menu entry over the opening frame.
+   It scrolls away with the hero; no bar, row, toolbar or compact chrome. */
+.exo-header.site-header {
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
+  z-index: 60;
   background: transparent;
   border-bottom-color: transparent;
   box-shadow: none;
   backdrop-filter: none;
-  text-shadow: 0 1px 16px rgb(0 0 0 / .28);
+  color: var(--exo-ink);
 }
-.exo-header--overlay .header-links a,
-.exo-header--overlay .header-links a[aria-current="page"] {
+.exo-header .exo-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: none;
+  height: var(--header-h);
+  padding-inline: clamp(1.25rem, 3.44vw, 2.75rem);
+}
+.exo-header .site-brand { min-height: 2.75rem; }
+.exo-header .brand-lockup { width: clamp(8.25rem, 12.5vw, 10.5rem); }
+
+.exo-header .exo-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  width: auto;
+  height: auto;
+  min-height: 2.75rem;
+  padding: .25rem .1rem;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: .7rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: opacity .2s;
+}
+.exo-header .exo-menu-trigger:hover {
+  background: transparent;
+  color: inherit;
+  opacity: .62;
+}
+
+.exo-header--overlay.site-header {
   color: var(--exo-white);
-}
-.exo-header--overlay .header-links a:hover,
-.exo-header--overlay .header-links a[aria-current="page"]:hover {
-  color: var(--exo-sand);
-}
-.exo-header--overlay .header-links a:focus-visible,
-.exo-header--overlay .header-icon:focus-visible,
-.exo-header--overlay .exo-cta:focus-visible,
-.exo-header--overlay .site-brand:focus-visible {
-  outline-color: var(--exo-white);
+  text-shadow: 0 1px 18px rgb(0 0 0 / .34);
 }
 .exo-header--overlay .site-brand .only-light { display: none; }
 .exo-header--overlay .site-brand .only-dark { display: inline-block; }
-.exo-header--overlay .header-icon {
-  color: var(--exo-white);
-  text-shadow: none;
-}
-.exo-header--overlay .header-icon:hover {
-  background: rgb(248 248 248 / .14);
-  color: var(--exo-white);
-}
-.exo-header--overlay .exo-cta {
-  border-color: rgb(248 248 248 / .5);
-  background: rgb(13 14 19 / .14);
-  color: var(--exo-white);
-}
-.exo-header--overlay .exo-cta:hover {
-  border-color: var(--exo-white);
-  background: rgb(248 248 248 / .14);
+.exo-header--overlay .exo-menu-trigger:focus-visible,
+.exo-header--overlay .site-brand:focus-visible {
+  outline-color: var(--exo-white);
 }
 
-@media (min-width: 52rem) and (max-width: 64rem) {
-  .exo-header .header-links {
-    gap: .6rem;
-    font-size: .72rem;
-  }
-  .exo-header .exo-cta {
-    min-height: 2.2rem;
-    padding-inline: .65rem;
-    font-size: .72rem;
-  }
-  .exo-header .brand-lockup { width: 8.75rem; }
-}
-
-@media (max-width: 51.999rem) {
-  .exo-header .exo-cta { display: none; }
-  /* The compact trigger must stay available on narrow screens at every
-     scroll position, including the transparent home hero. */
-  .exo-header--overlay.site-header { position: fixed; }
-}
-
-.exo-header--compact .header-links { display: none; }
-.exo-header--compact .exo-cta { display: none; }
-.exo-header--compact .menu-button { display: inline-grid; }
-.exo-header--compact .brand-lockup { width: 9.25rem; }
-.exo-header--compact.site-header {
-  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
-  border-bottom-color: var(--color-line);
-  backdrop-filter: blur(14px);
-}
-.exo-header--home.exo-header--compact.site-header {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
+@media (max-width: 47.999rem) {
+  .exo-header .exo-header-inner { padding-inline: var(--page-gutter); }
+  .exo-header .brand-lockup { width: 8.5rem; }
+  .exo-header .exo-menu-trigger { font-size: .66rem; letter-spacing: .12em; }
 }
 
 /* Full-screen menu */
@@ -308,6 +339,20 @@
   gap: .55rem;
   color: rgb(248 248 248 / .55);
 }
+.exo-menu .exo-theme-toggle,
+.exo-footer .exo-theme-toggle {
+  width: auto;
+  height: auto;
+  min-height: 2.25rem;
+  padding: .25rem;
+  border-radius: 50%;
+  color: rgb(248 248 248 / .68);
+}
+.exo-menu .exo-theme-toggle:hover,
+.exo-footer .exo-theme-toggle:hover {
+  background: transparent;
+  color: var(--exo-white);
+}
 .exo-menu .language-options {
   grid-template-columns: repeat(3, auto);
   gap: .1rem 1.1rem;
@@ -374,6 +419,21 @@
 .exo-footer .footer-brand .only-dark { display: inline-block; }
 .exo-footer .footer-brand .brand-lockup { width: clamp(10rem, 18vw, 15rem); }
 .exo-footer .footer-brand p { color: rgb(248 248 248 / .66); }
+.exo-footer .footer-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .15rem 1.15rem;
+  margin-block-start: .8rem;
+}
+.exo-footer .footer-index a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  color: rgb(248 248 248 / .54);
+  font-size: .82rem;
+  text-decoration: none;
+}
+.exo-footer .footer-index a:hover { color: var(--exo-white); }
 .exo-footer .footer-nav a { color: var(--exo-white); }
 .exo-footer .footer-nav a:hover { color: var(--exo-sand); }
 .exo-footer .footer-languages > p { color: rgb(248 248 248 / .5); }

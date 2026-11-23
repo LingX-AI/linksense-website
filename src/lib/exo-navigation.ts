@@ -27,11 +27,6 @@ export function shouldAnimatePath(fromPathname: string, toPathname: string): boo
   return normalizePathname(fromPathname) !== normalizePathname(toPathname)
 }
 
-/** Compact chrome appears once the page has scrolled about half a viewport. */
-export function isCompactScroll(scrollY: number, viewportHeight: number): boolean {
-  return scrollY > Math.max(0, viewportHeight) / 2
-}
-
 /**
  * Menu counter-motion uses a viewport-midpoint origin expressed inside the
  * page box, so long pages do not rotate around their offscreen document middle.

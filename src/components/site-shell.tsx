@@ -1,7 +1,7 @@
 import { Link, useLocation, useRouter } from '@tanstack/react-router'
 import { ArrowUpRight, Globe2, Menu, Moon, Sun, X } from 'lucide-react'
 import {
-  useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore,
+  useCallback, useEffect, useRef, useState, useSyncExternalStore,
 } from 'react'
 import type {
   ComponentProps, CSSProperties, MouseEvent, ReactNode, RefObject, SyntheticEvent, TransitionEvent,
@@ -11,8 +11,9 @@ import {
 } from '../lib/site'
 import type { SiteLocale, SitePage } from '../lib/site'
 import {
-  isCompactScroll, isHomePathname, menuCloseDuration, menuPageOrigin, shouldAnimatePath,
-} from '../lib/exo-navigation'
+  introActiveClass, introDoneClass, introExitDuration, introVisibleRemaining,
+} from '../lib/first-visit'
+import { isHomePathname, menuCloseDuration, menuPageOrigin, shouldAnimatePath } from '../lib/exo-navigation'
 import { colorSchemeKey, nextColorOverride, systemColorScheme } from '../lib/theme'
 import { useSite } from '../lib/use-site'
 
@@ -62,9 +63,86 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.altKey && !event.ctrlKey && !event.shiftKey
 }
 
-function desktopControlHasFocus() {
-  const active = document.activeElement
-  return active instanceof Element && Boolean(active.closest('[data-exo-hide-compact]'))
+function supportsCurtainAnimation() {
+  return typeof CSS !== 'undefined' && CSS.supports('transform', 'translate3d(0, -100%, 0)')
+}
+
+const introGlyph = 'M24.3796 98.8405C11.0005 95.9699 1.52725 85.1641 0.283289 71.3551C-0.025619 67.9292 -0.102326 6.02834 0.197366 2.3042L0.382889 2.91347e-05H9.10248H17.8221L17.9047 34.7113L17.9874 69.4226L18.6462 71.3578C20.2612 76.1026 23.1565 79.6489 26.9915 81.5803C30.5462 83.3701 31.7738 83.5357 41.5494 83.5404L50.2458 83.5449V91.4237V99.3025L38.279 99.279C29.2404 99.2609 25.8394 99.1538 24.3796 98.8405Z'
+
+function FirstVisitIntro() {
+  const [mounted, setMounted] = useState(true)
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (!root.classList.contains(introActiveClass)) return
+    const started = Number(root.dataset.exoIntroStarted) || performance.now()
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let released = false
+    let holdTimer = 0
+    let removeTimer = 0
+
+    const detach = () => {
+      window.removeEventListener('keydown', release)
+      window.removeEventListener('pointerdown', release)
+      window.removeEventListener('wheel', release)
+      reduced.removeEventListener('change', onReducedMotion)
+    }
+
+    const release = () => {
+      if (released) return
+      released = true
+      detach()
+      root.classList.add(introDoneClass)
+      const exit = introExitDuration(reduced.matches, supportsCurtainAnimation())
+      if (exit === 0) {
+        setMounted(false)
+        return
+      }
+      removeTimer = window.setTimeout(() => setMounted(false), exit)
+    }
+
+    const waitForCue = () => {
+      const remaining = introVisibleRemaining(started, performance.now())
+      holdTimer = window.setTimeout(release, remaining)
+    }
+
+    function onReducedMotion() {
+      if (reduced.matches) release()
+    }
+
+    window.addEventListener('keydown', release)
+    window.addEventListener('pointerdown', release)
+    window.addEventListener('wheel', release, { passive: true })
+    reduced.addEventListener('change', onReducedMotion)
+    waitForCue()
+
+    return () => {
+      detach()
+      window.clearTimeout(holdTimer)
+      window.clearTimeout(removeTimer)
+      // Tearing the shell down must never leave the document under a curtain.
+      root.classList.remove(introActiveClass)
+      root.classList.add(introDoneClass)
+    }
+  }, [])
+
+  if (!mounted) return null
+  return (
+    <div className="exo-intro" aria-hidden="true">
+      <div className="exo-intro-curtain">
+        <div className="exo-intro-mark">
+          <svg className="exo-intro-glyph" viewBox="0 0 52 100" xmlns="http://www.w3.org/2000/svg">
+            <path className="exo-intro-glyph-base" d={introGlyph} />
+          </svg>
+          <div className="exo-intro-fill">
+            <svg className="exo-intro-glyph" viewBox="0 0 52 100" xmlns="http://www.w3.org/2000/svg">
+              <path className="exo-intro-glyph-ink" d={introGlyph} />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function SiteLink({ page, language, hash, children, ...props }: {
@@ -99,7 +177,7 @@ function Brand() {
   )
 }
 
-function ThemeToggle() {
+function ThemeToggle({ className }: { className?: string }) {
   const { copy } = useSite()
 
   useEffect(() => {
@@ -129,7 +207,7 @@ function ThemeToggle() {
   }
 
   return (
-    <button className="header-icon theme-toggle" type="button" onClick={toggle}>
+    <button className={['header-icon', 'theme-toggle', className].filter(Boolean).join(' ')} type="button" onClick={toggle}>
       <span className="only-light"><Moon size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.darkMode}</span></span>
       <span className="only-dark"><Sun size={18} strokeWidth={1.65} aria-hidden="true" /><span className="sr-only">{copy.nav.lightMode}</span></span>
     </button>
@@ -162,8 +240,6 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
   const router = useRouter()
   const reducedMotion = usePrefersReducedMotion()
   const home = isHomePathname(pathname)
-  const [compact, setCompact] = useState(false)
-  const [narrow, setNarrow] = useState(false)
   const [phase, setPhaseState] = useState<MenuPhase>('closed')
   const [artPage, setArtPage] = useState<SitePage>(page)
 
@@ -174,7 +250,6 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
   const resetFrameInner = useRef(0)
   const focusFrame = useRef(0)
   const pageOrigin = useRef<number | null>(null)
-  const desktopControlFocus = useRef(false)
   const dialog = useRef<HTMLDialogElement>(null)
   const stage = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
@@ -351,44 +426,6 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
   }
 
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 51.999rem)')
-    const sync = () => {
-      desktopControlFocus.current = desktopControlHasFocus()
-      setNarrow(media.matches)
-    }
-    sync()
-    media.addEventListener('change', sync)
-    return () => media.removeEventListener('change', sync)
-  }, [])
-
-  useEffect(() => {
-    let frame = 0
-    const update = () => {
-      frame = 0
-      desktopControlFocus.current = desktopControlHasFocus()
-      setCompact(isCompactScroll(window.scrollY, window.innerHeight))
-    }
-    const onScroll = () => {
-      if (frame === 0) frame = window.requestAnimationFrame(update)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (frame) window.cancelAnimationFrame(frame)
-    }
-  }, [])
-
-  useLayoutEffect(() => {
-    if (!compact && !narrow) return
-    if (!desktopControlFocus.current) return
-    desktopControlFocus.current = false
-    trigger.current?.focus({ preventScroll: true })
-  }, [compact, narrow])
-
-  useEffect(() => {
     const unsubscribe = router.subscribe('onResolved', (event) => {
       if (event.pathChanged) closeImmediately(false)
     })
@@ -419,46 +456,26 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
     if (isPlainClick(event)) closeImmediately(false)
   }
 
-  const overlay = home && !compact
-  const className = [
-    'site-header',
-    'exo-header',
-    home && 'exo-header--home',
-    overlay && 'exo-header--overlay',
-    compact && 'exo-header--compact',
-  ].filter(Boolean).join(' ')
+  const className = ['site-header', 'exo-header', home && 'exo-header--overlay'].filter(Boolean).join(' ')
 
   return (
     <>
       <header className={className}>
-        <div className="container header-inner exo-header-inner">
+        <div className="exo-header-inner">
           <SiteLink page="home" className="site-brand exo-brand" aria-label="LinkSense"><Brand /></SiteLink>
-          <nav aria-label={copy.nav.primary} className="header-links exo-header-links" data-exo-hide-compact>
-            <SiteLink page="cases">{copy.nav.cases}</SiteLink>
-            <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight aria-hidden="true" size={12} /></a>
-            <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} /></a>
-          </nav>
-          <div className="header-actions exo-header-actions">
-            <a className="btn btn--compact exo-cta" href={productLinks.demo} aria-label={copy.nav.demo} data-exo-hide-compact>
-              <span className="hidden md:inline">{copy.nav.demo}</span>
-              <span className="md:hidden">{copy.nav.demoShort}</span>
-              <ArrowUpRight aria-hidden="true" size={15} />
-            </a>
-            <ThemeToggle />
-            <button
-              ref={trigger}
-              type="button"
-              className="header-icon menu-button exo-menu-trigger"
-              aria-haspopup="dialog"
-              aria-expanded={phase === 'open'}
-              aria-controls={menuId}
-              aria-label={copy.nav.menu}
-              onClick={openMenu}
-            >
-              <Menu size={21} strokeWidth={1.65} aria-hidden="true" />
-            </button>
-          </div>
+          <button
+            ref={trigger}
+            type="button"
+            className="header-icon exo-menu-trigger"
+            aria-haspopup="dialog"
+            aria-expanded={phase === 'open'}
+            aria-controls={menuId}
+            aria-label={copy.nav.menu}
+            onClick={openMenu}
+          >
+            <span>{copy.nav.menu}</span>
+            <Menu size={17} strokeWidth={1.65} aria-hidden="true" />
+          </button>
         </div>
       </header>
       <dialog
@@ -525,6 +542,7 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
             <div className="exo-menu-languages">
               <Globe2 size={15} aria-hidden="true" />
               <Languages onSelect={selectLanguage} />
+              <ThemeToggle className="exo-theme-toggle" />
             </div>
           </div>
         </div>
@@ -534,7 +552,7 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
 }
 
 function Footer() {
-  const { copy, locale } = useSite()
+  const { copy, locale, page } = useSite()
   return (
     <footer className="site-footer exo-footer">
       <div className="container">
@@ -542,18 +560,27 @@ function Footer() {
           <div className="footer-brand">
             <SiteLink page="home" aria-label="LinkSense"><Brand /></SiteLink>
             <p>{copy.footer.source}</p>
+            {page === 'home' && (
+              <nav className="footer-index" aria-label={copy.nav.primary}>
+                <a href="#workspace">{copy.home.work}</a>
+                <a href="#deliverables">{copy.home.files}</a>
+                <a href="#team-title">{copy.home.share}</a>
+              </nav>
+            )}
           </div>
           <nav className="footer-nav" aria-label={copy.nav.footer}>
             <SiteLink page="cases">{copy.nav.cases}</SiteLink>
             <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
             <a href={docsPath(locale)}>{copy.nav.docs}</a>
             <a href={productLinks.github}>{copy.nav.github}</a>
+            <a href={productLinks.demo}>{copy.nav.demo}</a>
             <a href={productLinks.community}>{copy.footer.community}</a>
             <a href={productLinks.contact}>{copy.nav.contact}</a>
           </nav>
           <div className="footer-languages">
             <p><Globe2 size={14} aria-hidden="true" />{copy.nav.language}</p>
             <Languages />
+            <ThemeToggle className="exo-theme-toggle" />
           </div>
         </div>
         <div className="footer-base">
@@ -599,6 +626,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="site-shell exo-site">
+      <FirstVisitIntro />
       <a className="skip-link" href="#main-content">{copy.nav.skip}</a>
       <Header pageRef={pageRef} />
       <div className="exo-page-clip">

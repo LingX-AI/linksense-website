@@ -1,5 +1,5 @@
 import {
-  ArrowDown, ArrowRight, ArrowUpRight, FileSpreadsheet, FileText, Play, Star,
+  ArrowDown, ArrowRight, ArrowUpRight, FileSpreadsheet, FileText, Play,
 } from 'lucide-react'
 import { getUseCases } from '../content'
 import { docsPath, productLinks } from '../lib/site'
@@ -20,46 +20,29 @@ function HomeHero() {
       </div>
       <div className="exo-hero-scrim" aria-hidden="true" />
       <div className="exo-frame exo-hero-layout">
-        <div className="exo-hero-top">
-          <a className="exo-hero-source" href={productLinks.github}>
-            <Star size={14} fill="currentColor" aria-hidden="true" />{copy.footer.source}<ArrowUpRight size={12} aria-hidden="true" />
-          </a>
-          <ul className="exo-hero-rail">
-            <li><a href="#workspace">{home.work}</a></li>
-            <li><a href="#deliverables">{home.files}</a></li>
-            <li><a href="#team-title">{home.share}</a></li>
-            <li><SiteLink page="hosting">{nav.hosting}</SiteLink></li>
-          </ul>
-        </div>
-
         <div className="exo-hero-main">
           <h1 className="exo-hero-title" id="home-title">
             <span className="exo-mask"><span className="exo-mask-in">{home.titleOne}{' '}</span></span>
             <span className="exo-mask"><span className="exo-mask-in">{home.titleTwo}</span></span>
           </h1>
-          <div className="exo-hero-aside">
+          <div className="exo-hero-support">
             <p className="exo-hero-intro">
               <span className="exo-mask"><span className="exo-mask-in">{home.introOne}{' '}</span></span>
               <span className="exo-mask"><span className="exo-mask-in">{home.introTwo}</span></span>
             </p>
-            <div className="exo-hero-action">
-              <div className="exo-hero-actions">
-                <a className="exo-cta" href={productLinks.demo}>
-                  {nav.demo}<ArrowUpRight size={15} aria-hidden="true" />
-                </a>
-                <SiteLink page="hosting" className="exo-cta exo-cta--ghost">
-                  {home.hostingLink}<ArrowRight size={15} aria-hidden="true" />
-                </SiteLink>
-              </div>
-              <p className="exo-hero-note">{copy.hosting.linux}</p>
+            <div className="exo-hero-actions">
+              <a className="exo-hero-link" href={productLinks.demo}>
+                {nav.demo}<ArrowUpRight size={13} aria-hidden="true" />
+              </a>
+              <SiteLink page="hosting" className="exo-hero-link">
+                {home.hostingLink}<ArrowRight size={13} aria-hidden="true" />
+              </SiteLink>
+              <a className="exo-hero-link exo-hero-link--quiet" href="#workspace">
+                {home.scroll}<ArrowDown size={13} aria-hidden="true" />
+              </a>
             </div>
+            <p className="exo-hero-note">{copy.hosting.linux}</p>
           </div>
-        </div>
-
-        <div className="exo-hero-foot">
-          <a className="exo-hero-scroll" href="#workspace">
-            <ArrowDown size={15} aria-hidden="true" />{home.scroll}
-          </a>
         </div>
       </div>
     </section>
@@ -257,19 +240,24 @@ function ClosingCta() {
 
   return (
     <section className="exo-closing" aria-labelledby="closing-title">
-      <div className="exo-frame">
-        <h2 className="exo-closing-title" id="closing-title">
-          <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleOne}{' '}</span></span>
-          <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleTwo}</span></span>
-        </h2>
-        <div className="exo-closing-actions">
-          <a className="exo-cta" href={productLinks.demo}>
-            {copy.nav.demo}<ArrowUpRight size={16} aria-hidden="true" />
-          </a>
-          <a className="exo-text-link" href={productLinks.github}>
-            {copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" />
-          </a>
+      <div className="exo-frame exo-closing-inner">
+        <div className="exo-closing-copy">
+          <h2 className="exo-closing-title" id="closing-title">
+            <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleOne}{' '}</span></span>
+            <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleTwo}</span></span>
+          </h2>
+          <div className="exo-closing-actions">
+            <a className="exo-cta" href={productLinks.demo}>
+              {copy.nav.demo}<ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+            <a className="exo-text-link" href={productLinks.github}>
+              {copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+          </div>
         </div>
+        <figure className="exo-closing-portrait" aria-hidden="true">
+          <img src="/media/exoape-hero.webp" alt="" width="1620" height="1000" loading="lazy" decoding="async" />
+        </figure>
       </div>
     </section>
   )

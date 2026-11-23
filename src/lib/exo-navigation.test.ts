@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  isCompactScroll, isHomePathname, menuCloseDuration, menuPageOrigin, normalizePathname, shouldAnimatePath,
+  isHomePathname, menuCloseDuration, menuPageOrigin, normalizePathname, shouldAnimatePath,
 } from './exo-navigation'
 import { locales, sitePath } from './site'
 
@@ -30,14 +30,6 @@ describe('Exo chrome path helpers', () => {
     expect(shouldAnimatePath('/fr/use-cases', '/ja/use-cases')).toBe(true)
     expect(shouldAnimatePath('/zh', '/zh/')).toBe(false)
     expect(shouldAnimatePath('/use-cases', '/use-cases/')).toBe(false)
-  })
-
-  it('compacts after half the viewport, not at the threshold itself', () => {
-    expect(isCompactScroll(0, 900)).toBe(false)
-    expect(isCompactScroll(450, 900)).toBe(false)
-    expect(isCompactScroll(451, 900)).toBe(true)
-    expect(isCompactScroll(200, 0)).toBe(true)
-    expect(isCompactScroll(50, -100)).toBe(true)
   })
 
   it('skips the menu close hold for reduced motion or missing clip-path support', () => {

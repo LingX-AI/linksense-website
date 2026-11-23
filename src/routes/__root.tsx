@@ -1,6 +1,7 @@
 import { createRootRoute, HeadContent, Outlet, Scripts, useRouter } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { SiteLink, SiteShell } from '../components/site-shell'
+import { introBootScript } from '../lib/first-visit'
 import { siteLocales } from '../lib/site'
 import { colorSchemeKey } from '../lib/theme'
 import { useSite } from '../lib/use-site'
@@ -28,12 +29,13 @@ export const Route = createRootRoute({
 function RootDocument({ children }: { children: ReactNode }) {
   const { locale } = useSite()
   return (
-    <html lang={siteLocales[locale].code}>
+    <html lang={siteLocales[locale].code} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="light dark" suppressHydrationWarning />
         <script dangerouslySetInnerHTML={{
           __html: `try{const mode=localStorage.getItem('${colorSchemeKey}');if(mode==='light'||mode==='dark')document.querySelector('meta[name="color-scheme"]').content=mode}catch{}`,
         }} />
+        <script dangerouslySetInnerHTML={{ __html: introBootScript() }} />
         <HeadContent />
       </head>
       <body>{children}<Scripts /></body>
