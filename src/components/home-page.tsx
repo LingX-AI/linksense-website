@@ -1,116 +1,64 @@
 import {
-  ArrowRight, ArrowUpRight, BookOpen, ClipboardList, FileSpreadsheet, FileText, Globe2,
-  Monitor, Play, Scale, Server, Share2, Star,
+  ArrowDown, ArrowRight, ArrowUpRight, FileSpreadsheet, FileText, Play, Star,
 } from 'lucide-react'
 import { getUseCases } from '../content'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
 import { hoverPreview, MediaLink, Poster, stopPreview } from './media'
 import { SiteLink } from './site-shell'
-import { GovernanceDetails, Hero, SectionHead } from './visuals'
+import { GovernanceDetails } from './visuals'
 
 function HomeHero() {
   const { copy } = useSite()
   const { home, nav } = copy
-  const rail = (
-    <div className="container hero-rail">
-      <ul className="flex flex-wrap items-center justify-center gap-x-7 gap-y-1">
-        <li><a href="#workspace"><Monitor size={17} aria-hidden="true" />{home.work}</a></li>
-        <li><a href="#deliverables"><FileSpreadsheet size={17} aria-hidden="true" />{home.files}</a></li>
-        <li><a href="#team-title"><Share2 size={17} aria-hidden="true" />{home.share}</a></li>
-        <li><SiteLink page="hosting"><Server size={17} aria-hidden="true" />{nav.hosting}</SiteLink></li>
-      </ul>
-    </div>
-  )
 
   return (
-    <Hero kind="home" intro={[home.introOne, home.introTwo]} title={[home.titleOne, home.titleTwo]} rail={rail}
-      beforeTitle={
-        <a className="hero-source" href={productLinks.github}>
-          <Star size={15} fill="currentColor" aria-hidden="true" />{copy.footer.source}<ArrowUpRight size={13} aria-hidden="true" />
-        </a>
-      }>
-      <div className="hero-action">
-        <a className="btn" href={productLinks.demo}>
-          <Globe2 size={17} aria-hidden="true" />{nav.demo}<ArrowUpRight className="btn-end" size={15} aria-hidden="true" />
-        </a>
-        <a className="hero-action-note" href="#workspace">{home.scroll}</a>
+    <section className="exo-home-hero" aria-labelledby="home-title">
+      <div className="exo-hero-media" aria-hidden="true">
+        <img className="exo-hero-img" src="/media/exoape-hero.webp" alt="" width="1620" height="1000"
+          fetchPriority="high" decoding="async" />
       </div>
-      <div className="hero-action">
-        <SiteLink page="hosting" className="btn btn--accent">{home.hostingLink}<ArrowRight className="btn-end" size={16} aria-hidden="true" /></SiteLink>
-        <span className="hero-action-note">{copy.hosting.linux}</span>
-      </div>
-    </Hero>
-  )
-}
+      <div className="exo-hero-scrim" aria-hidden="true" />
+      <div className="exo-frame exo-hero-layout">
+        <div className="exo-hero-top">
+          <a className="exo-hero-source" href={productLinks.github}>
+            <Star size={14} fill="currentColor" aria-hidden="true" />{copy.footer.source}<ArrowUpRight size={12} aria-hidden="true" />
+          </a>
+          <ul className="exo-hero-rail">
+            <li><a href="#workspace">{home.work}</a></li>
+            <li><a href="#deliverables">{home.files}</a></li>
+            <li><a href="#team-title">{home.share}</a></li>
+            <li><SiteLink page="hosting">{nav.hosting}</SiteLink></li>
+          </ul>
+        </div>
 
-function WorkspaceShowcase() {
-  const { copy } = useSite()
-  const { home, cases } = copy
-
-  return (
-    <section className="section" id="workspace" aria-labelledby="workspace-title">
-      <div className="container">
-        <SectionHead id="workspace-title" title={[home.overview, home.overviewResult]} body={home.overviewBody} />
-        <figure className="workspace-frame">
-          <Poster name="workspace-result" alt={home.workspaceAlt} preview="workspace-teaser" playOnView />
-        </figure>
-        <MediaLink source="/media/product-demo.mp4" poster="/media/workspace.webp" title={home.recording}
-          className="arrow-link mt-4">
-          {home.recording}<ArrowRight size={16} aria-hidden="true" />
-        </MediaLink>
-        <div className="workspace-details">
-          <div>
-            <p className="text-sm text-muted">{home.exampleTask}</p>
-            <h3>{cases.procurement}</h3>
-            <p>{home.exampleInput}</p>
-            <SiteLink page="cases" hash="procurement" className="arrow-link">
-              {home.workflowLink}<ArrowRight size={16} aria-hidden="true" />
-            </SiteLink>
-          </div>
-          <div id="deliverables">
-            <p className="text-sm text-muted">{home.example}</p>
-            <ul aria-label={home.example} className="file-list">
-              <li><FileSpreadsheet size={18} aria-hidden="true" /><span>{home.spreadsheet}</span><small>XLSX</small></li>
-              <li><FileText size={18} aria-hidden="true" /><span>{home.report}</span><small>DOCX</small></li>
-            </ul>
+        <div className="exo-hero-main">
+          <h1 className="exo-hero-title" id="home-title">
+            <span className="exo-mask"><span className="exo-mask-in">{home.titleOne}{' '}</span></span>
+            <span className="exo-mask"><span className="exo-mask-in">{home.titleTwo}</span></span>
+          </h1>
+          <div className="exo-hero-aside">
+            <p className="exo-hero-intro">
+              <span className="exo-mask"><span className="exo-mask-in">{home.introOne}{' '}</span></span>
+              <span className="exo-mask"><span className="exo-mask-in">{home.introTwo}</span></span>
+            </p>
+            <div className="exo-hero-action">
+              <div className="exo-hero-actions">
+                <a className="exo-cta" href={productLinks.demo}>
+                  {nav.demo}<ArrowUpRight size={15} aria-hidden="true" />
+                </a>
+                <SiteLink page="hosting" className="exo-cta exo-cta--ghost">
+                  {home.hostingLink}<ArrowRight size={15} aria-hidden="true" />
+                </SiteLink>
+              </div>
+              <p className="exo-hero-note">{copy.hosting.linux}</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
 
-function TeamSection() {
-  const { copy, locale } = useSite()
-  const home = copy.home
-
-  return (
-    <section className="section section--soft" aria-labelledby="team-title">
-      <div className="container">
-        <SectionHead id="team-title" title={home.teamTitle} body={home.teamBody} />
-        <div className="feature-list">
-          <SiteLink page="cases" hash="capability-sharing" className="feature-row"
-            onPointerEnter={hoverPreview} onPointerLeave={stopPreview}>
-            <div className="feature-media">
-              <Poster name="skills" alt={home.skillsAlt} preview="skills-preview" />
-            </div>
-            <div className="feature-caption">
-              <h3>{home.share}</h3>
-              <p>{home.shareBody}</p>
-              <ArrowRight size={20} aria-hidden="true" />
-            </div>
-          </SiteLink>
-          <a className="feature-row feature-row--connect" href={docsPath(locale, 'user-guide/mcp/connect-and-manage/')}
-            onPointerEnter={hoverPreview} onPointerLeave={stopPreview}>
-            <div className="feature-media">
-              <Poster name="connections" alt={home.connectionsAlt} preview="connections-preview" />
-            </div>
-            <div className="feature-caption">
-              <h3>{home.connect}</h3>
-              <p>{home.connectBody}</p>
-              <ArrowUpRight size={20} aria-hidden="true" />
-            </div>
+        <div className="exo-hero-foot">
+          <a className="exo-hero-scroll" href="#workspace">
+            <ArrowDown size={15} aria-hidden="true" />{home.scroll}
           </a>
         </div>
       </div>
@@ -118,70 +66,187 @@ function TeamSection() {
   )
 }
 
-const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
-
-function UseCasePreview() {
-  const { copy } = useSite()
+function WorkspaceShowcase() {
+  const { copy, locale } = useSite()
+  const { home, cases } = copy
 
   return (
-    <section className="section" aria-labelledby="scenarios-title">
-      <div className="container">
-        <SectionHead id="scenarios-title" title={copy.home.scenarios} body={copy.home.scenariosBody} />
-        <div className="scenario-grid">
-          {getUseCases(copy.cases).map(({ id, audience, title, output }) => {
-            const Icon = caseIcons[id]
-            return (
-              <article className="scenario-card" data-case={id} key={id}>
-                <div className="scenario-top">
-                  <span className="icon-tile" aria-hidden="true"><Icon size={22} strokeWidth={1.6} /></span>
-                  <span className="chip">{audience}</span>
-                </div>
-                <h3><SiteLink page="cases" hash={id}>{title}<ArrowUpRight size={18} aria-hidden="true" /></SiteLink></h3>
-                <p className="scenario-output">{output}</p>
-              </article>
-            )
-          })}
+    <section className="exo-work" id="workspace" aria-labelledby="workspace-title">
+      <div className="exo-frame">
+        <header className="exo-section-head">
+          <h2 className="exo-display" id="workspace-title">
+            <span className="exo-mask"><span className="exo-mask-in">{home.overview}{' '}</span></span>
+            <span className="exo-mask"><span className="exo-mask-in">{home.overviewResult}</span></span>
+          </h2>
+          <p>{home.overviewBody}</p>
+        </header>
+
+        <div className="exo-portfolio">
+          <article className="exo-card exo-card--lead">
+            <div className="exo-card-media">
+              <Poster name="workspace-result" alt={home.workspaceAlt} preview="workspace-teaser" playOnView />
+            </div>
+            <div className="exo-lead-copy">
+              <div className="exo-card-copy">
+                <h3>{home.work}</h3>
+                <p>{home.workBody}</p>
+                <MediaLink source="/media/product-demo.mp4" poster="/media/workspace.webp" title={home.recording}
+                  className="exo-media-link">
+                  <Play size={13} fill="currentColor" aria-hidden="true" />{home.recording}
+                  <ArrowRight size={14} aria-hidden="true" />
+                </MediaLink>
+              </div>
+              <div className="exo-deliverables" id="deliverables">
+                <p className="exo-label">{home.exampleTask}</p>
+                <h4 className="exo-deliverables-title">{cases.procurement}</h4>
+                <p className="exo-deliverables-note">{home.exampleInput}</p>
+                <p className="exo-label exo-deliverables-label">{home.example}</p>
+                <ul className="exo-file-list" aria-label={home.example}>
+                  <li><FileSpreadsheet size={17} aria-hidden="true" /><span>{home.spreadsheet}</span><small>XLSX</small></li>
+                  <li><FileText size={17} aria-hidden="true" /><span>{home.report}</span><small>DOCX</small></li>
+                </ul>
+                <SiteLink page="cases" hash="procurement" className="exo-text-link">
+                  {home.workflowLink}<ArrowRight size={15} aria-hidden="true" />
+                </SiteLink>
+              </div>
+            </div>
+          </article>
+
+          <article className="exo-card exo-card--files">
+            <div className="exo-card-media">
+              <img src="/media/team-app.webp" alt={cases.appAlt} width="1152" height="548" loading="lazy" decoding="async" />
+            </div>
+            <div className="exo-card-copy">
+              <h3>{home.files}</h3>
+              <p>{home.filesBody}</p>
+            </div>
+          </article>
+
+          <SiteLink page="cases" hash="capability-sharing" className="exo-card exo-card--skills"
+            onPointerEnter={hoverPreview} onPointerLeave={stopPreview}>
+            <div className="exo-card-media">
+              <Poster name="skills" alt={home.skillsAlt} preview="skills-preview" />
+            </div>
+            <div className="exo-card-copy">
+              <h3>{home.share}</h3>
+              <p>{home.shareBody}</p>
+              <span className="exo-card-arrow" aria-hidden="true"><ArrowUpRight size={17} /></span>
+            </div>
+          </SiteLink>
+
+          <a className="exo-card exo-card--connect" href={docsPath(locale, 'user-guide/mcp/connect-and-manage/')}
+            onPointerEnter={hoverPreview} onPointerLeave={stopPreview}>
+            <div className="exo-card-media">
+              <Poster name="connections" alt={home.connectionsAlt} preview="connections-preview" />
+            </div>
+            <div className="exo-card-copy">
+              <h3>{home.connect}</h3>
+              <p>{home.connectBody}</p>
+              <span className="exo-card-arrow" aria-hidden="true"><ArrowUpRight size={17} /></span>
+            </div>
+          </a>
         </div>
-        <div className="section-action">
-          <SiteLink page="cases" className="arrow-link"><span>{copy.home.allCases}</span><ArrowRight size={16} aria-hidden="true" /></SiteLink>
+
+        <div className="exo-team">
+          <h2 className="exo-display" id="team-title">
+            <span className="exo-mask"><span className="exo-mask-in">{home.teamTitle}</span></span>
+          </h2>
+          <div className="exo-team-copy">
+            <p>{home.teamBody}</p>
+            <SiteLink page="cases" hash="capability-sharing" className="exo-text-link">
+              {home.share}<ArrowUpRight size={15} aria-hidden="true" />
+            </SiteLink>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-function FilmSection() {
+function FilmReel() {
   const { copy } = useSite()
   const home = copy.home
+
   return (
-    <section className="section section--film" aria-labelledby="film-title">
-      <div className="container film-grid">
-        <div className="film-copy">
-          <p className="eyebrow">{home.film}</p>
-          <h2 className="h2" id="film-title">{home.reelOne}<br /><span className="text-accent">{home.reelTwo}</span></h2>
-          <p>{home.filmNote}</p>
+    <section className="exo-reel" aria-labelledby="film-title">
+      <div className="exo-reel-track">
+        <div className="exo-reel-stage">
+          <div className="exo-reel-head">
+            <p className="exo-label">{home.film}</p>
+            <h2 className="exo-reel-title" id="film-title">
+              <span className="exo-reel-word">{home.reelOne}{' '}</span>
+              <span className="exo-reel-word exo-reel-word--soft">{home.reelTwo}</span>
+            </h2>
+            <p className="exo-reel-note">{home.filmNote}</p>
+          </div>
+          <div className="exo-reel-media">
+            <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film}
+              label={home.play} subtitle={home.filmNote} className="exo-reel-link">
+              <img src="/media/reel.webp" alt="" width="1440" height="810" loading="lazy" decoding="async" />
+              <span className="exo-reel-play"><Play size={17} fill="currentColor" aria-hidden="true" />{home.play}</span>
+            </MediaLink>
+          </div>
         </div>
-        <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film} label={home.play}
-          subtitle={home.filmNote} className="film-link">
-          <img src="/media/reel.webp" alt="" width="1440" height="810" loading="lazy" decoding="async" />
-          <span className="film-pill"><Play size={18} fill="currentColor" aria-hidden="true" />{home.play}</span>
-        </MediaLink>
       </div>
     </section>
   )
 }
 
-function OwnershipSection() {
+function CaseIndex() {
   const { copy } = useSite()
   const home = copy.home
+
   return (
-    <section className="section section--soft" aria-labelledby="ownership-title">
-      <div className="container">
-        <SectionHead id="ownership-title" title={home.ownership} body={home.ownershipBody} />
-        <GovernanceDetails />
-        <div className="section-action">
-          <SiteLink page="hosting" className="btn btn--secondary">{home.hostingLink}<ArrowRight size={16} aria-hidden="true" /></SiteLink>
+    <section className="exo-index" aria-labelledby="scenarios-title">
+      <div className="exo-frame">
+        <header className="exo-index-head">
+          <h2 className="exo-display" id="scenarios-title">
+            <span className="exo-mask"><span className="exo-mask-in">{home.scenarios}</span></span>
+          </h2>
+          <p>{home.scenariosBody}</p>
+        </header>
+        <ol className="exo-case-list">
+          {getUseCases(copy.cases).map(({ id, audience, title, output }, index) => (
+            <li key={id}>
+              <SiteLink page="cases" hash={id} className="exo-case-row">
+                <span className="exo-case-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <span className="exo-case-main">
+                  <span className="exo-case-audience">{audience}</span>
+                  <span className="exo-case-title">{title}</span>
+                </span>
+                <span className="exo-case-output">{output}</span>
+                <span className="exo-case-arrow" aria-hidden="true"><ArrowUpRight size={18} /></span>
+              </SiteLink>
+            </li>
+          ))}
+        </ol>
+        <SiteLink page="cases" className="exo-text-link exo-index-all">
+          {home.allCases}<ArrowRight size={16} aria-hidden="true" />
+        </SiteLink>
+      </div>
+    </section>
+  )
+}
+
+function Ownership() {
+  const { copy } = useSite()
+  const home = copy.home
+
+  return (
+    <section className="exo-ownership" aria-labelledby="ownership-title">
+      <div className="exo-frame">
+        <header className="exo-section-head">
+          <h2 className="exo-display" id="ownership-title">
+            <span className="exo-mask"><span className="exo-mask-in">{home.ownership}</span></span>
+          </h2>
+          <p>{home.ownershipBody}</p>
+        </header>
+        <div className="exo-governance">
+          <GovernanceDetails />
         </div>
+        <SiteLink page="hosting" className="exo-text-link">
+          {home.hostingLink}<ArrowRight size={16} aria-hidden="true" />
+        </SiteLink>
       </div>
     </section>
   )
@@ -189,14 +254,21 @@ function OwnershipSection() {
 
 function ClosingCta() {
   const { copy } = useSite()
+
   return (
-    <section className="closing" aria-labelledby="closing-title">
-      <div className="container closing-inner">
-        <img src="/brand/linksense-icon.svg" alt="" className="closing-icon" width="64" height="64" loading="lazy" />
-        <h2 className="h2" id="closing-title">{copy.footer.titleOne}<br /><span className="text-accent">{copy.footer.titleTwo}</span></h2>
-        <div className="hero-actions">
-          <a className="btn" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={17} aria-hidden="true" /></a>
-          <a className="btn btn--secondary" href={productLinks.github}>{copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" /></a>
+    <section className="exo-closing" aria-labelledby="closing-title">
+      <div className="exo-frame">
+        <h2 className="exo-closing-title" id="closing-title">
+          <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleOne}{' '}</span></span>
+          <span className="exo-mask"><span className="exo-mask-in">{copy.footer.titleTwo}</span></span>
+        </h2>
+        <div className="exo-closing-actions">
+          <a className="exo-cta" href={productLinks.demo}>
+            {copy.nav.demo}<ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+          <a className="exo-text-link" href={productLinks.github}>
+            {copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
@@ -205,14 +277,13 @@ function ClosingCta() {
 
 export function HomePage() {
   return (
-    <>
+    <div className="exo-home">
       <HomeHero />
       <WorkspaceShowcase />
-      <UseCasePreview />
-      <TeamSection />
-      <FilmSection />
-      <OwnershipSection />
+      <FilmReel />
+      <CaseIndex />
+      <Ownership />
       <ClosingCta />
-    </>
+    </div>
   )
 }

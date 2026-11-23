@@ -1,0 +1,448 @@
+/* Exo Ape branch chrome: sparse home overlay, compact scroll header, angled
+   full-screen menu, dark editorial footer and native route view transitions.
+   Imported before the legacy stylesheet, so selectors carry enough specificity
+   to win without touching shared rules. */
+
+.exo-site {
+  position: relative;
+}
+
+/* Header and sparse top navigation */
+.exo-header.site-header {
+  z-index: 60;
+}
+.exo-header .exo-header-inner {
+  max-width: none;
+  padding-inline: var(--exo-frame);
+}
+@media (max-width: 51.999rem) {
+  .exo-header .exo-header-inner { padding-inline: var(--page-gutter); }
+}
+.exo-header .header-links {
+  gap: clamp(.9rem, 2.1vw, 1.75rem);
+  font-size: .78rem;
+  letter-spacing: .015em;
+}
+.exo-header .exo-cta {
+  min-height: 2.3rem;
+  padding: .35rem .85rem;
+  font-size: .78rem;
+}
+
+.exo-header--overlay.site-header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  text-shadow: 0 1px 16px rgb(0 0 0 / .28);
+}
+.exo-header--overlay .header-links a,
+.exo-header--overlay .header-links a[aria-current="page"] {
+  color: var(--exo-white);
+}
+.exo-header--overlay .header-links a:hover,
+.exo-header--overlay .header-links a[aria-current="page"]:hover {
+  color: var(--exo-sand);
+}
+.exo-header--overlay .header-links a:focus-visible,
+.exo-header--overlay .header-icon:focus-visible,
+.exo-header--overlay .exo-cta:focus-visible,
+.exo-header--overlay .site-brand:focus-visible {
+  outline-color: var(--exo-white);
+}
+.exo-header--overlay .site-brand .only-light { display: none; }
+.exo-header--overlay .site-brand .only-dark { display: inline-block; }
+.exo-header--overlay .header-icon {
+  color: var(--exo-white);
+  text-shadow: none;
+}
+.exo-header--overlay .header-icon:hover {
+  background: rgb(248 248 248 / .14);
+  color: var(--exo-white);
+}
+.exo-header--overlay .exo-cta {
+  border-color: rgb(248 248 248 / .5);
+  background: rgb(13 14 19 / .14);
+  color: var(--exo-white);
+}
+.exo-header--overlay .exo-cta:hover {
+  border-color: var(--exo-white);
+  background: rgb(248 248 248 / .14);
+}
+
+@media (min-width: 52rem) and (max-width: 64rem) {
+  .exo-header .header-links {
+    gap: .6rem;
+    font-size: .72rem;
+  }
+  .exo-header .exo-cta {
+    min-height: 2.2rem;
+    padding-inline: .65rem;
+    font-size: .72rem;
+  }
+  .exo-header .brand-lockup { width: 8.75rem; }
+}
+
+@media (max-width: 51.999rem) {
+  .exo-header .exo-cta { display: none; }
+  /* The compact trigger must stay available on narrow screens at every
+     scroll position, including the transparent home hero. */
+  .exo-header--overlay.site-header { position: fixed; }
+}
+
+.exo-header--compact .header-links { display: none; }
+.exo-header--compact .exo-cta { display: none; }
+.exo-header--compact .menu-button { display: inline-grid; }
+.exo-header--compact .brand-lockup { width: 9.25rem; }
+.exo-header--compact.site-header {
+  background: color-mix(in srgb, var(--color-paper) 94%, transparent);
+  border-bottom-color: var(--color-line);
+  backdrop-filter: blur(14px);
+}
+.exo-header--home.exo-header--compact.site-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+/* Full-screen menu */
+.exo-menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  border: 0;
+  background: var(--exo-night);
+  color: var(--exo-white);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  transition: clip-path 1s var(--exo-ease);
+}
+.exo-menu[open] { display: block; }
+.exo-menu.is-open { clip-path: polygon(0% 0%, 100% 0%, 100% 110%, 0% 100%); }
+.exo-menu.is-closing .exo-menu-stage { pointer-events: none; }
+.exo-menu::backdrop { background: transparent; }
+.exo-menu :focus-visible { outline-color: var(--exo-white); }
+
+.exo-menu-stage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: clamp(1rem, 2.4vw, 1.75rem) var(--exo-frame) clamp(1.5rem, 3.5vw, 2.5rem);
+  transform: translate3d(0, -50vh, 0) rotate(-7deg) scale(1.3);
+  transform-origin: 50% 0;
+  opacity: .3;
+  transition: transform 1s var(--exo-ease-out), opacity 1s var(--exo-ease-out);
+}
+.exo-menu.is-open .exo-menu-stage {
+  transform: none;
+  opacity: 1;
+}
+
+.exo-menu-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+}
+.exo-menu .exo-menu-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+.exo-menu .exo-menu-brand .only-light { display: none; }
+.exo-menu .exo-menu-brand .only-dark { display: inline-block; }
+.exo-menu .exo-menu-brand .brand-lockup { width: clamp(8.5rem, 12vw, 11.25rem); }
+.exo-menu-close {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.75rem;
+  padding: .45rem 1rem;
+  border: 1px solid rgb(248 248 248 / .28);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--exo-white);
+  font-size: .82rem;
+  transition: background-color .2s, border-color .2s;
+}
+.exo-menu-close:hover {
+  border-color: rgb(248 248 248 / .6);
+  background: rgb(248 248 248 / .08);
+}
+
+.exo-menu-body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
+  padding-block: clamp(1.5rem, 4vh, 3.5rem);
+}
+.exo-menu-art {
+  position: relative;
+  width: 100%;
+  max-height: min(60vh, 34rem);
+  aspect-ratio: 4 / 5;
+  overflow: clip;
+  border-radius: .55rem;
+  background: #191a21;
+}
+.exo-menu-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: rotate(7deg) scale(1.3);
+  transition: opacity 1s var(--exo-ease-out), transform 1s var(--exo-ease-out);
+}
+.exo-menu-art img.is-active {
+  opacity: 1;
+  transform: none;
+}
+
+.exo-menu-nav {
+  display: grid;
+  justify-items: end;
+  gap: clamp(.15rem, .9vw, .6rem);
+  text-align: right;
+}
+.exo-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(.6rem, 1.5vw, 1.15rem);
+  max-width: 100%;
+  min-width: 0;
+  min-height: 3.25rem;
+  color: var(--exo-white);
+  font-size: clamp(2.35rem, 6.8vw, 6.25rem);
+  font-weight: 500;
+  line-height: .96;
+  letter-spacing: -.055em;
+  text-align: right;
+  text-decoration: none;
+  transition: color .25s;
+}
+.exo-menu-link:hover,
+.exo-menu-link:focus-visible { color: var(--exo-sand); }
+.exo-menu-link:focus-visible {
+  outline: 2px solid var(--exo-white);
+  outline-offset: .08em;
+}
+.exo-menu-link-mask {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  overflow: clip;
+  padding-block: .1em;
+}
+.exo-menu-link-inner {
+  display: block;
+  max-width: 100%;
+  opacity: 0;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  transform: translate3d(0, 110%, 0) rotate(7deg);
+  transform-origin: 0 100%;
+  transition: transform 1s var(--exo-ease-out), opacity 1s var(--exo-ease-out);
+}
+.exo-menu.is-open .exo-menu-link-inner {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(.35s + var(--exo-index, 0) * .1s);
+}
+.exo-menu-link-icon {
+  flex-shrink: 0;
+  margin-block-start: .18em;
+  opacity: .32;
+  translate: 0 .1em;
+  transition: opacity .25s, translate .25s var(--exo-ease-out);
+}
+.exo-menu-link:hover .exo-menu-link-icon,
+.exo-menu-link:focus-visible .exo-menu-link-icon {
+  opacity: 1;
+  translate: .12em -.04em;
+}
+
+.exo-menu-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding-block-start: 1.15rem;
+  border-top: 1px solid rgb(248 248 248 / .16);
+  font-size: .88rem;
+}
+.exo-menu-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .15rem 1.4rem;
+}
+.exo-menu-secondary a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  color: var(--exo-sand);
+  text-decoration: none;
+}
+.exo-menu-secondary a:hover { color: var(--exo-white); }
+.exo-menu-languages {
+  display: flex;
+  align-items: start;
+  gap: .55rem;
+  color: rgb(248 248 248 / .55);
+}
+.exo-menu .language-options {
+  grid-template-columns: repeat(3, auto);
+  gap: .1rem 1.1rem;
+  font-size: .82rem;
+}
+.exo-menu .language-options a { color: rgb(248 248 248 / .68); }
+.exo-menu .language-options a:hover { color: var(--exo-white); }
+.exo-menu .language-current {
+  color: var(--exo-white) !important;
+  text-decoration-color: rgb(248 248 248 / .6) !important;
+}
+
+@media (max-width: 51.999rem) {
+  .exo-menu-stage { padding: 1rem var(--page-gutter) 1.5rem; }
+  .exo-menu-body {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 1.75rem;
+    padding-block: 1.75rem 1.5rem;
+  }
+  .exo-menu-art { display: none; }
+  .exo-menu-nav { justify-items: start; text-align: left; }
+  .exo-menu-link {
+    justify-content: flex-start;
+    text-align: left;
+    font-size: clamp(2.25rem, 12vw, 4.25rem);
+  }
+  .exo-menu-link-icon { display: none; }
+  .exo-menu-foot { flex-direction: column; }
+  .exo-menu .language-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-height: 40rem) {
+  .exo-menu-art { display: none; }
+  .exo-menu-body {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    padding-block: 1.25rem;
+  }
+  .exo-menu-nav { justify-items: start; text-align: left; }
+  .exo-menu-link { justify-content: flex-start; font-size: clamp(2rem, 8vh, 3.5rem); }
+}
+
+/* The page counter-moves under the menu and is reset before route motion.
+   The wrapper clips the transformed page so it cannot widen the document. */
+.exo-page-clip { overflow: clip; }
+.exo-page {
+  position: relative;
+  transform-origin: 50% 50%;
+  background: var(--color-paper);
+  transition: transform 1s var(--exo-ease);
+}
+.exo-page--menu-shifted {
+  transform: translate3d(0, 50vh, 0) rotate(7deg) scale(1.3);
+}
+
+/* Dark editorial footer, same actions as the shared footer. */
+.exo-footer {
+  padding-block: clamp(3.5rem, 7vw, 5.75rem) 1.5rem;
+  background: var(--exo-night);
+  color: var(--exo-white);
+}
+.exo-footer .footer-brand .only-light { display: none; }
+.exo-footer .footer-brand .only-dark { display: inline-block; }
+.exo-footer .footer-brand .brand-lockup { width: clamp(10rem, 18vw, 15rem); }
+.exo-footer .footer-brand p { color: rgb(248 248 248 / .66); }
+.exo-footer .footer-nav a { color: var(--exo-white); }
+.exo-footer .footer-nav a:hover { color: var(--exo-sand); }
+.exo-footer .footer-languages > p { color: rgb(248 248 248 / .5); }
+.exo-footer .language-options a { color: rgb(248 248 248 / .68); }
+.exo-footer .language-options a:hover { color: var(--exo-white); }
+.exo-footer .language-current {
+  color: var(--exo-white) !important;
+  text-decoration-color: rgb(248 248 248 / .6) !important;
+}
+.exo-footer .footer-base {
+  border-top-color: rgb(248 248 248 / .18);
+  color: rgb(248 248 248 / .54);
+}
+.exo-footer .footer-base a { color: rgb(248 248 248 / .54); }
+.exo-footer .footer-base a:hover { color: var(--exo-white); }
+.exo-footer :focus-visible { outline-color: var(--exo-white); }
+
+/* Native same-document View Transitions. TanStack starts these only when a
+   SiteLink crosses a real page/locale path and the browser supports the API. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition { background: var(--color-paper); }
+  ::view-transition-group(root) {
+    animation-duration: 1s;
+    animation-timing-function: var(--exo-ease);
+  }
+  ::view-transition-old(root) {
+    transform-origin: 50% 50%;
+    animation: exo-route-out 1s var(--exo-ease) both;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(root) {
+    transform-origin: 50% 50%;
+    animation: exo-route-in 1s var(--exo-ease) both;
+    mix-blend-mode: normal;
+  }
+}
+
+@keyframes exo-route-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: .9; transform: translate3d(0, -50vh, 0) rotate(-7deg) scale(1.3); }
+}
+
+@keyframes exo-route-in {
+  from {
+    clip-path: polygon(0% 100%, 100% 110%, 100% 100%, 0% 100%);
+    transform: rotate(7deg) scale(1.3);
+  }
+  to {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exo-menu,
+  .exo-menu-stage,
+  .exo-menu-art img,
+  .exo-menu-link-inner,
+  .exo-page {
+    transition: none;
+  }
+  .exo-menu-stage {
+    transform: none;
+    opacity: 1;
+  }
+  .exo-page--menu-shifted { transform: none; }
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

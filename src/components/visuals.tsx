@@ -1,79 +1,25 @@
 import { ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
-import GradientWaves from './GradientWaves'
 
-function useDarkArt() {
-  const [dark, setDark] = useState(false)
-  useEffect(() => {
-    const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
-    if (!meta) return
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const sync = () => {
-      const value = meta.content
-      setDark(value === 'dark' || (value !== 'light' && media.matches))
-    }
-    sync()
-    const observer = new MutationObserver(sync)
-    observer.observe(meta, { attributes: true, attributeFilter: ['content'] })
-    media.addEventListener('change', sync)
-    return () => {
-      observer.disconnect()
-      media.removeEventListener('change', sync)
-    }
-  }, [])
-  return dark
-}
-
-function HeroBackground() {
-  const dark = useDarkArt()
-  return (
-    <div className="hero-bg" aria-hidden="true">
-      <GradientWaves
-        horizonColor={dark ? '#2c1850' : '#8b5cf6'}
-        waveColor={dark ? '#7c5cf0' : '#b7a4ec'}
-        crestColor={dark ? '#ded3ff' : '#ffffff'}
-        lightMode={!dark}
-        speed={0.35}
-        amplitude={2.4}
-        height={7}
-        tilt={62}
-        zoom={1.05}
-        relief={1}
-        lightAngle={115}
-        sheen={0.35}
-        grain={0.16}
-        quality="medium"
-        intro={false}
-        dpr={1.5}
-      />
-    </div>
-  )
-}
-
-export function Hero({ kind, title, intro, rail, beforeTitle, children }: {
-  kind: 'home' | 'cases' | 'hosting'
+export function Hero({ kind, title, intro, children }: {
+  kind: 'cases' | 'hosting'
   title: [string, string]
   intro: [string, string]
-  rail?: ReactNode
-  beforeTitle?: ReactNode
   children?: ReactNode
 }) {
   return (
-    <section className={`hero hero--${kind}`}>
-      {kind === 'home' && <HeroBackground />}
-      {rail}
-      <div className="container hero-inner">
-        <div className="hero-copy">
-          {beforeTitle}
-          <h1 className="h1 hero-title">
-            <span className="block">{title[0]}</span>{' '}
-            <span className="block text-accent">{title[1]}</span>
-          </h1>
-          <p className="lead hero-lead">{intro[0]} {intro[1]}</p>
-          <div className="hero-actions">{children}</div>
-        </div>
+    <section className={`exo-page-hero exo-page-hero--${kind}`}>
+      <div className="exo-frame exo-page-hero-inner">
+        <h1 className="exo-page-hero-title">
+          <span className="exo-mask"><span className="exo-mask-in">{title[0]}{' '}</span></span>
+          <span className="exo-mask"><span className="exo-mask-in">{title[1]}</span></span>
+        </h1>
+        <p className="exo-page-hero-intro">
+          <span className="exo-mask"><span className="exo-mask-in">{intro[0]}{' '}</span></span>
+          <span className="exo-mask"><span className="exo-mask-in">{intro[1]}</span></span>
+        </p>
+        <div className="exo-page-hero-actions">{children}</div>
       </div>
     </section>
   )

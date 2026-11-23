@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "./exo-home.css";
+@import "./exo-detail.css";
+@import "./exo-shell.css";
 
 @font-face {
   font-family: "Inter";
@@ -34,6 +37,12 @@
   --container: 77.5rem;
   --header-h: 5.125rem;
   --page-gutter: 1.5rem;
+  --exo-sand: #e4e0db;
+  --exo-night: #0d0e13;
+  --exo-white: #f8f8f8;
+  --exo-frame: clamp(1.25rem, 8.33vw, 9.5rem);
+  --exo-ease: cubic-bezier(.496, .004, 0, 1);
+  --exo-ease-out: cubic-bezier(0, .202, .204, 1);
   --hero-wash-start: #f8f6fb;
   --hero-wash-end: #e9e4f8;
   --film-bg: #fff;

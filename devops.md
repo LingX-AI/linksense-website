@@ -1,5 +1,11 @@
 # Deployment
 
+## Exo Ape preview
+
+The `exoape` branch has a separate, non-indexed preview at <http://192.168.2.210:19014/zh>. It uses `/root/devops/linksense-website-exoape/docker-compose.yml` on `linksense-dev-server`. Build locally with the pinned Node.js and pnpm versions, then upload only `.output/public` and `.output/server` to a versioned release directory. Verify the artifact checksums and mount the release read-only with the host's cached `node:24-alpine` image. Start only `web` with `docker compose up -d --no-build --pull never --no-deps web` in the preview directory. This branch does not use the main branch's image publishing workflow.
+
+## Main site
+
 The site runs on the `linksense-dev-server` host as a pull-only Docker Compose service.
 
 | | |

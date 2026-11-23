@@ -26,41 +26,78 @@ try {
   }).finally(() => clearTimeout(timer))
 
   const request = (path) => fetch(`${origin}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
+  // Read the copy from the rendered <h1>, independent of <title> metadata,
+  // line-mask markup and attribute order.
+  const renderedHeading = (html) => (html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'")
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim()
   const locales = [
-    ['', 'en-US', 'On your infrastructure.', 'a real task.', 'on your terms.'],
-    ['/zh', 'zh-CN', '部署和权限，你做主', '具体的事开始。', '由你决定。'],
-    ['/es', 'es-ES', 'En tu infraestructura.', 'una tarea real.', 'a tu manera.'],
-    ['/pt', 'pt-BR', 'Na sua infraestrutura.', 'uma tarefa real.', 'seu jeito.'],
-    ['/fr', 'fr-FR', 'Sur votre infrastructure.', 'une tâche réelle.', 'à votre façon.'],
-    ['/ja', 'ja-JP', '自社の環境で運用。', '始めよう。', '自分たちで決める。'],
+    ['', 'en-US', 'AI agents for teams.', 'On your infrastructure.', 'a real task.', 'on your terms.'],
+    ['/zh', 'zh-CN', '团队 Agent 工作台', '部署和权限，你做主', '具体的事开始。', '由你决定。'],
+    ['/es', 'es-ES', 'Agentes para tu equipo.', 'En tu infraestructura.', 'una tarea real.', 'a tu manera.'],
+    ['/pt', 'pt-BR', 'Agentes para sua equipe.', 'Na sua infraestrutura.', 'uma tarefa real.', 'seu jeito.'],
+    ['/fr', 'fr-FR', 'Des agents pour l’équipe.', 'Sur votre infrastructure.', 'une tâche réelle.', 'à votre façon.'],
+    ['/ja', 'ja-JP', 'チームのための AI エージェント。', '自社の環境で運用。', '始めよう。', '自分たちで決める。'],
   ]
-  for (const [prefix, locale, home, cases, hosting] of locales) {
+  for (const [prefix, locale, homeOne, homeTwo, cases, hosting] of locales) {
     const docs = locale === 'en-US' ? 'https://linksense.org/doc/' : `https://linksense.org/doc/${locale}/`
-    for (const [suffix, heading] of [['', home], ['/use-cases', cases], ['/self-hosted', hosting]]) {
+    for (const [suffix, heading] of [['', homeTwo], ['/use-cases', cases], ['/self-hosted', hosting]]) {
       const path = (prefix + suffix) || '/'
       const response = await request(path)
       assert.equal(response.status, 200, path)
       const html = await response.text()
-      const title = html.match(/<h1\b[^>]*>(.*?)<\/h1>/s)?.[1] ?? ''
+      const h1 = renderedHeading(html)
       assert.ok(html.includes(`<html lang="${locale}"`), path)
-      assert.ok(title.includes(heading), `SSR heading missing on ${path}`)
+      assert.ok(h1.includes(heading), `SSR heading missing on ${path}`)
       assert.ok(html.includes(`href="${docs}"`), `Documentation link missing on ${path}`)
       assert.ok(html.includes('name="description"'), path)
       assert.ok(html.includes('name="color-scheme" content="light dark"'), `System theme default missing on ${path}`)
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
+        assert.ok(h1.includes(homeOne) && h1.includes(homeTwo), `Localized hero heading missing on ${path}`)
+        assert.ok(html.includes('class="exo-home-hero"'), `Hero surface missing on ${path}`)
+        assert.ok(html.includes('class="exo-mask-in"'), `Masked hero line missing on ${path}`)
+        assert.ok(html.includes('src="/media/exoape-hero.webp"'), `Hero art reference missing on ${path}`)
+        assert.ok(/class="exo-hero-img"[^>]*width="1620"[^>]*height="1000"/.test(html), `Hero art dimensions missing on ${path}`)
+        assert.ok(/fetchpriority="high"/i.test(html), `Hero fetch priority missing on ${path}`)
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.ok(html.includes('src="/media/workspace-result.webp"'), `Workspace still missing on ${path}`)
+        for (const still of ['workspace-result', 'skills', 'connections', 'team-app', 'reel']) {
+          assert.ok(html.includes(`src="/media/${still}.webp"`), `Homepage still ${still} missing on ${path}`)
+        }
+        assert.ok(html.includes('href="/media/product-demo.mp4"'), `Workspace demo fallback missing on ${path}`)
+        assert.ok(html.includes('href="/media/linksense-intro-v6.mp4"'), `Film fallback missing on ${path}`)
+        for (const anchor of ['#workspace', '#deliverables', '#team-title']) {
+          assert.ok(html.includes(`href="${anchor}"`), `Homepage rail anchor ${anchor} missing on ${path}`)
+        }
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
-        const story = ['id="workspace"', 'id="scenarios-title"', 'id="team-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
+        const story = ['id="workspace"', 'id="deliverables"', 'id="team-title"', 'id="film-title"', 'id="scenarios-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
         assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
       }
       if (suffix === '/use-cases') {
-        for (const anchor of ['procurement', 'reporting', 'knowledge', 'capability-sharing']) {
+        for (const anchor of ['examples', 'procurement', 'reporting', 'knowledge', 'capability-sharing']) {
           assert.ok(html.includes(`id="${anchor}"`), `Linked example is missing on ${path}`)
         }
+        for (const kind of ['procurement', 'reporting', 'knowledge']) {
+          assert.ok(html.includes(`exo-detail-story--${kind}`), `Editorial story ${kind} missing on ${path}`)
+          assert.ok(html.includes(`exo-detail-visual--${kind}`), `Editorial visual ${kind} missing on ${path}`)
+        }
+        assert.ok(html.includes('exo-detail--handoff') && html.includes('src="/media/team-app.webp"'), `Sharing feature missing on ${path}`)
+      }
+      if (suffix === '/self-hosted') {
+        for (const anchor of ['profiles', 'governance']) {
+          assert.ok(html.includes(`id="${anchor}"`), `Hosting anchor ${anchor} missing on ${path}`)
+        }
+        for (const profile of ['core', 'full']) {
+          assert.ok(html.includes(`exo-detail-profile--${profile}`), `Profile ${profile} missing on ${path}`)
+          assert.ok(html.includes(`href="${docs}deploy/${profile}/"`), `Deployment guide for ${profile} missing on ${path}`)
+        }
+        assert.ok(html.includes('exo-detail--governance') && html.includes('class="hosting-diagram"'), `Governance spread missing on ${path}`)
+        assert.ok(html.includes('exo-detail-boundary'), `Security boundary missing on ${path}`)
       }
     }
   }
@@ -80,7 +117,10 @@ try {
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; homepage story, example links, redirect, 404, social image, and video range request passed.')
+  const heroArt = await request('/media/exoape-hero.webp')
+  assert.equal(heroArt.status, 200, 'The supplied /media/exoape-hero.webp art is missing.')
+  assert.equal(heroArt.headers.get('content-type'), 'image/webp')
+  console.log('18 localized pages verified in SSR HTML; homepage, editorial detail layouts, anchors, assets, media fallbacks, redirects and 404 checks passed.')
 } finally {
   server.kill()
   await closed

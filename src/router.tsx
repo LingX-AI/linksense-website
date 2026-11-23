@@ -7,6 +7,10 @@ export function getRouter() {
     defaultPreload: 'intent',
     scrollRestoration: true,
     trailingSlash: 'never',
+    // Native same-document View Transitions are opted into per link in
+    // `SiteLink` for real path/locale moves only. Back/Forward keeps the
+    // router's plain history restoration, and same-route hashes do not wipe.
+    defaultViewTransition: false,
   })
 }
 
