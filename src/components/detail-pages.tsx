@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BookOpen, FileText, Server } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, BookOpen, FileText, Server, Share2, ShieldCheck } from 'lucide-react'
 import { getUseCases } from '../content'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
@@ -9,50 +9,72 @@ export function CasesPage() {
   const cases = copy.cases
   return (
     <>
-      <Hero kind="cases" title={[cases.titleOne, cases.titleTwo]} intro={[cases.introOne, cases.introTwo]}>
+      <Hero
+        kind="cases"
+        title={[cases.titleOne, cases.titleTwo]}
+        intro={[cases.introOne, cases.introTwo]}
+        index={{ href: '#examples', label: cases.file }}
+      >
         <a className="btn" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={17} aria-hidden="true" /></a>
       </Hero>
-      <section className="section" id="examples" aria-label={copy.nav.cases}>
-        <div className="container">
-          <p className="case-note">{cases.examplesNote}</p>
-          {getUseCases(cases).map((example) => (
-            <article className="case-row" id={example.id} key={example.id}>
-              <div className="case-copy">
-                <p className="case-eyebrow">{example.audience}</p>
-                <h2 className="h2">{example.title}</h2>
-                <p>{example.body}</p>
-                <div className="case-output"><FileText size={19} strokeWidth={1.5} aria-hidden="true" /><div><strong>{cases.file}</strong><p>{example.output}</p></div></div>
-              </div>
-              <div className={`case-art case-art--${example.id}`}>
-                {example.id === 'procurement' ? <Deliverables />
-                  : example.id === 'reporting' ? (
-                    <div className="paper-brief" aria-hidden="true">
-                      <FileText size={26} strokeWidth={1.4} />
-                      <strong>{cases.briefFile}</strong>
-                      <ol>{[cases.briefPointOne, cases.briefPointTwo, cases.briefPointThree].map((line) => <li key={line}>{line}</li>)}</ol>
-                    </div>
-                  ) : (
-                    <div className="source-note">
-                      <BookOpen size={26} strokeWidth={1.4} aria-hidden="true" />
-                      <strong>{cases.question}</strong>
-                      <p>{cases.answer}</p>
-                      <span>{cases.reference}</span>
-                    </div>
-                  )}
-              </div>
-            </article>
-          ))}
+      <section className="section qclay-cases-detail" id="examples" aria-labelledby="examples-title">
+        <div className="container qclay-wrap">
+          <SectionHead id="examples-title" title={copy.nav.cases} body={cases.examplesNote} />
+          <div className="case-stories">
+            {getUseCases(cases).map((example, index) => (
+              <article className={`case-story case-story--${example.id}`} id={example.id} data-case={example.id} key={example.id}>
+                <div className="case-story-copy">
+                  <div className="case-story-top">
+                    <p className="case-eyebrow">{example.audience}</p>
+                    <span className="case-ordinal" aria-hidden="true">0{index + 1}</span>
+                  </div>
+                  <h2 className="h2">{example.title}</h2>
+                  <p>{example.body}</p>
+                  <div className="case-output">
+                    <FileText size={19} strokeWidth={1.5} aria-hidden="true" />
+                    <div><strong>{cases.file}</strong><p>{example.output}</p></div>
+                  </div>
+                </div>
+                <div className={`case-stage case-stage--${example.id}`} data-art={example.id}>
+                  <span className="case-stage-orbit" aria-hidden="true" />
+                  {example.id === 'procurement' ? <Deliverables />
+                    : example.id === 'reporting' ? (
+                      <div className="paper-brief">
+                        <FileText size={26} strokeWidth={1.4} aria-hidden="true" />
+                        <strong>{cases.briefFile}</strong>
+                        <ol>{[cases.briefPointOne, cases.briefPointTwo, cases.briefPointThree].map((line) => <li key={line}>{line}</li>)}</ol>
+                      </div>
+                    ) : (
+                      <div className="source-note">
+                        <BookOpen size={26} strokeWidth={1.4} aria-hidden="true" />
+                        <strong>{cases.question}</strong>
+                        <p>{cases.answer}</p>
+                        <span>{cases.reference}</span>
+                      </div>
+                    )}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
       <section className="section section--soft" id="capability-sharing" aria-labelledby="handoff-title">
-        <div className="container handoff">
-          <div className="handoff-image">
-            <img src="/media/team-app.webp" alt={cases.appAlt} width="1152" height="548" loading="lazy" decoding="async" />
-          </div>
-          <div>
+        <div className="container qclay-wrap share-spread">
+          <div className="share-copy">
+            <p className="eyebrow">{copy.home.share}</p>
             <h2 className="h2" id="handoff-title">{cases.handoff}</h2>
-            <p className="handoff-body">{cases.handoffBody}</p>
+            <p className="share-body">{cases.handoffBody}</p>
             <a className="arrow-link" href={productLinks.demo}>{copy.nav.demo}<ArrowRight size={16} aria-hidden="true" /></a>
+          </div>
+          <div className="share-stage">
+            <span className="share-orbit" aria-hidden="true" />
+            <figure className="share-screen share-screen--primary">
+              <img src="/media/team-app.webp" alt={cases.appAlt} width="1152" height="548" loading="lazy" decoding="async" />
+            </figure>
+            <figure className="share-screen share-screen--secondary">
+              <img src="/media/skills.webp" alt={copy.home.skillsAlt} width="1152" height="548" loading="lazy" decoding="async" />
+            </figure>
+            <span className="share-link-mark" aria-hidden="true"><Share2 size={24} strokeWidth={1.5} /></span>
           </div>
         </div>
       </section>
@@ -64,39 +86,54 @@ export function HostingPage() {
   const { copy, locale } = useSite()
   const hosting = copy.hosting
   const profiles = [
-    { name: 'Core', title: hosting.core, body: hosting.coreBody, link: hosting.coreDocs, path: 'deploy/core/', full: false },
-    { name: 'Full', title: hosting.full, body: hosting.fullBody, link: hosting.fullDocs, path: 'deploy/full/', full: true },
+    { name: 'Core', tone: 'core', title: hosting.core, body: hosting.coreBody, link: hosting.coreDocs, path: 'deploy/core/' },
+    { name: 'Full', tone: 'full', title: hosting.full, body: hosting.fullBody, link: hosting.fullDocs, path: 'deploy/full/' },
   ]
   return (
     <>
-      <Hero kind="hosting" title={[hosting.titleOne, hosting.titleTwo]} intro={[hosting.introOne, hosting.introTwo]}>
-        <a className="btn" href="#profiles">{hosting.compare}<ArrowRight size={17} aria-hidden="true" /></a>
+      <Hero
+        kind="hosting"
+        title={[hosting.titleOne, hosting.titleTwo]}
+        intro={[hosting.introOne, hosting.introTwo]}
+        index={{ href: '#profiles', label: hosting.compare }}
+      >
         <a className="btn btn--secondary" href={productLinks.github}>{hosting.source}<ArrowUpRight size={15} aria-hidden="true" /></a>
       </Hero>
-      <section className="section" id="profiles">
-        <div className="container">
+      <section className="section" id="profiles" aria-labelledby="profiles-title">
+        <div className="container qclay-wrap">
           <SectionHead id="profiles-title" title={hosting.compare} body={hosting.compareBody} />
-          <div className="profile-grid">
-            {profiles.map((item) => (
-              <article className={`profile-card${item.full ? ' profile-card--full' : ''}`} key={item.name}>
-                <p className="profile-name">{item.name}</p>
-                <p className="profile-title">{item.title}</p>
+          <div className="profile-pair">
+            {profiles.map((item, index) => (
+              <article className={`profile-block profile-block--${item.tone}`} data-profile={item.tone} key={item.name}>
+                <div className="profile-block-head">
+                  <p className="profile-name">{item.name}</p>
+                  <span className="profile-ordinal" aria-hidden="true">0{index + 1}</span>
+                </div>
+                <h3 className="profile-title">{item.title}</h3>
                 <p className="profile-body">{item.body}</p>
-                <p className="profile-platform"><Server size={16} strokeWidth={1.5} aria-hidden="true" />{hosting.linux}</p>
-                <a className="arrow-link" href={docsPath(locale, item.path)}>{item.link}<ArrowUpRight size={16} aria-hidden="true" /></a>
+                <div className="profile-foot">
+                  <p className="profile-platform"><Server size={16} strokeWidth={1.5} aria-hidden="true" />{hosting.linux}</p>
+                  <a className="arrow-link" href={docsPath(locale, item.path)}>{item.link}<ArrowUpRight size={16} aria-hidden="true" /></a>
+                </div>
               </article>
             ))}
           </div>
         </div>
       </section>
-      <section className="section section--soft" id="governance">
-        <div className="container">
-          <div className="section-head">
+      <section className="section section--soft" id="governance" aria-labelledby="governance-title">
+        <div className="container qclay-wrap">
+          <div className="governance-head">
             <h2 className="h2" id="governance-title">{hosting.governance}</h2>
+            <span className="governance-rule" aria-hidden="true" />
           </div>
           <GovernanceDetails />
-          <div className="boundary">
-            <h3>{hosting.boundaries}</h3>
+        </div>
+      </section>
+      <section className="section boundary-section" id="boundaries" aria-labelledby="boundaries-title">
+        <div className="container qclay-wrap boundary-spread">
+          <div className="boundary-aside" aria-hidden="true"><ShieldCheck size={72} strokeWidth={1.15} /></div>
+          <div className="boundary-body">
+            <h2 className="h2" id="boundaries-title">{hosting.boundaries}</h2>
             <p>{hosting.boundaryBody}</p>
             <a className="arrow-link" href={productLinks.security}>{hosting.security}<ArrowUpRight size={16} aria-hidden="true" /></a>
           </div>

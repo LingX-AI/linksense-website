@@ -1,23 +1,32 @@
-import { ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
-export function Hero({ kind, title, intro, children }: {
+export function Hero({ kind, title, intro, index, children }: {
   kind: 'cases' | 'hosting'
   title: [string, string]
   intro: [string, string]
+  index?: { href: string; label: string }
   children?: ReactNode
 }) {
   return (
-    <section className={`hero hero--${kind}`}>
-      <div className="container hero-inner">
-        <div className="hero-copy">
-          <h1 className="h1 hero-title">
+    <section className={`hero hero--${kind}`} aria-labelledby={`${kind}-title`}>
+      <div className="container qclay-wrap qclay-detail-hero">
+        <div className="qclay-hero-heading qclay-detail-heading">
+          <h1 className="h1 qclay-title qclay-detail-title" id={`${kind}-title`}>
             <span className="block">{title[0]}</span>{' '}
             <span className="block text-accent">{title[1]}</span>
           </h1>
-          <p className="lead hero-lead">{intro[0]} {intro[1]}</p>
-          <div className="hero-actions">{children}</div>
+          {index && (
+            <a className="qclay-index" href={index.href}>
+              <span className="qclay-index-orbit" aria-hidden="true"><ArrowDown size={34} strokeWidth={1.4} /></span>
+              <span>{index.label}</span>
+            </a>
+          )}
+        </div>
+        <div className="qclay-hero-meta qclay-detail-meta">
+          <p className="lead">{intro[0]} {intro[1]}</p>
+          <div className="hero-actions qclay-detail-actions">{children}</div>
         </div>
       </div>
     </section>

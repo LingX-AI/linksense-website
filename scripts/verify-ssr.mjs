@@ -79,6 +79,37 @@ try {
         for (const anchor of ['procurement', 'reporting', 'knowledge', 'capability-sharing']) {
           assert.ok(html.includes(`id="${anchor}"`), `Linked example is missing on ${path}`)
         }
+        assert.ok(tagWith(html, 'a', { href: '#examples' }), `Use case index target missing on ${path}`)
+        assert.ok(tagWith(html, 'section', { id: 'examples' }), `Use case examples section missing on ${path}`)
+        for (const anchor of ['procurement', 'reporting', 'knowledge']) {
+          assert.ok(tagWith(html, 'article', { id: anchor, 'data-case': anchor }), `Use case story ${anchor} missing on ${path}`)
+          assert.ok(tagWith(html, 'div', { 'data-art': anchor }), `Use case stage ${anchor} missing on ${path}`)
+        }
+        assert.ok(tagWith(html, 'section', { id: 'capability-sharing' }), `Capability sharing section missing on ${path}`)
+        assert.ok(tagWith(html, 'h2', { id: 'handoff-title' }), `Capability sharing heading missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/team-app.webp' }), `Sharing app screen missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/skills.webp' }), `Sharing skills screen missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo link missing on ${path}`)
+        const layout = ['examples-title', 'procurement', 'reporting', 'knowledge', 'handoff-title'].map((id) => idPosition(html, id))
+        assert.ok(layout.every((position, index) => position >= 0 && (!index || position > layout[index - 1])), `Use case story order is wrong on ${path}`)
+      }
+      if (suffix === '/self-hosted') {
+        assert.ok(tagWith(html, 'a', { href: '#profiles' }), `Hosting index target missing on ${path}`)
+        assert.ok(tagWith(html, 'section', { id: 'profiles' }), `Hosting profiles section missing on ${path}`)
+        assert.ok(tagWith(html, 'article', { 'data-profile': 'core' }), `Core profile missing on ${path}`)
+        assert.ok(tagWith(html, 'article', { 'data-profile': 'full' }), `Full profile missing on ${path}`)
+        for (const profile of ['core', 'full']) {
+          assert.ok(tagWith(html, 'a', { href: `${docs}deploy/${profile}/` }), `Localized ${profile} deployment guide missing on ${path}`)
+        }
+        assert.ok(tagWith(html, 'section', { id: 'governance' }), `Governance section missing on ${path}`)
+        assert.ok(tagWith(html, 'h2', { id: 'governance-title' }), `Governance heading missing on ${path}`)
+        assert.ok(html.includes('class="hosting-diagram"'), `Governance illustration missing on ${path}`)
+        assert.ok(tagWith(html, 'section', { id: 'boundaries' }), `Boundary section missing on ${path}`)
+        assert.ok(tagWith(html, 'h2', { id: 'boundaries-title' }), `Boundary heading missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: 'https://github.com/LingX-AI/LinkSense/security/policy' }), `Security link missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: 'https://github.com/LingX-AI/LinkSense' }), `Source link missing on ${path}`)
+        const layout = ['profiles-title', 'governance-title', 'boundaries-title'].map((id) => idPosition(html, id))
+        assert.ok(layout.every((position, index) => position >= 0 && (!index || position > layout[index - 1])), `Hosting chapter order is wrong on ${path}`)
       }
     }
   }
@@ -101,7 +132,7 @@ try {
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; film-first homepage story, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; film-first homepage story, detail-page headers and chapters, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed

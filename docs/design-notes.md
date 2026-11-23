@@ -6,7 +6,8 @@ The `qclay` preview adapts the public [QClay homepage](https://qclay.design/), i
 | --- | --- |
 | Hero | Large, left-aligned type and generous space lead into a compact supporting row with the source and self-hosting links. A circular index links down to the film and becomes an inline control on mobile. |
 | Film and workspace | A wide original cover with a centered play control precedes the workspace. Each recording opens on demand in the existing native player, with a direct video link if JavaScript is unavailable. The workspace still shows example results, not a live agent. |
-| Sections | Pastel case panels and alternating feature images borrow the reference’s editorial rhythm. The closing actions and the existing deployment diagram remain product-specific, and the detail routes keep their existing structure. |
+| Sections | Pastel case panels and alternating feature images borrow the reference’s editorial rhythm. The closing actions and the existing deployment diagram remain product-specific. |
+| Detail pages | Both detail routes extend the homepage’s wide type, compact supporting row and circular index with a real in-page destination. Use cases become a studio-style story: asymmetric pastel fields frame the existing deliverable, brief and source artifacts, with audience and outcome details alongside, then a sharing spread pairs the app and skills screens. Self-hosted pairs Core and Full in offset pastel blocks, gives governance its own section around the deployment illustration, and gives the boundaries statement its own native section. |
 | Header and theme | The desktop navigation is centered, while narrow screens retain the native modal menu. The persisted theme override and system default are unchanged. The cover stays static; the circular controls move only in response to interaction when reduced motion is off. |
 
 ## Media
