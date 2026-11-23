@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="810" viewBox="0 0 1440 810">
+  <defs>
+    <linearGradient id="table" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f8f8f2"/>
+      <stop offset=".52" stop-color="#e4ebdb"/>
+      <stop offset="1" stop-color="#b6c9b6"/>
+    </linearGradient>
+    <radialGradient id="daylight" cx=".12" cy=".04" r=".93">
+      <stop stop-color="#fffdf3"/>
+      <stop offset="1" stop-color="#fffdf3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="violet-depth" x1="0" y1="0" x2=".72" y2="1">
+      <stop stop-color="#c3b3e4"/>
+      <stop offset=".45" stop-color="#9a80c3"/>
+      <stop offset="1" stop-color="#614a8d"/>
+    </linearGradient>
+    <linearGradient id="violet" x1=".12" y1="0" x2=".67" y2="1">
+      <stop stop-color="#d5c3ed"/>
+      <stop offset=".19" stop-color="#f7efff"/>
+      <stop offset=".44" stop-color="#dcc9ef"/>
+      <stop offset=".76" stop-color="#b394dd"/>
+      <stop offset="1" stop-color="#8b6cb7"/>
+    </linearGradient>
+    <linearGradient id="green-depth" x1="0" y1="0" x2=".7" y2="1">
+      <stop stop-color="#90be98"/>
+      <stop offset=".58" stop-color="#477f66"/>
+      <stop offset="1" stop-color="#315e4b"/>
+    </linearGradient>
+    <linearGradient id="green" x1=".14" y1="0" x2=".79" y2="1">
+      <stop stop-color="#d3eac3"/>
+      <stop offset=".23" stop-color="#f7ffe6"/>
+      <stop offset=".45" stop-color="#bddbb2"/>
+      <stop offset=".73" stop-color="#82b393"/>
+      <stop offset="1" stop-color="#4e826a"/>
+    </linearGradient>
+    <linearGradient id="polish" x1=".06" y1="0" x2=".55" y2="1">
+      <stop stop-color="#fff" stop-opacity=".9"/>
+      <stop offset=".39" stop-color="#fff" stop-opacity=".5"/>
+      <stop offset=".71" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".28"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-.3" y="-1.5" width="1.6" height="4">
+      <feGaussianBlur stdDeviation="27"/>
+    </filter>
+    <filter id="contact" x="-.2" y="-.65" width="1.4" height="2.3">
+      <feGaussianBlur stdDeviation="13"/>
+    </filter>
+    <path id="link" d="M-139-137H139a137 137 0 0 1 0 274h-278a137 137 0 0 1 0-274Z"/>
+    <clipPath id="crossing">
+      <path d="M597 450 854 332 954 502 653 643Z"/>
+    </clipPath>
+    <g id="violet-link" transform="translate(481 435) rotate(-24)" fill="none">
+      <use href="#link" y="24" stroke="url(#violet-depth)" stroke-width="108"/>
+      <use href="#link" stroke="url(#violet)" stroke-width="108"/>
+      <use href="#link" stroke="url(#polish)" stroke-width="94" opacity=".52"/>
+      <use href="#link" stroke="url(#violet)" stroke-width="78"/>
+    </g>
+    <g id="green-link" transform="translate(940 366) rotate(-30) scale(1 .94)" fill="none">
+      <use href="#link" y="23" stroke="url(#green-depth)" stroke-width="106"/>
+      <use href="#link" stroke="url(#green)" stroke-width="106"/>
+      <use href="#link" stroke="url(#polish)" stroke-width="93" opacity=".62"/>
+      <use href="#link" stroke="url(#green)" stroke-width="77"/>
+    </g>
+  </defs>
+  <path fill="url(#table)" d="M0 0h1440v810H0z"/>
+  <path fill="url(#daylight)" d="M0 0h1440v810H0z"/>
+  <path fill="#fffdf4" opacity=".17" d="M0 0h432L0 539zm487 0h84L0 699v-97z"/>
+  <g fill="#475a4d">
+    <ellipse cx="556" cy="563" rx="324" ry="69" transform="rotate(-21 556 563)" filter="url(#soft-shadow)" opacity=".29"/>
+    <ellipse cx="1005" cy="514" rx="293" ry="61" transform="rotate(-24 1005 514)" filter="url(#soft-shadow)" opacity=".27"/>
+    <ellipse cx="598" cy="532" rx="235" ry="30" transform="rotate(-23 598 532)" filter="url(#contact)" opacity=".21"/>
+    <ellipse cx="978" cy="472" rx="243" ry="31" transform="rotate(-27 978 472)" filter="url(#contact)" opacity=".19"/>
+  </g>
+  <use href="#violet-link"/>
+  <use href="#green-link"/>
+  <use href="#violet-link" clip-path="url(#crossing)"/>
+</svg>

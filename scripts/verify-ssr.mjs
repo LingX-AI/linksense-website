@@ -26,6 +26,14 @@ try {
   }).finally(() => clearTimeout(timer))
 
   const request = (path) => fetch(`${origin}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
+  const escape = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const attributePattern = (name, value) => `${escape(name)}="${escape(value)}"(?=\\s|/?>)`
+  const hasAttribute = (tag, name, value) => new RegExp(`(?:^|\\s)${attributePattern(name, value)}`).test(tag)
+  const tagWith = (html, name, attributes) =>
+    (html.match(new RegExp(`<${name}(?=\\s|/?>)[^>]*>`, 'g')) ?? []).find((tag) =>
+      Object.entries(attributes).every(([attribute, value]) => hasAttribute(tag, attribute, value)))
+  const idPosition = (html, id) =>
+    html.search(new RegExp(`<[a-z][\\w-]*\\b[^>]*\\s${attributePattern('id', id)}[^>]*>`))
   const locales = [
     ['', 'en-US', 'On your infrastructure.', 'a real task.', 'on your terms.'],
     ['/zh', 'zh-CN', '部署和权限，你做主', '具体的事开始。', '由你决定。'],
@@ -50,11 +58,21 @@ try {
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.ok(html.includes('src="/media/workspace-result.webp"'), `Workspace still missing on ${path}`)
+        assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: '/media/linksense-intro-v6.mp4' }), `Product film fallback missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/qclay-reel.svg', alt: '' }), `Decorative product film cover missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/workspace-result.webp' }), `Workspace still missing on ${path}`)
+        assert.ok(tagWith(html, 'a', { href: '/media/product-demo.mp4' }), `Workspace demo fallback missing on ${path}`)
+        assert.ok(!html.includes('workspace-teaser.mp4'), `Autoplay workspace teaser still referenced on ${path}`)
+        const deliverables = new RegExp(
+          `<p\\b[^>]*\\s${attributePattern('id', 'deliverables-title')}[^>]*>([\\s\\S]*?)<\\/p>\\s*` +
+          `<ul\\b[^>]*\\s${attributePattern('aria-labelledby', 'deliverables-title')}[^>]*>`,
+        ).exec(html)
+        assert.ok(deliverables?.[1].replace(/<[^>]+>/g, '').trim(), `Deliverables list label missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
-          assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
+          assert.ok(tagWith(html, 'a', { href: `${prefix}/use-cases#${anchor}` }), `Localized use case missing on ${path}`)
         }
-        const story = ['id="workspace"', 'id="scenarios-title"', 'id="team-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
+        const story = ['film-title', 'workspace', 'scenarios-title', 'team-title', 'ownership-title'].map((id) => idPosition(html, id))
         assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
       }
       if (suffix === '/use-cases') {
@@ -75,12 +93,15 @@ try {
   const brandArt = await request('/media/social.jpg')
   assert.equal(brandArt.status, 200)
   assert.equal(brandArt.headers.get('content-type'), 'image/jpeg')
+  const filmCoverArt = await request('/media/qclay-reel.svg')
+  assert.equal(filmCoverArt.status, 200)
+  assert.equal(filmCoverArt.headers.get('content-type'), 'image/svg+xml')
   const film = await fetch(`${origin}/media/linksense-intro-v6.mp4`, {
     headers: { Range: 'bytes=0-255' }, signal: AbortSignal.timeout(5000),
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; homepage story, example links, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; film-first homepage story, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed

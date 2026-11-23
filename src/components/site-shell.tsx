@@ -118,7 +118,7 @@ function Header() {
             <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight aria-hidden="true" size={12} /></a>
           </nav>
           <div className="header-actions">
-            <a href={productLinks.demo} className="btn btn--compact" aria-label={copy.nav.demo}>
+            <a href={productLinks.demo} className="btn btn--secondary btn--compact header-demo" aria-label={copy.nav.demo}>
               <span className="hidden md:inline">{copy.nav.demo}</span>
               <span className="md:hidden">{copy.nav.demoShort}</span>
               <ArrowUpRight aria-hidden="true" size={15} />
