@@ -278,17 +278,19 @@ function FilmSection() {
   const home = copy.home
   return (
     <section className="section-block" aria-labelledby="film-title">
-      <div className="container film-panel">
-        <div className="film-copy">
-          <p className="mono-label">{home.film}</p>
-          <h2 id="film-title">{home.reelOne}<br /><span>{home.reelTwo}</span></h2>
-          <p>{home.filmNote}</p>
+      <div className="container">
+        <div className="film-panel">
+          <div className="film-copy">
+            <p className="mono-label">{home.film}</p>
+            <h2 id="film-title">{home.reelOne}<br /><span>{home.reelTwo}</span></h2>
+            <p>{home.filmNote}</p>
+          </div>
+          <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film} label={home.play}
+            subtitle={home.filmNote} className="film-thumb">
+            <img src="/media/reel.webp" alt="" width="1440" height="810" loading="lazy" decoding="async" />
+            <span className="film-pill"><Play size={16} fill="currentColor" aria-hidden="true" />{home.play}</span>
+          </MediaLink>
         </div>
-        <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film} label={home.play}
-          subtitle={home.filmNote} className="film-thumb">
-          <img src="/media/reel.webp" alt="" width="1440" height="810" loading="lazy" decoding="async" />
-          <span className="film-pill"><Play size={16} fill="currentColor" aria-hidden="true" />{home.play}</span>
-        </MediaLink>
       </div>
     </section>
   )
