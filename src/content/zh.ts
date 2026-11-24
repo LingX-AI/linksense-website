@@ -6,7 +6,7 @@ export const zh = {
     demo: '体验 LinkSense', github: 'GitHub', menu: '菜单', close: '关闭',
     language: '语言', primary: '主导航', footer: '页脚',
     skip: '跳到正文', contact: '联系我们',
-    demoShort: '体验', lightMode: '切换到浅色模式', darkMode: '切换到深色模式',
+    demoShort: '体验', theme: '主题', themeLight: '浅色', themeSystem: '系统', themeDark: '深色',
   },
   home: {
     description: 'LinkSense 是开源团队 Agent 工作空间。交付文件、与团队共享技能，也能部署在自己的基础设施上。',

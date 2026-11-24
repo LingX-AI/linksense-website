@@ -6,7 +6,7 @@ export const es = {
     demo: 'Probar LinkSense', github: 'GitHub', menu: 'Menú', close: 'Cerrar',
     language: 'Idioma', primary: 'Navegación principal', footer: 'Pie de página',
     skip: 'Ir al contenido', contact: 'Contactar',
-    demoShort: 'Probar', lightMode: 'Cambiar al modo claro', darkMode: 'Cambiar al modo oscuro',
+    demoShort: 'Probar', theme: 'Tema', themeLight: 'Claro', themeSystem: 'Sistema', themeDark: 'Oscuro',
   },
   home: {
     description: 'LinkSense es un espacio de trabajo de código abierto para equipos. Entrega archivos, comparte habilidades y ejecútalo en tu propia infraestructura.',

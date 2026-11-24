@@ -61,10 +61,16 @@ try {
       assert.ok(tagWith(html, 'button', { 'aria-haspopup': 'dialog', 'aria-controls': 'site-menu' }), `Menu trigger missing on ${path}`)
       assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo CTA missing from shell on ${path}`)
       assert.ok(tagWith(html, 'img', { src: '/media/qclay-links.webp' }), `Menu artwork missing on ${path}`)
+      assert.ok(tagWith(html, 'fieldset', { class: 'menu-theme-switch' }), `Theme switch missing on ${path}`)
+      for (const theme of ['light', 'system', 'dark']) {
+        assert.ok(tagWith(html, 'input', { type: 'radio', name: 'color-scheme', value: theme }), `${theme} theme option missing on ${path}`)
+      }
+      assert.ok(!html.includes('menu-theme-button'), `Legacy theme button returned on ${path}`)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(tagWith(html, 'h1', { id: 'home-title', class: 'home-intro-title' }), `Homepage narrative heading missing on ${path}`)
         assert.ok(!tagWith(html, 'a', { href: '#showreel' }), `Homepage film index shortcut returned on ${path}`)
+        assert.ok(tagWith(html, 'div', { class: 'closing-lead' }), `Closing icon and title group missing on ${path}`)
         assert.ok(html.includes('class="chapter-head"') && html.includes('class="chapter-number"'), `Numbered work passage missing on ${path}`)
         assert.ok(!html.includes('scenario-card'), `Repeated card grid returned on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)

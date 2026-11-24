@@ -6,7 +6,7 @@ export const fr = {
     demo: 'Essayer LinkSense', github: 'GitHub', menu: 'Menu', close: 'Fermer',
     language: 'Langue', primary: 'Navigation principale', footer: 'Pied de page',
     skip: 'Aller au contenu', contact: 'Nous contacter',
-    demoShort: 'Essayer', lightMode: 'Passer au mode clair', darkMode: 'Passer au mode sombre',
+    demoShort: 'Essayer', theme: 'Thème', themeLight: 'Clair', themeSystem: 'Système', themeDark: 'Sombre',
   },
   home: {
     description: 'LinkSense est un espace de travail open source avec des agents. Livrez des fichiers, partagez vos méthodes et hébergez-le sur votre infrastructure.',

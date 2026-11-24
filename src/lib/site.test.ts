@@ -2,19 +2,25 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getCopy } from '../content'
 import { pageHead } from './head'
 import { docsPath, locales, localeFromPath, pageFromPath, publicSiteOrigin, sitePath } from './site'
-import { nextColorOverride } from './theme'
+import { colorSchemeContent, themePreference } from './theme'
 
-describe('color scheme toggle', () => {
+describe('theme preference', () => {
   it.each([
-    ['light dark', false, 'dark'],
-    ['light dark', true, 'light'],
-    ['dark', false, null],
-    ['light', true, null],
-    ['dark', true, 'light'],
-    ['light', false, 'dark'],
-    ['invalid', true, 'light'],
-  ] as const)('toggles %s (system dark: %s) to %s', (preference, systemDark, expected) => {
-    expect(nextColorOverride(preference, systemDark)).toBe(expected)
+    ['light dark', 'system'],
+    ['light', 'light'],
+    ['dark', 'dark'],
+    ['invalid', 'system'],
+    [null, 'system'],
+  ] as const)('reads %s as %s', (content, expected) => {
+    expect(themePreference(content)).toBe(expected)
+  })
+
+  it.each([
+    ['system', 'light dark'],
+    ['light', 'light'],
+    ['dark', 'dark'],
+  ] as const)('writes %s as %s', (preference, expected) => {
+    expect(colorSchemeContent(preference)).toBe(expected)
   })
 })
 

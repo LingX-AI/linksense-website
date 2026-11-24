@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowUpRight, Globe2, Moon, Sun, X } from 'lucide-react'
+import { ArrowUpRight, Globe2, Monitor, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 import {
   defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales,
 } from '../lib/site'
 import type { SiteLocale, SitePage } from '../lib/site'
-import { colorSchemeKey, nextColorOverride, systemColorScheme } from '../lib/theme'
+import { colorSchemeContent, colorSchemeKey, themePreference, type ThemePreference } from '../lib/theme'
 import { useSite } from '../lib/use-site'
 import { ordinaryClick } from './media'
 
@@ -44,50 +44,64 @@ function Brand() {
   )
 }
 
-function ThemeToggle({ labeled = false }: { labeled?: boolean }) {
+function ThemeSwitch() {
   const { copy } = useSite()
+  const [theme, setTheme] = useState<ThemePreference>('system')
 
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
     if (!meta) return
-    function sync(event: StorageEvent) {
+    const syncFromMeta = () => setTheme(themePreference(meta.content))
+    syncFromMeta()
+    function handleStorage(event: StorageEvent) {
       if (meta && (event.key === colorSchemeKey || event.key === null)) {
-        const mode = event.newValue
-        meta.content = mode === 'light' || mode === 'dark' ? mode : 'light dark'
+        meta.content = colorSchemeContent(themePreference(event.newValue))
+        setTheme(themePreference(event.newValue))
       }
     }
-    window.addEventListener('storage', sync)
-    return () => window.removeEventListener('storage', sync)
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
   }, [])
 
-  function toggle() {
+  function selectTheme(next: ThemePreference) {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
     if (!meta) return
-    const next = nextColorOverride(meta.content, window.matchMedia(systemColorScheme).matches)
-    meta.content = next ?? 'light dark'
+    meta.content = colorSchemeContent(next)
+    setTheme(next)
     try {
-      if (next) localStorage.setItem(colorSchemeKey, next)
-      else localStorage.removeItem(colorSchemeKey)
+      if (next === 'system') localStorage.removeItem(colorSchemeKey)
+      else localStorage.setItem(colorSchemeKey, next)
     } catch {
       return
     }
   }
 
+  const options: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
+    { value: 'light', label: copy.nav.themeLight, Icon: Sun },
+    { value: 'system', label: copy.nav.themeSystem, Icon: Monitor },
+    { value: 'dark', label: copy.nav.themeDark, Icon: Moon },
+  ]
+
   return (
-    <button className={labeled ? 'menu-theme-button' : 'header-icon theme-toggle'} type="button" onClick={toggle}>
-      <span className="only-light">
-        <span className="theme-toggle-row">
-          <Moon size={18} strokeWidth={1.65} aria-hidden="true" />
-          <span className={labeled ? undefined : 'sr-only'}>{copy.nav.darkMode}</span>
-        </span>
-      </span>
-      <span className="only-dark">
-        <span className="theme-toggle-row">
-          <Sun size={18} strokeWidth={1.65} aria-hidden="true" />
-          <span className={labeled ? undefined : 'sr-only'}>{copy.nav.lightMode}</span>
-        </span>
-      </span>
-    </button>
+    <fieldset className="menu-theme-switch">
+      <legend>{copy.nav.theme}</legend>
+      <div className="menu-theme-track" data-theme={theme}>
+        <span className="menu-theme-thumb" aria-hidden="true" />
+        {options.map(({ value, label, Icon }) => (
+          <label className="menu-theme-option" key={value}>
+            <input
+              type="radio"
+              name="color-scheme"
+              value={value}
+              checked={theme === value}
+              onChange={() => selectTheme(value)}
+            />
+            <Icon size={14} strokeWidth={1.7} aria-hidden="true" />
+            <span>{label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   )
 }
 
@@ -240,7 +254,7 @@ function Header() {
               <a href={docsPath(locale)} onClick={closeMenuFrom}>{copy.nav.docs}<ArrowUpRight size={13} aria-hidden="true" /></a>
               <a href={productLinks.github} onClick={closeMenuFrom}>{copy.nav.github}<ArrowUpRight size={13} aria-hidden="true" /></a>
               <a href={productLinks.demo} onClick={closeMenuFrom}>{copy.nav.demo}<ArrowUpRight size={13} aria-hidden="true" /></a>
-              <ThemeToggle labeled />
+              <ThemeSwitch />
               <div className="menu-language">
                 <p><Globe2 size={14} aria-hidden="true" />{copy.nav.language}</p>
                 <Languages onSelect={closeMenuFrom} />

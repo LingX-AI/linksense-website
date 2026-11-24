@@ -6,7 +6,7 @@ export const pt = {
     demo: 'Experimentar o LinkSense', github: 'GitHub', menu: 'Menu', close: 'Fechar',
     language: 'Idioma', primary: 'Navegação principal', footer: 'Rodapé',
     skip: 'Pular para o conteúdo', contact: 'Fale conosco',
-    demoShort: 'Testar', lightMode: 'Mudar para o modo claro', darkMode: 'Mudar para o modo escuro',
+    demoShort: 'Testar', theme: 'Tema', themeLight: 'Claro', themeSystem: 'Sistema', themeDark: 'Escuro',
   },
   home: {
     description: 'LinkSense é um ambiente de trabalho com agentes e código aberto. Entregue arquivos, compartilhe habilidades e rode na sua infraestrutura.',

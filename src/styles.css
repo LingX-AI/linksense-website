@@ -380,25 +380,83 @@ dialog::backdrop {
   text-decoration: none;
 }
 .menu-utilities > a:hover { color: var(--color-accent); text-decoration: underline; text-underline-offset: .25em; }
-.menu-theme-button {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.4rem;
+.menu-theme-switch {
+  min-inline-size: 0;
+  margin: .45rem 0 0;
   padding: 0;
   border: 0;
-  background: transparent;
-  color: var(--color-ink);
-  font-size: .9rem;
-  text-align: start;
 }
-.menu-theme-button:hover { color: var(--color-accent); }
-.menu-theme-button .theme-toggle-row {
+.menu-theme-switch legend {
+  margin: 0 0 .38rem;
+  padding: 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: .64rem;
+  letter-spacing: .1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.menu-theme-track {
+  --switch-inset: .18rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 2.3rem;
+  padding: var(--switch-inset);
+  border: 1px solid var(--color-line);
+  border-radius: .6rem;
+  background: color-mix(in srgb, var(--color-soft) 64%, var(--color-panel));
+}
+.menu-theme-thumb {
+  position: absolute;
+  z-index: 0;
+  inset-block: var(--switch-inset);
+  left: var(--switch-inset);
+  width: calc((100% - 2 * var(--switch-inset)) / 3);
+  border-radius: .4rem;
+  background: var(--color-ink);
+  box-shadow: 0 4px 12px -8px rgb(20 18 15 / .65);
+  transition: translate .24s var(--ease-out);
+}
+.menu-theme-track[data-theme="system"] .menu-theme-thumb { translate: 100% 0; }
+.menu-theme-track[data-theme="dark"] .menu-theme-thumb { translate: 200% 0; }
+.menu-theme-option {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: .45rem;
+  justify-content: center;
+  gap: .22rem;
   min-width: 0;
+  min-height: 1.94rem;
+  padding: .2rem;
+  border-radius: .4rem;
+  color: var(--color-muted);
+  font-size: .69rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .18s;
 }
-.menu-theme-button .theme-toggle-row > svg { flex: none; width: 18px; height: 18px; }
+.menu-theme-option > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu-theme-option > svg { flex: none; }
+.menu-theme-option:has(input:checked) { color: var(--color-paper); }
+.menu-theme-option:not(:has(input:checked)):hover { color: var(--color-ink); }
+.menu-theme-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+.menu-theme-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .menu-language { display: grid; gap: .4rem; margin-top: .9rem; padding-top: 1rem; border-top: 1px solid var(--color-line); }
 .menu-language > p {
   display: flex;
@@ -500,7 +558,7 @@ dialog::backdrop {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu-strokes span, .pill-link, .eye-link-ring, .case-index-link > svg, .share-piece-caption > svg { transition-duration: 0s; }
+  .menu-strokes span, .pill-link, .eye-link-ring, .case-index-link > svg, .share-piece-caption > svg, .menu-theme-thumb { transition-duration: 0s; }
 }
 
 /* Shared homepage introduction */
@@ -798,11 +856,16 @@ dialog::backdrop {
 .closing { padding-block: clamp(4.5rem, 9vw, 8rem); border-top: 1px solid var(--color-line); }
 .closing-inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1.2fr) auto;
+  grid-template-columns: minmax(0, 1.2fr) auto;
   align-items: end;
-  gap: 1.5rem clamp(1.5rem, 4vw, 3rem);
+  gap: 1.5rem clamp(1.75rem, 4vw, 3rem);
 }
-.closing-icon { width: clamp(2.75rem, 4.5vw, 4rem); height: auto; }
+.closing-lead {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+.closing-icon { flex: none; width: clamp(2.75rem, 4.5vw, 4rem); height: auto; margin-block-start: .18em; }
 .closing .h2 { max-width: 18ch; font-size: clamp(2.4rem, 1.2rem + 4vw, 5rem); }
 .closing .hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; }
 
@@ -1357,6 +1420,8 @@ dialog::backdrop {
   .share-portfolio { display: flex; flex-direction: column; gap: 2.5rem; }
   .share-piece, .share-piece--secondary { width: 100%; margin-block-start: 0; }
   .closing-inner { grid-template-columns: minmax(0, 1fr); }
+  .closing-lead { gap: .85rem; }
+  .closing-icon { width: 2.4rem; }
   .closing .h2 { font-size: clamp(2.35rem, 11vw, 3.4rem); }
   .closing .hero-actions { justify-content: flex-start; }
   .page-hero { padding-block: 3.2rem 3.5rem; }
