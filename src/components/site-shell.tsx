@@ -75,8 +75,18 @@ function ThemeToggle({ labeled = false }: { labeled?: boolean }) {
 
   return (
     <button className={labeled ? 'menu-theme-button' : 'header-icon theme-toggle'} type="button" onClick={toggle}>
-      <span className="only-light"><Moon size={18} strokeWidth={1.65} aria-hidden="true" /><span className={labeled ? undefined : 'sr-only'}>{copy.nav.darkMode}</span></span>
-      <span className="only-dark"><Sun size={18} strokeWidth={1.65} aria-hidden="true" /><span className={labeled ? undefined : 'sr-only'}>{copy.nav.lightMode}</span></span>
+      <span className="only-light">
+        <span className="theme-toggle-row">
+          <Moon size={18} strokeWidth={1.65} aria-hidden="true" />
+          <span className={labeled ? undefined : 'sr-only'}>{copy.nav.darkMode}</span>
+        </span>
+      </span>
+      <span className="only-dark">
+        <span className="theme-toggle-row">
+          <Sun size={18} strokeWidth={1.65} aria-hidden="true" />
+          <span className={labeled ? undefined : 'sr-only'}>{copy.nav.lightMode}</span>
+        </span>
+      </span>
     </button>
   )
 }

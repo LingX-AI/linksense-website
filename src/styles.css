@@ -392,7 +392,13 @@ dialog::backdrop {
   text-align: start;
 }
 .menu-theme-button:hover { color: var(--color-accent); }
-.menu-theme-button .only-light svg, .menu-theme-button .only-dark svg { margin-inline-end: .45rem; vertical-align: -.18em; }
+.menu-theme-button .theme-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  min-width: 0;
+}
+.menu-theme-button .theme-toggle-row > svg { flex: none; width: 18px; height: 18px; }
 .menu-language { display: grid; gap: .4rem; margin-top: .9rem; padding-top: 1rem; border-top: 1px solid var(--color-line); }
 .menu-language > p {
   display: flex;
