@@ -4,7 +4,7 @@ import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
 import { hoverPreview, MediaLink, Poster, stopPreview } from './media'
 import { SiteLink } from './site-shell'
-import { EyeLink, GovernanceDetails } from './visuals'
+import { GovernanceDetails } from './visuals'
 
 function ChapterHead({ id, number, title, body }: {
   id: string
@@ -29,13 +29,10 @@ function HomeHero() {
   return (
     <section className="home-intro" aria-labelledby="home-title">
       <div className="container qclay-wrap">
-        <div className="home-intro-head">
-          <h1 className="home-intro-title" id="home-title">
-            <span>{home.titleOne}</span>{' '}
-            <span>{home.titleTwo}</span>
-          </h1>
-          <EyeLink href="#showreel" label={home.film} />
-        </div>
+        <h1 className="home-intro-title" id="home-title">
+          <span>{home.titleOne}</span>{' '}
+          <span>{home.titleTwo}</span>
+        </h1>
         <div className="home-intro-meta">
           <div className="home-intro-brief">
             <p className="home-facts">

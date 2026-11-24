@@ -64,10 +64,7 @@ try {
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(tagWith(html, 'h1', { id: 'home-title', class: 'home-intro-title' }), `Homepage narrative heading missing on ${path}`)
-        assert.ok(tagWith(html, 'a', { href: '#showreel' }), `Eye/index link to the film missing on ${path}`)
-        if (locale === 'en-US') {
-          assert.ok(tagWith(html, 'a', { class: 'eye-link', href: '#showreel', 'aria-label': 'Introducing LinkSense' }), `English eye/index link is not named for the film on ${path}`)
-        }
+        assert.ok(!tagWith(html, 'a', { href: '#showreel' }), `Homepage film index shortcut returned on ${path}`)
         assert.ok(html.includes('class="chapter-head"') && html.includes('class="chapter-number"'), `Numbered work passage missing on ${path}`)
         assert.ok(!html.includes('scenario-card'), `Repeated card grid returned on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)
