@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BookOpen, FileText, Server, Share2, ShieldCheck } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, BookOpen, FileText, Server, Share2 } from 'lucide-react'
 import { getUseCases } from '../content'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
@@ -13,7 +13,6 @@ export function CasesPage() {
         kind="cases"
         title={[cases.titleOne, cases.titleTwo]}
         intro={[cases.introOne, cases.introTwo]}
-        index={{ href: '#examples', label: cases.file }}
       >
         <a className="pill-link" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={17} aria-hidden="true" /></a>
       </Hero>
@@ -118,7 +117,6 @@ export function HostingPage() {
         kind="hosting"
         title={[hosting.titleOne, hosting.titleTwo]}
         intro={[hosting.introOne, hosting.introTwo]}
-        index={{ href: '#profiles', label: hosting.compare }}
       >
         <a className="pill-link" href={productLinks.github}>{hosting.source}<ArrowUpRight size={15} aria-hidden="true" /></a>
       </Hero>
@@ -158,7 +156,6 @@ export function HostingPage() {
       </section>
       <section className="boundary-section" id="boundaries" aria-labelledby="boundaries-title">
         <div className="container qclay-wrap boundary-spread">
-          <div className="boundary-aside" aria-hidden="true"><ShieldCheck size={72} strokeWidth={1.15} /></div>
           <div className="boundary-body">
             <h2 className="h2" id="boundaries-title">{hosting.boundaries}</h2>
             <p>{hosting.boundaryBody}</p>

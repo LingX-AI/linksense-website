@@ -204,10 +204,7 @@ function ClosingCta() {
   return (
     <section className="closing" aria-labelledby="closing-title">
       <div className="container qclay-wrap closing-inner">
-        <div className="closing-lead">
-          <img src="/brand/linksense-icon.svg" alt="" className="closing-icon" width="64" height="64" loading="lazy" />
-          <h2 className="h2" id="closing-title">{copy.footer.titleOne}<br />{copy.footer.titleTwo}</h2>
-        </div>
+        <h2 className="h2" id="closing-title">{copy.footer.titleOne}<br />{copy.footer.titleTwo}</h2>
         <div className="hero-actions">
           <a className="pill-link" href={productLinks.demo}>{copy.nav.demo}<ArrowUpRight size={17} aria-hidden="true" /></a>
           <a className="pill-link" href={productLinks.github}>{copy.nav.github}<ArrowUpRight size={15} aria-hidden="true" /></a>

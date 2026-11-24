@@ -61,16 +61,18 @@ try {
       assert.ok(tagWith(html, 'button', { 'aria-haspopup': 'dialog', 'aria-controls': 'site-menu' }), `Menu trigger missing on ${path}`)
       assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo CTA missing from shell on ${path}`)
       assert.ok(tagWith(html, 'img', { src: '/media/qclay-links.webp' }), `Menu artwork missing on ${path}`)
-      assert.ok(tagWith(html, 'fieldset', { class: 'menu-theme-switch' }), `Theme switch missing on ${path}`)
-      for (const theme of ['light', 'system', 'dark']) {
-        assert.ok(tagWith(html, 'input', { type: 'radio', name: 'color-scheme', value: theme }), `${theme} theme option missing on ${path}`)
-      }
+      assert.ok(tagWith(html, 'button', {
+        type: 'button', class: 'menu-theme-toggle', role: 'switch', 'aria-checked': 'false',
+      }), `Theme toggle missing on ${path}`)
+      assert.ok(!tagWith(html, 'input', { name: 'color-scheme' }), `Segmented theme options returned on ${path}`)
       assert.ok(!html.includes('menu-theme-button'), `Legacy theme button returned on ${path}`)
+      assert.ok(!html.includes('eye-link'), `Eye link returned on ${path}`)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(tagWith(html, 'h1', { id: 'home-title', class: 'home-intro-title' }), `Homepage narrative heading missing on ${path}`)
         assert.ok(!tagWith(html, 'a', { href: '#showreel' }), `Homepage film index shortcut returned on ${path}`)
-        assert.ok(tagWith(html, 'div', { class: 'closing-lead' }), `Closing icon and title group missing on ${path}`)
+        assert.ok(tagWith(html, 'h2', { id: 'closing-title', class: 'h2' }), `Closing heading missing on ${path}`)
+        assert.ok(!html.includes('closing-icon'), `Closing icon returned on ${path}`)
         assert.ok(html.includes('class="chapter-head"') && html.includes('class="chapter-number"'), `Numbered work passage missing on ${path}`)
         assert.ok(!html.includes('scenario-card'), `Repeated card grid returned on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)
@@ -94,7 +96,7 @@ try {
         for (const anchor of ['procurement', 'reporting', 'knowledge', 'capability-sharing']) {
           assert.ok(html.includes(`id="${anchor}"`), `Linked example is missing on ${path}`)
         }
-        assert.ok(tagWith(html, 'a', { href: '#examples' }), `Use case index target missing on ${path}`)
+        assert.ok(!tagWith(html, 'a', { href: '#examples' }), `Use case hero index shortcut returned on ${path}`)
         assert.ok(tagWith(html, 'section', { id: 'examples' }), `Use case examples section missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(tagWith(html, 'article', { id: anchor, 'data-case': anchor }), `Use case story ${anchor} missing on ${path}`)
@@ -111,7 +113,7 @@ try {
         assert.ok(layout.every((position, index) => position >= 0 && (!index || position > layout[index - 1])), `Use case story order is wrong on ${path}`)
       }
       if (suffix === '/self-hosted') {
-        assert.ok(tagWith(html, 'a', { href: '#profiles' }), `Hosting index target missing on ${path}`)
+        assert.ok(!tagWith(html, 'a', { href: '#profiles' }), `Hosting hero index shortcut returned on ${path}`)
         assert.ok(tagWith(html, 'section', { id: 'profiles' }), `Hosting profiles section missing on ${path}`)
         assert.ok(tagWith(html, 'article', { 'data-profile': 'core' }), `Core profile missing on ${path}`)
         assert.ok(tagWith(html, 'article', { 'data-profile': 'full' }), `Full profile missing on ${path}`)
@@ -125,6 +127,7 @@ try {
         assert.ok(html.includes('class="hosting-diagram"'), `Governance illustration missing on ${path}`)
         assert.ok(tagWith(html, 'section', { id: 'boundaries' }), `Boundary section missing on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'boundaries-title' }), `Boundary heading missing on ${path}`)
+        assert.ok(!html.includes('boundary-aside'), `Boundary circle returned on ${path}`)
         assert.ok(tagWith(html, 'a', { href: 'https://github.com/LingX-AI/LinkSense/security/policy' }), `Security link missing on ${path}`)
         assert.ok(tagWith(html, 'a', { href: 'https://github.com/LingX-AI/LinkSense' }), `Source link missing on ${path}`)
         const layout = ['profiles-title', 'governance-title', 'boundaries-title'].map((id) => idPosition(html, id))

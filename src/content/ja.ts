@@ -6,7 +6,7 @@ export const ja = {
     demo: 'LinkSense を試す', github: 'GitHub', menu: 'メニュー', close: '閉じる',
     language: '言語', primary: 'メインナビゲーション', footer: 'フッター',
     skip: '本文へ移動', contact: 'お問い合わせ',
-    demoShort: '試す', theme: 'テーマ', themeLight: 'ライト', themeSystem: 'システム', themeDark: 'ダーク',
+    demoShort: '試す', theme: 'テーマ', themeLight: 'ライト', themeDark: 'ダーク',
   },
   home: {
     description: 'LinkSense は、チーム向けのオープンソースのエージェント作業環境です。ファイルの作成やスキルの共有を、自組織のインフラで行えます。',

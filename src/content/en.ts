@@ -4,7 +4,7 @@ export const en = {
     demo: 'Try LinkSense', github: 'GitHub', menu: 'Menu', close: 'Close',
     language: 'Language', primary: 'Main navigation', footer: 'Footer',
     skip: 'Skip to content', contact: 'Get in touch',
-    demoShort: 'Try', theme: 'Theme', themeLight: 'Light', themeSystem: 'System', themeDark: 'Dark',
+    demoShort: 'Try', theme: 'Theme', themeLight: 'Light', themeDark: 'Dark',
   },
   home: {
     description: 'LinkSense is an open-source agent workspace. Deliver files, share skills with your team, and run it on your own infrastructure.',

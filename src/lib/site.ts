@@ -2,7 +2,7 @@ export const siteLocales = {
   en: { code: 'en-US', label: 'English' },
   zh: { code: 'zh-CN', label: '简体中文' },
   es: { code: 'es-ES', label: 'Español' },
-  pt: { code: 'pt-BR', label: 'Português (Brasil)' },
+  pt: { code: 'pt-BR', label: 'Português' },
   fr: { code: 'fr-FR', label: 'Français' },
   ja: { code: 'ja-JP', label: '日本語' },
 } as const

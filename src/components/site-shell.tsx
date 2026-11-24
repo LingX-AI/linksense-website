@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowUpRight, Globe2, Monitor, Moon, Sun, X } from 'lucide-react'
+import { ArrowUpRight, Globe2, Moon, Sun, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { ComponentProps, MouseEvent, ReactNode } from 'react'
 import {
   defaultLocale, docsPath, locales, pageNames, productLinks, siteLocales,
 } from '../lib/site'
 import type { SiteLocale, SitePage } from '../lib/site'
-import { colorSchemeContent, colorSchemeKey, themePreference, type ThemePreference } from '../lib/theme'
+import { colorSchemeContent, colorSchemeKey, themePreference } from '../lib/theme'
 import { useSite } from '../lib/use-site'
 import { ordinaryClick } from './media'
 
@@ -46,62 +46,64 @@ function Brand() {
 
 function ThemeSwitch() {
   const { copy } = useSite()
-  const [theme, setTheme] = useState<ThemePreference>('system')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
 
   useEffect(() => {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
     if (!meta) return
-    const syncFromMeta = () => setTheme(themePreference(meta.content))
+    const darkQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const syncFromMeta = () => {
+      const preference = themePreference(meta.content)
+      setTheme(preference === 'system' ? (darkQuery.matches ? 'dark' : 'light') : preference)
+    }
     syncFromMeta()
+    const syncSystemTheme = () => {
+      if (themePreference(meta.content) === 'system') setTheme(darkQuery.matches ? 'dark' : 'light')
+    }
+    darkQuery.addEventListener('change', syncSystemTheme)
     function handleStorage(event: StorageEvent) {
       if (meta && (event.key === colorSchemeKey || event.key === null)) {
         meta.content = colorSchemeContent(themePreference(event.newValue))
-        setTheme(themePreference(event.newValue))
+        syncFromMeta()
       }
     }
     window.addEventListener('storage', handleStorage)
-    return () => window.removeEventListener('storage', handleStorage)
+    return () => {
+      darkQuery.removeEventListener('change', syncSystemTheme)
+      window.removeEventListener('storage', handleStorage)
+    }
   }, [])
 
-  function selectTheme(next: ThemePreference) {
+  function selectTheme(next: 'light' | 'dark') {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')
     if (!meta) return
-    meta.content = colorSchemeContent(next)
+    meta.content = next
     setTheme(next)
     try {
-      if (next === 'system') localStorage.removeItem(colorSchemeKey)
-      else localStorage.setItem(colorSchemeKey, next)
+      localStorage.setItem(colorSchemeKey, next)
     } catch {
       return
     }
   }
 
-  const options: { value: ThemePreference; label: string; Icon: typeof Sun }[] = [
-    { value: 'light', label: copy.nav.themeLight, Icon: Sun },
-    { value: 'system', label: copy.nav.themeSystem, Icon: Monitor },
-    { value: 'dark', label: copy.nav.themeDark, Icon: Moon },
-  ]
-
   return (
-    <fieldset className="menu-theme-switch">
-      <legend>{copy.nav.theme}</legend>
-      <div className="menu-theme-track" data-theme={theme}>
-        <span className="menu-theme-thumb" aria-hidden="true" />
-        {options.map(({ value, label, Icon }) => (
-          <label className="menu-theme-option" key={value}>
-            <input
-              type="radio"
-              name="color-scheme"
-              value={value}
-              checked={theme === value}
-              onChange={() => selectTheme(value)}
-            />
-            <Icon size={14} strokeWidth={1.7} aria-hidden="true" />
-            <span>{label}</span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
+    <button
+      type="button"
+      className="menu-theme-toggle"
+      data-theme={theme}
+      role="switch"
+      aria-checked={theme === 'dark'}
+      aria-label={`${copy.nav.theme}: ${theme === 'dark' ? copy.nav.themeDark : copy.nav.themeLight}`}
+      onClick={() => selectTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      <span className="menu-theme-thumb" aria-hidden="true" />
+      <span className="menu-theme-icon menu-theme-icon--light" aria-hidden="true">
+        <Sun size={15} strokeWidth={1.8} fill="currentColor" />
+      </span>
+      <span className="menu-theme-icon menu-theme-icon--dark" aria-hidden="true">
+        <Moon size={15} strokeWidth={1.8} fill="currentColor" />
+      </span>
+    </button>
   )
 }
 
@@ -297,10 +299,10 @@ function Footer() {
           <nav className="footer-nav" aria-label={copy.nav.footer}>
             <SiteLink page="cases">{copy.nav.cases}</SiteLink>
             <SiteLink page="hosting">{copy.nav.hosting}</SiteLink>
-            <a href={docsPath(locale)}>{copy.nav.docs}</a>
-            <a href={productLinks.github}>{copy.nav.github}</a>
-            <a href={productLinks.community}>{copy.footer.community}</a>
-            <a href={productLinks.contact}>{copy.nav.contact}</a>
+            <a href={docsPath(locale)}>{copy.nav.docs}<ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={productLinks.github}>{copy.nav.github}<ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={productLinks.community}>{copy.footer.community}<ArrowUpRight size={13} aria-hidden="true" /></a>
+            <a href={productLinks.contact}>{copy.nav.contact}<ArrowUpRight size={13} aria-hidden="true" /></a>
           </nav>
           <div className="footer-languages">
             <p><Globe2 size={14} aria-hidden="true" />{copy.nav.language}</p>
@@ -309,7 +311,7 @@ function Footer() {
         </div>
         <div className="footer-base">
           <span>© {copy.footer.company}</span>
-          <a href={productLinks.license}>{copy.footer.license}</a>
+          <a href={productLinks.license}>{copy.footer.license}<ArrowUpRight size={11} aria-hidden="true" /></a>
         </div>
       </div>
     </footer>

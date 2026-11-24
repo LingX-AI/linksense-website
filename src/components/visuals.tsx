@@ -1,21 +1,11 @@
-import { ArrowUpRight, ClipboardCheck, Eye, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
+import { ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
-export function EyeLink({ href, label, className }: { href: string; label: string; className?: string }) {
-  return (
-    <a className={className ? `eye-link ${className}` : 'eye-link'} href={href} aria-label={label}>
-      <span className="eye-link-ring" aria-hidden="true"><Eye size={30} strokeWidth={1.35} /></span>
-      <span className="eye-link-caption">{label}</span>
-    </a>
-  )
-}
-
-export function Hero({ kind, title, intro, index, children }: {
+export function Hero({ kind, title, intro, children }: {
   kind: 'cases' | 'hosting'
   title: [string, string]
   intro: [string, string]
-  index?: { href: string; label: string }
   children?: ReactNode
 }) {
   return (
@@ -26,7 +16,6 @@ export function Hero({ kind, title, intro, index, children }: {
             <span>{title[0]}</span>{' '}
             <span>{title[1]}</span>
           </h1>
-          {index && <EyeLink href={index.href} label={index.label} />}
         </div>
         <div className="page-hero-meta">
           <p className="lead">{intro[0]} {intro[1]}</p>
