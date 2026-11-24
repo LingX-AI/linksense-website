@@ -55,7 +55,7 @@ try {
         compareBody: 'Core and Full are deployment profiles. Consult the deployment guides for host requirements and installation steps.',
         governance: 'Keep operations visible.',
         model: 'Choose your models',
-        modelBody: 'Connect supported hosted model APIs or compatible self-hosted endpoints.',
+        modelBody: 'Connect supported hosted model APIs or compatible endpoints on your own infrastructure.',
         boundaries: 'Understand the boundaries',
         boundaryBody: 'Tasks are isolated by user Worker, so tasks from the same user can access that user’s shared files. External models and integrations receive the data sent to them.',
         deployment: 'Deployment',
@@ -251,18 +251,22 @@ try {
       assert.ok(html.includes(`href="${docs}"`), `Documentation link missing on ${path}`)
       assert.ok(html.includes('name="description"'), path)
       assert.ok(html.includes('name="color-scheme" content="light dark"'), `System theme default missing on ${path}`)
+      if (locale === 'en-US') {
+        assert.ok(html.includes('Self Hosting'), `Self Hosting label missing on ${path}`)
+        assert.ok(!html.includes('Self-hosted') && !html.includes('self-hosting'), `Hyphenated self-hosting label returned on ${path}`)
+      }
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        assert.ok(html.includes('class="workbench-frame"'), `Workbench frame missing on ${path}`)
-        assert.equal(count(html, /class="workbench-panel(?:\s|")/g), 3, `Workbench panels incomplete on ${path}`)
-        assert.equal(count(html, /class="screenshot-placeholder"/g), 3, `Homepage screenshot placeholders incomplete on ${path}`)
-        assert.equal(count(html, new RegExp(detail.screenshot[0], 'g')), 3, `Localized screenshot labels missing on ${path}`)
-        for (const description of detail.screenshot.slice(1, 4)) assert.ok(html.includes(description), `Screenshot description missing on ${path}: ${description}`)
+        assert.ok(!html.includes('workbench-frame') && !html.includes('id="workspace"'), `Workspace workbench returned on ${path}`)
+        assert.equal(count(html, /class="screenshot-placeholder"/g), 2, `Homepage screenshot placeholders incomplete on ${path}`)
+        assert.equal(count(html, new RegExp(detail.screenshot[0], 'g')), 2, `Localized screenshot labels missing on ${path}`)
+        for (const description of detail.screenshot.slice(2, 4)) assert.ok(html.includes(description), `Screenshot description missing on ${path}: ${description}`)
+        assert.ok(!html.includes(detail.screenshot[1]), `Workspace screenshot description returned on ${path}`)
         for (const obsolete of ['workspace-result.webp', 'skills.webp', 'skills-preview.mp4', 'connections.webp', 'connections-preview.mp4']) {
           assert.ok(!html.includes(obsolete), `Obsolete homepage media ${obsolete} present on ${path}`)
         }
-        assert.match(html, /href="\/media\/product-demo\.mp4"/, `Workspace recording fallback missing on ${path}`)
+        assert.ok(!html.includes('/media/product-demo.mp4'), `Workspace recording fallback returned on ${path}`)
         assert.ok(html.includes('href="/media/linksense-intro-v6.mp4"') && html.includes('src="/media/reel.webp"'), `Introduction film fallback missing on ${path}`)
         assert.ok(!html.includes('src="/media/workspace-teaser.mp4"'), `Workspace recording shouldn't autoplay on ${path}`)
         const libraryDescriptions = [
@@ -274,12 +278,11 @@ try {
           assert.ok(openingTag(html, 'p', { id: descriptionId }), `Library body description missing on ${path}: ${descriptionId}`)
           assert.ok(openingTag(html, 'div', { id: mediaId, class: 'library-media' }), `Library media description missing on ${path}: ${mediaId}`)
         }
-        assert.ok(html.includes('id="deliverables-title"') && html.includes('aria-labelledby="deliverables-title"'), `Deliverables inspector name missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
-        const story = ['id="workspace"', 'id="team-title"', 'id="scenarios-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
-        assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage workbench-to-library order is wrong on ${path}`)
+        const story = ['id="team-title"', 'id="scenarios-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
+        assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
         assert.ok(html.includes(`href="${docs}deploy/core/"`) && html.includes(`href="${docs}deploy/full/"`), `Homepage deployment guides missing on ${path}`)
       }
       if (suffix === '/use-cases') {
@@ -361,7 +364,7 @@ try {
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; workbench, library order, catalogue artifacts, hosting docs, anchors, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; library order, catalogue artifacts, hosting docs, anchors, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed

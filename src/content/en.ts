@@ -1,6 +1,6 @@
 export const en = {
   nav: {
-    home: 'Home', cases: 'Use cases', hosting: 'Self-hosted', docs: 'Docs',
+    home: 'Home', cases: 'Use cases', hosting: 'Self Hosting', docs: 'Docs',
     demo: 'Try LinkSense', github: 'GitHub', menu: 'Menu', close: 'Close',
     language: 'Language', primary: 'Main navigation', footer: 'Footer',
     skip: 'Skip to content', contact: 'Get in touch',
@@ -34,7 +34,7 @@ export const en = {
     pauseBackground: 'Pause background', playBackground: 'Animate background',
     ownership: 'Keep control of where work runs.',
     ownershipBody: 'Run LinkSense on your servers or private cloud. Choose hosted or compatible local models, and manage access, usage and audit records.',
-    hostingLink: 'Explore self-hosting',
+    hostingLink: 'Explore Self Hosting',
   },
   cases: {
     description: 'See how teams can use LinkSense for procurement, recurring reports, and finding answers in shared knowledge.',
@@ -81,7 +81,7 @@ export const en = {
     coreDocs: 'Core deployment guide', fullDocs: 'Full deployment guide',
     linux: 'Linux or macOS with Docker', compareBody: 'Core and Full are deployment profiles. Consult the deployment guides for host requirements and installation steps.',
     governance: 'Keep operations visible.',
-    model: 'Choose your models', modelBody: 'Connect supported hosted model APIs or compatible self-hosted endpoints.',
+    model: 'Choose your models', modelBody: 'Connect supported hosted model APIs or compatible endpoints on your own infrastructure.',
     access: 'Share by permission', accessBody: 'Give users or groups access to specific shared resources without handing them the underlying credentials.',
     oversight: 'Manage use and access', oversightBody: 'Manage members, credentials, quotas, usage and audit records from the administration surface.',
     boundaries: 'Understand the boundaries',

@@ -1,22 +1,15 @@
 import {
-  ArrowRight, ArrowUpRight, BookOpen, Boxes, ClipboardList, FileSpreadsheet, FileText, Files,
-  Globe2, Pause, Play, Scale, Server, Share2, Star, Terminal,
+  ArrowRight, ArrowUpRight, BookOpen, Boxes, ClipboardList,
+  Globe2, Play, Scale, Server, Share2, Star,
 } from 'lucide-react'
-import { useRef, useState } from 'react'
 import { getDeploymentProfiles, getUseCases } from '../content'
-import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
-import GradientWaves from './GradientWaves'
 import { MediaLink } from './media'
 import { SiteLink } from './site-shell'
 import { GovernanceDetails, ScreenshotPlaceholder } from './visuals'
 
 const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
-
-const workbenchPanelMotion: readonly MotionAccentStep[] = [
-  { selector: '.workbench-panel', from: 'translateY(9px)', duration: 0.34, stagger: 0.06 },
-]
 
 function HomeIntro() {
   const { copy } = useSite()
@@ -39,9 +32,6 @@ function HomeIntro() {
             <a className="btn btn--accent" href={productLinks.demo}>
               <Globe2 size={16} aria-hidden="true" />{nav.demo}<ArrowUpRight size={14} aria-hidden="true" />
             </a>
-            <a className="btn btn--secondary" href="#workspace">
-              {home.scroll}<ArrowRight size={15} aria-hidden="true" />
-            </a>
           </div>
         </div>
         <div className="home-intro-note">
@@ -51,138 +41,6 @@ function HomeIntro() {
             {home.hostingLink}<ArrowRight size={14} aria-hidden="true" />
           </SiteLink>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function Workbench() {
-  const { copy } = useSite()
-  const { home, cases } = copy
-  const [paused, setPaused] = useState(false)
-  const stackRef = useRef<HTMLDivElement>(null)
-  const presets = getUseCases(cases)
-
-  useMotionAccent(stackRef, workbenchPanelMotion)
-
-  return (
-    <section className="container workbench-section" id="workspace" aria-labelledby="workspace-title">
-      <div className="workbench-frame">
-        <div className="workbench-bar">
-          <span className="window-dots" aria-hidden="true"><i /><i /><i /></span>
-          <div className="workbench-identity">
-            <img src="/brand/linksense-icon.svg" alt="" width="17" height="17" />
-            <h2 id="workspace-title">{home.overview} {home.overviewResult}</h2>
-          </div>
-          <div className="workbench-bar-meta">
-            <span>{home.exampleTask}</span>
-            <span className="workbench-bar-case">{cases.teams}</span>
-          </div>
-          <button
-            className="workbench-pause"
-            type="button"
-            aria-label={paused ? home.playBackground : home.pauseBackground}
-            onClick={() => setPaused((current) => !current)}
-          >
-            {paused ? <Play size={13} aria-hidden="true" /> : <Pause size={13} aria-hidden="true" />}
-            <span>{paused ? home.playBackground : home.pauseBackground}</span>
-          </button>
-        </div>
-        <div className="workbench-grid">
-          <div className="workbench-editor">
-            <div className="workbench-editor-head">
-              <span>{home.work}</span>
-              <span className="workbench-editor-case">{cases.procurement}</span>
-            </div>
-            <div className="workbench-screen">
-              <ScreenshotPlaceholder>{copy.screenshot.workspace}</ScreenshotPlaceholder>
-            </div>
-            <div className="workbench-editor-foot">
-              <MediaLink source="/media/product-demo.mp4" poster="/media/workspace.webp" title={home.recording}
-                className="workbench-play">
-                <Play size={13} fill="currentColor" aria-hidden="true" />
-                <span>{home.recording}</span>
-                <ArrowUpRight size={13} aria-hidden="true" />
-              </MediaLink>
-              <p>{home.overviewBody}</p>
-            </div>
-          </div>
-          <aside className="workbench-aside" aria-label={home.exampleTask}>
-            <div className="workbench-waves" aria-hidden="true">
-              <GradientWaves
-                horizonColor="#603ad2" waveColor="#bd88fa" crestColor="#f1d6ff"
-                speed={0.26} amplitude={2.75} swell={34} tilt={59} lightAngle={116}
-                sheen={0.35} grain={0.12} quality="low" dpr={1} intro={false}
-                mouseInteraction={!paused} parallaxStrength={0.3} mouseStrength={0.35}
-                swellOnClick={false} paused={paused}
-              />
-            </div>
-            <div className="workbench-stack" ref={stackRef}>
-              <section className="workbench-panel workbench-task-panel" aria-labelledby="workbench-task-title">
-                <div className="panel-bar">
-                  <Terminal size={13} aria-hidden="true" />
-                  <span>{home.exampleTask}</span>
-                  <span className="panel-index">01</span>
-                </div>
-                <h3 id="workbench-task-title">{cases.procurement}</h3>
-                <p>{home.exampleInput}</p>
-                <SiteLink page="cases" hash="procurement" className="panel-link">
-                  {home.workflowLink}<ArrowRight size={14} aria-hidden="true" />
-                </SiteLink>
-              </section>
-              <section className="workbench-panel" id="deliverables" aria-labelledby="deliverables-title">
-                <div className="panel-bar">
-                  <Files size={13} aria-hidden="true" />
-                  <span id="deliverables-title">{home.example}</span>
-                  <span className="panel-index">02</span>
-                </div>
-                <ul className="artifact-list" aria-labelledby="deliverables-title">
-                  <li>
-                    <SiteLink page="cases" hash="procurement">
-                      <FileSpreadsheet size={15} aria-hidden="true" />
-                      <span><strong>{home.spreadsheet}</strong><small>XLSX · {cases.file}</small></span>
-                      <ArrowUpRight size={13} aria-hidden="true" />
-                    </SiteLink>
-                  </li>
-                  <li>
-                    <SiteLink page="cases" hash="procurement">
-                      <FileText size={15} aria-hidden="true" />
-                      <span><strong>{home.report}</strong><small>DOCX · {cases.file}</small></span>
-                      <ArrowUpRight size={13} aria-hidden="true" />
-                    </SiteLink>
-                  </li>
-                </ul>
-              </section>
-              <section className="workbench-panel workbench-presets" aria-labelledby="presets-title">
-                <div className="panel-bar">
-                  <Boxes size={13} aria-hidden="true" />
-                  <span id="presets-title">{home.scenarios}</span>
-                  <span className="panel-index">03</span>
-                </div>
-                <ul className="preset-list">
-                  {presets.map((preset, index) => (
-                    <li key={preset.id}>
-                      <SiteLink page="cases" hash={preset.id}>
-                        <span className="preset-index">{String(index + 1).padStart(2, '0')}</span>
-                        <span>{preset.title}</span>
-                        <ArrowUpRight size={12} aria-hidden="true" />
-                      </SiteLink>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
-          </aside>
-        </div>
-      </div>
-      <div className="workbench-caption">
-        <p>{home.overviewBody}</p>
-        <ul className="capability-links" aria-label={copy.nav.primary}>
-          <li><a href="#workspace"><Terminal size={14} aria-hidden="true" />{home.work}</a></li>
-          <li><a href="#deliverables"><FileSpreadsheet size={14} aria-hidden="true" />{home.files}</a></li>
-          <li><a href="#team-title"><Share2 size={14} aria-hidden="true" />{home.share}</a></li>
-          <li><SiteLink page="hosting"><Server size={14} aria-hidden="true" />{copy.nav.hosting}</SiteLink></li>
-        </ul>
       </div>
     </section>
   )
@@ -343,7 +201,6 @@ export function HomePage() {
   return (
     <>
       <HomeIntro />
-      <Workbench />
       <CapabilityLibrary />
       <UseCaseIndex />
       <FilmSection />
