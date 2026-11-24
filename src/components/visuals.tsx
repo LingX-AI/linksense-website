@@ -1,5 +1,5 @@
 import {
-  ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow,
+  ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, Image, KeyRound, Layers3, Network, Server, Workflow,
 } from 'lucide-react'
 import { useRef, type ReactNode } from 'react'
 import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
@@ -9,6 +9,20 @@ const deliverableMotion: readonly MotionAccentStep[] = [
   { selector: '.sheet-spreadsheet', from: 'translate(10px, 6px)', duration: 0.4 },
   { selector: '.sheet-report', from: 'translate(-11px, -6px)', duration: 0.44, delay: 0.06 },
 ]
+
+export function ScreenshotPlaceholder({ children }: { children: ReactNode }) {
+  const { copy } = useSite()
+
+  return (
+    <div className="screenshot-placeholder">
+      <Image size={18} strokeWidth={1.6} aria-hidden="true" />
+      <div>
+        <p>{copy.screenshot.eyebrow}</p>
+        <span>{children}</span>
+      </div>
+    </div>
+  )
+}
 
 export function PageIntro({ kind, title, intro, source, children }: {
   kind: 'cases' | 'hosting'

@@ -8,9 +8,9 @@ import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
 import GradientWaves from './GradientWaves'
-import { hoverPreview, MediaLink, Poster, stopPreview } from './media'
+import { MediaLink } from './media'
 import { SiteLink } from './site-shell'
-import { GovernanceDetails } from './visuals'
+import { GovernanceDetails, ScreenshotPlaceholder } from './visuals'
 
 const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
 
@@ -95,7 +95,7 @@ function Workbench() {
               <span className="workbench-editor-case">{cases.procurement}</span>
             </div>
             <div className="workbench-screen">
-              <Poster name="workspace-result" alt={home.workspaceAlt} priority />
+              <ScreenshotPlaceholder>{copy.screenshot.workspace}</ScreenshotPlaceholder>
             </div>
             <div className="workbench-editor-foot">
               <MediaLink source="/media/product-demo.mp4" poster="/media/workspace.webp" title={home.recording}
@@ -204,8 +204,8 @@ function CapabilityLibrary() {
             page="cases"
             hash="capability-sharing"
             className="library-card library-card--lead"
-            onPointerEnter={hoverPreview}
-            onPointerLeave={stopPreview}
+            aria-label={home.share}
+            aria-describedby="library-share-description library-share-media"
           >
             <div className="library-card-head">
               <span><Share2 size={14} aria-hidden="true" />{home.share}</span>
@@ -213,17 +213,17 @@ function CapabilityLibrary() {
             </div>
             <div className="library-card-copy">
               <h3>{home.share}</h3>
-              <p>{home.shareBody}</p>
+              <p id="library-share-description">{home.shareBody}</p>
             </div>
-            <div className="library-media">
-              <Poster name="skills" alt={home.skillsAlt} preview="skills-preview" />
+            <div className="library-media" id="library-share-media">
+              <ScreenshotPlaceholder>{copy.screenshot.skills}</ScreenshotPlaceholder>
             </div>
           </SiteLink>
           <a
             className="library-card"
             href={docsPath(locale, 'user-guide/mcp/connect-and-manage/')}
-            onPointerEnter={hoverPreview}
-            onPointerLeave={stopPreview}
+            aria-label={home.connect}
+            aria-describedby="library-connect-description library-connect-media"
           >
             <div className="library-card-head">
               <span><Boxes size={14} aria-hidden="true" />{home.connect}</span>
@@ -231,10 +231,10 @@ function CapabilityLibrary() {
             </div>
             <div className="library-card-copy">
               <h3>{home.connect}</h3>
-              <p>{home.connectBody}</p>
+              <p id="library-connect-description">{home.connectBody}</p>
             </div>
-            <div className="library-media">
-              <Poster name="connections" alt={home.connectionsAlt} preview="connections-preview" />
+            <div className="library-media" id="library-connect-media">
+              <ScreenshotPlaceholder>{copy.screenshot.connections}</ScreenshotPlaceholder>
             </div>
           </a>
         </div>

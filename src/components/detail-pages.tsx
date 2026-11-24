@@ -6,7 +6,7 @@ import { getDeploymentProfiles, getUseCases } from '../content'
 import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
-import { Deliverables, GovernanceDetails, PageIntro } from './visuals'
+import { Deliverables, GovernanceDetails, PageIntro, ScreenshotPlaceholder } from './visuals'
 
 const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
 
@@ -142,7 +142,7 @@ function SharingSection() {
             <img src="/brand/linksense-icon.svg" alt="" width="16" height="16" />
             <span>{copy.home.share}</span>
           </div>
-          <img src="/media/team-app.webp" alt={cases.appAlt} width="1152" height="548" loading="lazy" decoding="async" />
+          <ScreenshotPlaceholder>{copy.screenshot.sharing}</ScreenshotPlaceholder>
         </div>
       </div>
     </section>

@@ -27,8 +27,12 @@ try {
 
   const request = (path) => fetch(`${origin}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
   const count = (html, pattern) => (html.match(pattern) ?? []).length
+  const openingTag = (html, name, attributes) => (html.match(new RegExp(`<${name}\\b[^>]*>`, 'g')) ?? []).find((tag) => (
+    Object.entries(attributes).every(([attribute, value]) => tag.includes(`${attribute}="${value}"`))
+  ))
   const detailCopy = {
     en: {
+      screenshot: ['Suggested screenshot', 'Completed supplier comparison with the generated spreadsheet and decision brief.', 'A reusable Skill with its instructions visible.', 'Connector details showing its connection status.', 'App sharing settings showing access for a user group.'],
       cases: {
         note: 'Illustrative workflows using example data.',
         audiences: ['Procurement', 'Operations', 'Team enablement'],
@@ -61,6 +65,7 @@ try {
       },
     },
     zh: {
+      screenshot: ['建议截图', '已完成的供应商比价，以及生成的电子表格和决策简报。', '显示具体说明的可复用技能。', '显示连接状态的连接器详情。', '显示用户组访问权限的应用共享设置。'],
       cases: {
         note: '以下流程使用示例数据展示。',
         audiences: ['采购', '运营', '团队知识'],
@@ -93,6 +98,7 @@ try {
       },
     },
     es: {
+      screenshot: ['Captura sugerida', 'Comparación de proveedores completada con la hoja de cálculo y el informe de decisión generados.', 'Una habilidad reutilizable con sus instrucciones visibles.', 'Detalles de un conector que muestran su estado de conexión.', 'Ajustes para compartir una aplicación que muestran el acceso de un grupo de usuarios.'],
       cases: {
         note: 'Procesos ilustrativos con datos de ejemplo.',
         audiences: ['Compras', 'Operaciones', 'Conocimiento del equipo'],
@@ -125,6 +131,7 @@ try {
       },
     },
     pt: {
+      screenshot: ['Captura sugerida', 'Comparação de fornecedores concluída com a planilha e o resumo de decisão gerados.', 'Uma habilidade reutilizável com as instruções visíveis.', 'Detalhes de um conector mostrando seu status de conexão.', 'Configurações de compartilhamento do aplicativo mostrando o acesso de um grupo de usuários.'],
       cases: {
         note: 'Processos ilustrativos com dados de exemplo.',
         audiences: ['Compras', 'Operações', 'Conhecimento da equipe'],
@@ -157,6 +164,7 @@ try {
       },
     },
     fr: {
+      screenshot: ['Capture suggérée', 'Comparatif fournisseurs terminé, avec le tableur et la note de décision générés.', 'Une compétence réutilisable avec ses instructions visibles.', 'Détails d’un connecteur indiquant son état de connexion.', 'Paramètres de partage d’une application montrant l’accès d’un groupe d’utilisateurs.'],
       cases: {
         note: 'Méthodes présentées avec des données d’exemple.',
         audiences: ['Achats', 'Opérations', 'Connaissances de l’équipe'],
@@ -189,6 +197,7 @@ try {
       },
     },
     ja: {
+      screenshot: ['推奨スクリーンショット', '完了した仕入先比較と、生成されたスプレッドシートおよび判断用の要約。', '手順が表示された再利用可能なスキル。', '接続状態が表示されたコネクタの詳細。', 'ユーザーグループのアクセス権を示すアプリ共有設定。'],
       cases: {
         note: 'サンプルデータを用いた活用のイメージです。',
         audiences: ['調達', '業務運営', 'チームのナレッジ'],
@@ -247,9 +256,24 @@ try {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(html.includes('class="workbench-frame"'), `Workbench frame missing on ${path}`)
         assert.equal(count(html, /class="workbench-panel(?:\s|")/g), 3, `Workbench panels incomplete on ${path}`)
-        assert.match(html, /class="workbench-frame"[\s\S]+?<img\b(?=[^>]*src="\/media\/workspace-result\.webp")(?=[^>]*fetchPriority="high")[^>]*>/i, `Workspace still isn't prioritized in the workbench on ${path}`)
+        assert.equal(count(html, /class="screenshot-placeholder"/g), 3, `Homepage screenshot placeholders incomplete on ${path}`)
+        assert.equal(count(html, new RegExp(detail.screenshot[0], 'g')), 3, `Localized screenshot labels missing on ${path}`)
+        for (const description of detail.screenshot.slice(1, 4)) assert.ok(html.includes(description), `Screenshot description missing on ${path}: ${description}`)
+        for (const obsolete of ['workspace-result.webp', 'skills.webp', 'skills-preview.mp4', 'connections.webp', 'connections-preview.mp4']) {
+          assert.ok(!html.includes(obsolete), `Obsolete homepage media ${obsolete} present on ${path}`)
+        }
         assert.match(html, /href="\/media\/product-demo\.mp4"/, `Workspace recording fallback missing on ${path}`)
+        assert.ok(html.includes('href="/media/linksense-intro-v6.mp4"') && html.includes('src="/media/reel.webp"'), `Introduction film fallback missing on ${path}`)
         assert.ok(!html.includes('src="/media/workspace-teaser.mp4"'), `Workspace recording shouldn't autoplay on ${path}`)
+        const libraryDescriptions = [
+          [`${prefix}/use-cases#capability-sharing`, 'library-share-description library-share-media', 'library-share-description', 'library-share-media'],
+          [`${docs}user-guide/mcp/connect-and-manage/`, 'library-connect-description library-connect-media', 'library-connect-description', 'library-connect-media'],
+        ]
+        for (const [href, references, descriptionId, mediaId] of libraryDescriptions) {
+          assert.ok(openingTag(html, 'a', { href, 'aria-describedby': references }), `Library link descriptions missing on ${path}: ${href}`)
+          assert.ok(openingTag(html, 'p', { id: descriptionId }), `Library body description missing on ${path}: ${descriptionId}`)
+          assert.ok(openingTag(html, 'div', { id: mediaId, class: 'library-media' }), `Library media description missing on ${path}: ${mediaId}`)
+        }
         assert.ok(html.includes('id="deliverables-title"') && html.includes('aria-labelledby="deliverables-title"'), `Deliverables inspector name missing on ${path}`)
         for (const anchor of ['procurement', 'reporting', 'knowledge']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
@@ -285,7 +309,10 @@ try {
         assert.ok(html.includes('class="deliverable-art"'), `Deliverable sheet artifact missing on ${path}`)
         assert.equal(count(html, /class="document-sheet /g), 2, `Deliverable layers incomplete on ${path}`)
         assert.ok(html.includes('class="sharing-panel"'), `Sharing panel missing on ${path}`)
-        assert.ok(html.includes('src="/media/team-app.webp"'), `Sharing product media missing on ${path}`)
+        assert.equal(count(html, /class="screenshot-placeholder"/g), 1, `Use-case screenshot placeholder incomplete on ${path}`)
+        assert.ok(html.includes(detail.screenshot[0]) && html.includes(detail.screenshot[4]), `Localized sharing screenshot copy missing on ${path}`)
+        assert.ok(!html.includes('team-app.webp'), `Obsolete sharing still present on ${path}`)
+        assert.ok(!html.includes('workspace-result.webp') && !html.includes('skills-preview.mp4') && !html.includes('connections-preview.mp4'), `Homepage media leaked into ${path}`)
         assert.ok(html.includes('href="https://explore.linksense.org/"'), `Demo target missing on ${path}`)
         assert.ok(!html.includes('class="docs-layout"'), `Use-case layout contains the hosting workbench on ${path}`)
       }

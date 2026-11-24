@@ -1,65 +1,10 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import type { MouseEvent, PointerEvent, ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import { useSite } from '../lib/use-site'
 
 export function ordinaryClick(event: MouseEvent<HTMLAnchorElement>): boolean {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey
-}
-
-export function hoverPreview(event: PointerEvent<HTMLElement>) {
-  if (event.pointerType !== 'mouse' || !window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) return
-  const target = event.currentTarget
-  const clip = target.querySelector('video')
-  if (clip) void clip.play().then(() => {
-    if (!target.isConnected || !target.matches(':hover') || document.hidden) clip.pause()
-  }).catch(() => { /* The poster remains when a preview cannot play. */ })
-}
-
-export function stopPreview(event: PointerEvent<HTMLElement>) {
-  event.currentTarget.querySelector('video')?.pause()
-}
-
-export function Poster({ name, alt, preview, priority = false }: {
-  name: string
-  alt: string
-  preview?: string
-  priority?: boolean
-}) {
-  const clip = useRef<HTMLVideoElement>(null)
-  useEffect(() => {
-    const video = clip.current
-    if (!video) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
-    let visible = false
-    function sync() {
-      if (!visible || reduced.matches || document.hidden) video?.pause()
-    }
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = !!entry?.isIntersecting
-      sync()
-    })
-    observer.observe(video)
-    reduced.addEventListener('change', sync)
-    document.addEventListener('visibilitychange', sync)
-    return () => {
-      observer.disconnect()
-      reduced.removeEventListener('change', sync)
-      document.removeEventListener('visibilitychange', sync)
-      video.pause()
-    }
-  }, [])
-  return (
-    <div className="poster-stack">
-      <img src={`/media/${name}.webp`} alt={alt} className="poster-still" width="1152" height="548"
-        loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : undefined} decoding="async" />
-      {preview && <video ref={clip} aria-hidden="true" tabIndex={-1} src={`/media/${preview}.mp4`}
-        width="1152" height="548" preload="none" muted loop playsInline className="poster-preview"
-        onPlaying={({ currentTarget }) => { currentTarget.dataset.playing = '' }}
-        onPause={({ currentTarget }) => { delete currentTarget.dataset.playing }}
-        onError={({ currentTarget }) => { delete currentTarget.dataset.playing }} />}
-    </div>
-  )
 }
 
 export function MediaLink({ source, poster, title, label = title, subtitle, className, children }: {

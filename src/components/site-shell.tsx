@@ -20,7 +20,7 @@ export function SiteLink({ page, language, hash, children, ...props }: {
   language?: SiteLocale
   hash?: string
   children: ReactNode
-} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'aria-label'>) {
+} & Pick<ComponentProps<'a'>, 'className' | 'onClick' | 'onFocus' | 'onPointerEnter' | 'onPointerLeave' | 'aria-label' | 'aria-describedby'>) {
   const { locale } = useSite()
   const lang = language ?? locale
   return (
