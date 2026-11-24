@@ -12,7 +12,6 @@ export const pt = {
     description: 'LinkSense é um ambiente de trabalho com agentes e código aberto. Entregue arquivos, compartilhe habilidades e rode na sua infraestrutura.',
     titleOne: 'Agentes para sua equipe.', titleTwo: 'Na sua infraestrutura.',
     introOne: 'O LinkSense é a alternativa de código aberto ao WorkBuddy e ao ChatGPT Enterprise.',
-    introTwo: 'Execute tarefas, compartilhe conhecimentos, habilidades, plugins e aplicativos, e conecte suas ferramentas sem distribuir credenciais.',
     scroll: 'Explorar o ambiente de trabalho',
     overview: 'De uma solicitação', overviewResult: 'a uma entrega.',
     overviewBody: 'Passe ao LinkSense a tarefa e os arquivos ou ferramentas de que precisa. Acompanhe o trabalho, revise as entregas e compartilhe os métodos que vale a pena reaproveitar.',

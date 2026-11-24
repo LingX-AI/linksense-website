@@ -26,23 +26,28 @@ try {
   }).finally(() => clearTimeout(timer))
 
   const request = (path) => fetch(`${origin}${path}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
-  // Read the copy from the rendered <h1>, independent of <title> metadata,
-  // line-mask markup and attribute order.
-  const renderedHeading = (html) => (html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? '')
+  const renderedText = (markup) => markup
     .replace(/<[^>]+>/g, ' ')
     .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&#39;/g, "'")
     .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
     .replace(/\s+/g, ' ')
     .trim()
+  // Read the copy from the rendered <h1>, independent of <title> metadata,
+  // line-mask markup and attribute order.
+  const renderedHeading = (html) => renderedText(html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? '')
+  const renderedHero = (html) => html.match(/<section class="exo-home-hero"[\s\S]*?<\/section>/)?.[0] ?? ''
+  const renderedIntro = (hero) => hero.match(/<p class="exo-hero-intro">([\s\S]*?)<\/p>/)?.[1] ?? ''
+  const renderedActions = (hero) => hero.match(/<div class="exo-hero-actions">([\s\S]*?)<\/div>/)?.[1] ?? ''
+  const maskCount = (markup) => (markup.match(/<span class="exo-mask">/g) ?? []).length
   const locales = [
-    ['', 'en-US', 'AI agents for teams.', 'On your infrastructure.', 'a real task.', 'on your terms.'],
-    ['/zh', 'zh-CN', '团队 Agent 工作台', '部署和权限，你做主', '具体的事开始。', '由你决定。'],
-    ['/es', 'es-ES', 'Agentes para tu equipo.', 'En tu infraestructura.', 'una tarea real.', 'a tu manera.'],
-    ['/pt', 'pt-BR', 'Agentes para sua equipe.', 'Na sua infraestrutura.', 'uma tarefa real.', 'seu jeito.'],
-    ['/fr', 'fr-FR', 'Des agents pour l’équipe.', 'Sur votre infrastructure.', 'une tâche réelle.', 'à votre façon.'],
-    ['/ja', 'ja-JP', 'チームのための AI エージェント。', '自社の環境で運用。', '始めよう。', '自分たちで決める。'],
+    ['', 'en-US', 'AI agents for teams.', 'On your infrastructure.', 'LinkSense is the open‑source alternative to WorkBuddy and ChatGPT Enterprise.', 'a real task.', 'on your terms.'],
+    ['/zh', 'zh-CN', '团队 Agent 工作台', '部署和权限，你做主', 'LinkSense 是 WorkBuddy 和 ChatGPT Enterprise 的开源替代方案。', '具体的事开始。', '由你决定。'],
+    ['/es', 'es-ES', 'Agentes para tu equipo.', 'En tu infraestructura.', 'LinkSense es la alternativa de código abierto a WorkBuddy y ChatGPT Enterprise.', 'una tarea real.', 'a tu manera.'],
+    ['/pt', 'pt-BR', 'Agentes para sua equipe.', 'Na sua infraestrutura.', 'O LinkSense é a alternativa de código aberto ao WorkBuddy e ao ChatGPT Enterprise.', 'uma tarefa real.', 'seu jeito.'],
+    ['/fr', 'fr-FR', 'Des agents pour l’équipe.', 'Sur votre infrastructure.', 'LinkSense est l’alternative open source à WorkBuddy et ChatGPT Enterprise.', 'une tâche réelle.', 'à votre façon.'],
+    ['/ja', 'ja-JP', 'チームのための AI エージェント。', '自社の環境で運用。', 'LinkSense は、WorkBuddy や ChatGPT Enterprise に代わるオープンソースの作業環境です。', '始めよう。', '自分たちで決める。'],
   ]
-  for (const [prefix, locale, homeOne, homeTwo, cases, hosting] of locales) {
+  for (const [prefix, locale, homeOne, homeTwo, introOne, cases, hosting] of locales) {
     const docs = locale === 'en-US' ? 'https://linksense.org/doc/' : `https://linksense.org/doc/${locale}/`
     for (const [suffix, heading] of [['', homeTwo], ['/use-cases', cases], ['/self-hosted', hosting]]) {
       const path = (prefix + suffix) || '/'
@@ -62,8 +67,21 @@ try {
       assert.ok(html.includes('linksense-intro-seen'), `First-visit session boot script missing on ${path}`)
       if (!process.env.VITE_SITE_URL) assert.ok(html.includes('noindex, nofollow'), path)
       if (!suffix) {
+        const hero = renderedHero(html)
+        const heroTitle = hero.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1] ?? ''
+        const intro = renderedIntro(hero)
+        const actions = renderedActions(hero)
         assert.ok(h1.includes(homeOne) && h1.includes(homeTwo), `Localized hero heading missing on ${path}`)
-        assert.ok(html.includes('class="exo-home-hero"'), `Hero surface missing on ${path}`)
+        assert.ok(hero.startsWith('<section class="exo-home-hero"'), `Hero surface missing on ${path}`)
+        assert.equal(maskCount(heroTitle), 2, `Hero title line mask count is wrong on ${path}`)
+        assert.equal(maskCount(intro), 1, `Hero intro line mask count is wrong on ${path}`)
+        assert.equal(renderedText(intro), introOne, `Localized hero intro missing on ${path}`)
+        const heroOrder = ['exo-hero-title', 'exo-hero-support', 'exo-hero-intro', 'exo-hero-actions', 'exo-hero-note']
+          .map((name) => hero.indexOf(name))
+        assert.ok(heroOrder.every((position, index) => position >= 0 && (!index || position > heroOrder[index - 1])), `Hero copy order is wrong on ${path}`)
+        for (const href of ['https://explore.linksense.org/', `${prefix}/self-hosted`, '#workspace']) {
+          assert.ok(actions.includes(`href="${href}"`), `Hero action ${href} missing on ${path}`)
+        }
         assert.ok(html.includes('class="exo-mask-in"'), `Masked hero line missing on ${path}`)
         assert.ok(html.includes('src="/media/exoape-hero.webp"'), `Hero art reference missing on ${path}`)
         assert.ok(/class="exo-hero-img"[^>]*width="1620"[^>]*height="1000"/.test(html), `Hero art dimensions missing on ${path}`)

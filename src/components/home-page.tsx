@@ -27,8 +27,7 @@ function HomeHero() {
           </h1>
           <div className="exo-hero-support">
             <p className="exo-hero-intro">
-              <span className="exo-mask"><span className="exo-mask-in">{home.introOne}{' '}</span></span>
-              <span className="exo-mask"><span className="exo-mask-in">{home.introTwo}</span></span>
+              <span className="exo-mask"><span className="exo-mask-in">{home.introOne}</span></span>
             </p>
             <div className="exo-hero-actions">
               <a className="exo-hero-link" href={productLinks.demo}>
