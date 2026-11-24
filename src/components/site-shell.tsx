@@ -540,9 +540,12 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
               <a href={productLinks.contact} onClick={closeForExternal}>{copy.nav.contact} ↗</a>
             </nav>
             <div className="exo-menu-languages">
-              <Globe2 size={15} aria-hidden="true" />
-              <Languages onSelect={selectLanguage} />
+              <p className="exo-menu-languages-label">
+                <Globe2 size={15} aria-hidden="true" />
+                <span>{copy.nav.language}</span>
+              </p>
               <ThemeToggle className="exo-theme-toggle" />
+              <Languages onSelect={selectLanguage} />
             </div>
           </div>
         </div>
