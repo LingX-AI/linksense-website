@@ -58,7 +58,7 @@ function FilmSection() {
       <div className="container qclay-wrap">
         <MediaLink source="/media/linksense-intro-v6.mp4" poster="/media/reel.webp" title={home.film} label={home.play}
           subtitle={home.filmNote} className="film-link">
-          <img src="/media/qclay-reel.svg" alt="" width="1440" height="810" fetchPriority="high" decoding="async" />
+          <img src="/media/qclay-links.webp" alt="" width="1600" height="900" fetchPriority="high" decoding="async" />
           <span className="film-pill" aria-hidden="true"><Play size={20} fill="currentColor" /></span>
         </MediaLink>
         <div className="reel-caption">

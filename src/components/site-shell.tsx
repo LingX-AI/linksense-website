@@ -111,12 +111,11 @@ function Languages({ onSelect }: { onSelect?: (event: MouseEvent<HTMLAnchorEleme
   )
 }
 
-function MenuArtwork({ page }: { page: SitePage }) {
+function MenuArtwork() {
   const { copy } = useSite()
-  const source = page === 'hosting' ? '/media/menu-self-hosted.webp' : '/media/menu-use-cases.webp'
   return (
     <figure className="menu-artwork">
-      <img src={source} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+      <img src="/media/qclay-links.webp" alt="" width="1600" height="900" loading="lazy" decoding="async" />
       <figcaption>{copy.footer.company}</figcaption>
     </figure>
   )
@@ -247,7 +246,7 @@ function Header() {
                 <Languages onSelect={closeMenuFrom} />
               </div>
             </div>
-            <MenuArtwork page={page} />
+          <MenuArtwork />
             <nav aria-label={copy.nav.primary} className="menu-primary">
               <ol>
                 {pageNames.map((name, index) => (

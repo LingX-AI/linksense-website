@@ -60,7 +60,7 @@ try {
       assert.ok(menu && !/\sopen(?=\s|\/?>)/.test(menu), `Native menu dialog missing or open before interaction on ${path}`)
       assert.ok(tagWith(html, 'button', { 'aria-haspopup': 'dialog', 'aria-controls': 'site-menu' }), `Menu trigger missing on ${path}`)
       assert.ok(tagWith(html, 'a', { href: 'https://explore.linksense.org/' }), `Demo CTA missing from shell on ${path}`)
-      assert.ok(html.includes(`/media/${suffix === '/self-hosted' ? 'menu-self-hosted' : 'menu-use-cases'}.webp`), `Menu artwork missing on ${path}`)
+      assert.ok(tagWith(html, 'img', { src: '/media/qclay-links.webp' }), `Menu artwork missing on ${path}`)
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(tagWith(html, 'h1', { id: 'home-title', class: 'home-intro-title' }), `Homepage narrative heading missing on ${path}`)
@@ -69,7 +69,7 @@ try {
         assert.ok(!html.includes('scenario-card'), `Repeated card grid returned on ${path}`)
         assert.ok(tagWith(html, 'h2', { id: 'film-title' }), `Product film heading missing on ${path}`)
         assert.ok(tagWith(html, 'a', { href: '/media/linksense-intro-v6.mp4' }), `Product film fallback missing on ${path}`)
-        assert.ok(tagWith(html, 'img', { src: '/media/qclay-reel.svg', alt: '' }), `Decorative product film cover missing on ${path}`)
+        assert.ok(tagWith(html, 'img', { src: '/media/qclay-links.webp', alt: '' }), `Decorative product film cover missing on ${path}`)
         assert.ok(tagWith(html, 'img', { src: '/media/workspace-result.webp' }), `Workspace still missing on ${path}`)
         assert.ok(tagWith(html, 'a', { href: '/media/product-demo.mp4' }), `Workspace demo fallback missing on ${path}`)
         assert.ok(!html.includes('workspace-teaser.mp4'), `Autoplay workspace teaser still referenced on ${path}`)
@@ -137,15 +137,15 @@ try {
   const brandArt = await request('/media/social.jpg')
   assert.equal(brandArt.status, 200)
   assert.equal(brandArt.headers.get('content-type'), 'image/jpeg')
-  const filmCoverArt = await request('/media/qclay-reel.svg')
+  const filmCoverArt = await request('/media/qclay-links.webp')
   assert.equal(filmCoverArt.status, 200)
-  assert.equal(filmCoverArt.headers.get('content-type'), 'image/svg+xml')
+  assert.equal(filmCoverArt.headers.get('content-type'), 'image/webp')
   const film = await fetch(`${origin}/media/linksense-intro-v6.mp4`, {
     headers: { Range: 'bytes=0-255' }, signal: AbortSignal.timeout(5000),
   })
   assert.equal(film.status, 206)
   assert.equal((await film.arrayBuffer()).byteLength, 256)
-  console.log('18 localized pages verified in SSR HTML; native menu shell, QClay-style homepage chapters, editorial case sequence, distinct Core/Full compositions, media fallbacks, decorative film SVG, example links, redirect, 404, social image, and video range request passed.')
+  console.log('18 localized pages verified in SSR HTML; native menu shell, QClay-style homepage chapters, editorial case sequence, distinct Core/Full compositions, media fallbacks, shared decorative artwork, example links, redirect, 404, social image, and video range request passed.')
 } finally {
   server.kill()
   await closed
