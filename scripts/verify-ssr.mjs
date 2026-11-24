@@ -246,6 +246,7 @@ try {
       if (!suffix) {
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
         assert.ok(html.includes('class="workbench-frame"'), `Workbench frame missing on ${path}`)
+        assert.equal(count(html, /class="workbench-panel(?:\s|")/g), 3, `Workbench panels incomplete on ${path}`)
         assert.match(html, /class="workbench-frame"[\s\S]+?<img\b(?=[^>]*src="\/media\/workspace-result\.webp")(?=[^>]*fetchPriority="high")[^>]*>/i, `Workspace still isn't prioritized in the workbench on ${path}`)
         assert.match(html, /href="\/media\/product-demo\.mp4"/, `Workspace recording fallback missing on ${path}`)
         assert.ok(!html.includes('src="/media/workspace-teaser.mp4"'), `Workspace recording shouldn't autoplay on ${path}`)
@@ -282,6 +283,7 @@ try {
         assert.ok(html.includes('class="brief-document"'), `Brief document artifact missing on ${path}`)
         assert.ok(html.includes('class="qa-thread"'), `Reference artifact missing on ${path}`)
         assert.ok(html.includes('class="deliverable-art"'), `Deliverable sheet artifact missing on ${path}`)
+        assert.equal(count(html, /class="document-sheet /g), 2, `Deliverable layers incomplete on ${path}`)
         assert.ok(html.includes('class="sharing-panel"'), `Sharing panel missing on ${path}`)
         assert.ok(html.includes('src="/media/team-app.webp"'), `Sharing product media missing on ${path}`)
         assert.ok(html.includes('href="https://explore.linksense.org/"'), `Demo target missing on ${path}`)
@@ -303,6 +305,7 @@ try {
           assert.ok(html.includes(item), `Hosting profile content missing on ${path}: ${item}`)
         }
         assert.ok(html.includes('class="governance-workbench"'), `Governance workbench missing on ${path}`)
+        assert.ok(html.includes('class="diagram-path"') && html.includes('class="deployment-models"'), `Governance diagram missing on ${path}`)
         for (const item of [expected.governance, expected.model, expected.modelBody, expected.boundaries, expected.boundaryBody, expected.deployment, expected.workers, expected.capabilities, expected.models]) {
           assert.ok(html.includes(item), `Governance content missing on ${path}: ${item}`)
         }

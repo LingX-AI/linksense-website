@@ -1,8 +1,14 @@
 import {
   ArrowUpRight, ClipboardCheck, FileSpreadsheet, FileText, KeyRound, Layers3, Network, Server, Workflow,
 } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
+import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { useSite } from '../lib/use-site'
+
+const deliverableMotion: readonly MotionAccentStep[] = [
+  { selector: '.sheet-spreadsheet', from: 'translate(10px, 6px)', duration: 0.4 },
+  { selector: '.sheet-report', from: 'translate(-11px, -6px)', duration: 0.44, delay: 0.06 },
+]
 
 export function PageIntro({ kind, title, intro, source, children }: {
   kind: 'cases' | 'hosting'
@@ -60,8 +66,12 @@ export function GovernanceDetails() {
 
 export function Deliverables() {
   const { copy } = useSite()
+  const artRef = useRef<HTMLDivElement>(null)
+
+  useMotionAccent(artRef, deliverableMotion)
+
   return (
-    <div className="deliverable-art" role="img" aria-label={`${copy.home.example}: ${copy.home.spreadsheet}, ${copy.home.report}`}>
+    <div ref={artRef} className="deliverable-art" role="img" aria-label={`${copy.home.example}: ${copy.home.spreadsheet}, ${copy.home.report}`}>
       <div className="document-sheet sheet-spreadsheet" aria-hidden="true">
         <div className="sheet-label"><FileSpreadsheet size={15} /> .XLSX</div>
         <strong>{copy.home.spreadsheet}</strong>

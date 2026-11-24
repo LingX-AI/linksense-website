@@ -2,8 +2,9 @@ import {
   ArrowRight, ArrowUpRight, BookOpen, Boxes, ClipboardList, FileSpreadsheet, FileText, Files,
   Globe2, Pause, Play, Scale, Server, Share2, Star, Terminal,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { getDeploymentProfiles, getUseCases } from '../content'
+import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
 import GradientWaves from './GradientWaves'
@@ -12,6 +13,10 @@ import { SiteLink } from './site-shell'
 import { GovernanceDetails } from './visuals'
 
 const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
+
+const workbenchPanelMotion: readonly MotionAccentStep[] = [
+  { selector: '.workbench-panel', from: 'translateY(9px)', duration: 0.34, stagger: 0.06 },
+]
 
 function HomeIntro() {
   const { copy } = useSite()
@@ -55,7 +60,10 @@ function Workbench() {
   const { copy } = useSite()
   const { home, cases } = copy
   const [paused, setPaused] = useState(false)
+  const stackRef = useRef<HTMLDivElement>(null)
   const presets = getUseCases(cases)
+
+  useMotionAccent(stackRef, workbenchPanelMotion)
 
   return (
     <section className="container workbench-section" id="workspace" aria-labelledby="workspace-title">
@@ -109,7 +117,7 @@ function Workbench() {
                 swellOnClick={false} paused={paused}
               />
             </div>
-            <div className="workbench-stack">
+            <div className="workbench-stack" ref={stackRef}>
               <section className="workbench-panel workbench-task-panel" aria-labelledby="workbench-task-title">
                 <div className="panel-bar">
                   <Terminal size={13} aria-hidden="true" />

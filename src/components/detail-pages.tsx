@@ -1,12 +1,19 @@
 import {
   ArrowRight, ArrowUpRight, BookOpen, ClipboardList, FileText, Layers3, Scale, Server, ShieldCheck, Star, Workflow,
 } from 'lucide-react'
+import { useRef } from 'react'
 import { getDeploymentProfiles, getUseCases } from '../content'
+import { useMotionAccent, type MotionAccentStep } from '../lib/motion-accent'
 import { docsPath, productLinks } from '../lib/site'
 import { useSite } from '../lib/use-site'
 import { Deliverables, GovernanceDetails, PageIntro } from './visuals'
 
 const caseIcons = { procurement: Scale, reporting: ClipboardList, knowledge: BookOpen }
+
+const hostingGovernanceMotion: readonly MotionAccentStep[] = [
+  { selector: '.diagram-path', from: 'scaleY(0)', duration: 0.36 },
+  { selector: '.deployment-models', from: 'translateY(-4px)', duration: 0.34, delay: 0.36 },
+]
 
 function CaseArtifact({ id }: { id: 'procurement' | 'reporting' | 'knowledge' }) {
   const { copy } = useSite()
@@ -198,6 +205,9 @@ export function HostingPage() {
   const { copy } = useSite()
   const hosting = copy.hosting
   const profiles = getDeploymentProfiles(hosting)
+  const governanceRef = useRef<HTMLDivElement>(null)
+
+  useMotionAccent(governanceRef, hostingGovernanceMotion)
 
   return (
     <>
@@ -246,7 +256,7 @@ export function HostingPage() {
                 <p className="mono-label">02 / {hosting.deployment}</p>
                 <h2 id="governance-title">{hosting.governance}</h2>
               </div>
-              <div className="governance-workbench">
+              <div className="governance-workbench" ref={governanceRef}>
                 <GovernanceDetails />
               </div>
             </section>
