@@ -76,29 +76,35 @@ try {
         assert.equal(maskCount(heroTitle), 2, `Hero title line mask count is wrong on ${path}`)
         assert.equal(maskCount(intro), 1, `Hero intro line mask count is wrong on ${path}`)
         assert.equal(renderedText(intro), introOne, `Localized hero intro missing on ${path}`)
-        const heroOrder = ['exo-hero-title', 'exo-hero-support', 'exo-hero-intro', 'exo-hero-actions', 'exo-hero-note']
+        const heroOrder = ['exo-hero-title', 'exo-hero-support', 'exo-hero-intro', 'exo-hero-actions']
           .map((name) => hero.indexOf(name))
         assert.ok(heroOrder.every((position, index) => position >= 0 && (!index || position > heroOrder[index - 1])), `Hero copy order is wrong on ${path}`)
-        for (const href of ['https://explore.linksense.org/', `${prefix}/self-hosted`, '#workspace']) {
+        for (const href of ['https://explore.linksense.org/', `${prefix}/self-hosted`]) {
           assert.ok(actions.includes(`href="${href}"`), `Hero action ${href} missing on ${path}`)
         }
+        assert.ok(hero.includes('href="#workspace"'), `Hero scroll cue missing on ${path}`)
         assert.ok(html.includes('class="exo-mask-in"'), `Masked hero line missing on ${path}`)
+        assert.ok(html.includes('src="/media/menu-linksense-glass.webp"'), `Menu artwork missing on ${path}`)
         assert.ok(html.includes('src="/media/exoape-hero.webp"'), `Hero art reference missing on ${path}`)
         assert.ok(/class="exo-hero-img"[^>]*width="1620"[^>]*height="1000"/.test(html), `Hero art dimensions missing on ${path}`)
         assert.ok(/fetchpriority="high"/i.test(html), `Hero fetch priority missing on ${path}`)
         assert.ok(html.includes('WorkBuddy') && html.includes('ChatGPT Enterprise'), `Product positioning missing on ${path}`)
-        for (const still of ['workspace-result', 'skills', 'connections', 'team-app', 'reel']) {
+        for (const still of ['workspace', 'workspace-result', 'skills', 'reel', 'signal']) {
           assert.ok(html.includes(`src="/media/${still}.webp"`), `Homepage still ${still} missing on ${path}`)
         }
-        assert.ok(html.includes('href="/media/product-demo.mp4"'), `Workspace demo fallback missing on ${path}`)
         assert.ok(html.includes('href="/media/linksense-intro-v6.mp4"'), `Film fallback missing on ${path}`)
+        assert.equal((html.match(/class="exo-feature exo-feature--/g) ?? []).length, 3, `Homepage feature count is wrong on ${path}`)
+        assert.ok(html.includes('class="exo-work-more"'), `Homepage use-case link missing on ${path}`)
+        assert.ok(!html.includes('exo-case-list') && !html.includes('id="scenarios-title"'), `Homepage use-case index returned on ${path}`)
+        assert.ok(!html.includes('id="ownership-title"'), `Homepage governance block returned on ${path}`)
         for (const anchor of ['#workspace', '#deliverables', '#team-title']) {
           assert.ok(html.includes(`href="${anchor}"`), `Homepage rail anchor ${anchor} missing on ${path}`)
         }
-        for (const anchor of ['procurement', 'reporting', 'knowledge']) {
+        for (const anchor of ['procurement', 'capability-sharing']) {
           assert.ok(html.includes(`href="${prefix}/use-cases#${anchor}"`), `Localized use case missing on ${path}`)
         }
-        const story = ['id="workspace"', 'id="deliverables"', 'id="team-title"', 'id="film-title"', 'id="scenarios-title"', 'id="ownership-title"'].map((name) => html.indexOf(name))
+        assert.ok(html.includes(`href="${prefix}/use-cases"`), `Localized use-case index link missing on ${path}`)
+        const story = ['id="workspace"', 'id="deliverables"', 'id="team-title"', 'id="film-title"', 'id="closing-title"'].map((name) => html.indexOf(name))
         assert.ok(story.every((position, index) => position >= 0 && (!index || position > story[index - 1])), `Homepage story order is wrong on ${path}`)
       }
       if (suffix === '/use-cases') {
@@ -143,7 +149,10 @@ try {
   const heroArt = await request('/media/exoape-hero.webp')
   assert.equal(heroArt.status, 200, 'The supplied /media/exoape-hero.webp art is missing.')
   assert.equal(heroArt.headers.get('content-type'), 'image/webp')
-  console.log('18 localized pages verified in SSR HTML; homepage, editorial detail layouts, anchors, assets, media fallbacks, redirects and 404 checks passed.')
+  const menuArt = await request('/media/menu-linksense-glass.webp')
+  assert.equal(menuArt.status, 200, 'The supplied menu artwork is missing.')
+  assert.equal(menuArt.headers.get('content-type'), 'image/webp')
+  console.log('18 localized pages verified in SSR HTML; compact homepage, editorial detail layouts, anchors, assets, media fallbacks, redirects and 404 checks passed.')
 } finally {
   server.kill()
   await closed

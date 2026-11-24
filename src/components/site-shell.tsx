@@ -24,11 +24,7 @@ const routeTargets = {
 } as const
 
 const menuId = 'exo-menu'
-const menuArt = [
-  { page: 'home', src: '/media/workspace.webp' },
-  { page: 'cases', src: '/media/menu-use-cases.webp' },
-  { page: 'hosting', src: '/media/menu-self-hosted.webp' },
-] as const
+const menuArt = '/media/menu-linksense-glass.webp'
 
 type MenuPhase = 'closed' | 'open' | 'closing'
 
@@ -241,7 +237,6 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
   const reducedMotion = usePrefersReducedMotion()
   const home = isHomePathname(pathname)
   const [phase, setPhaseState] = useState<MenuPhase>('closed')
-  const [artPage, setArtPage] = useState<SitePage>(page)
 
   const phaseRef = useRef<MenuPhase>('closed')
   const restoreFocus = useRef(true)
@@ -375,10 +370,9 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
       void element.offsetWidth
     }
     if (stage.current) stage.current.inert = false
-    setArtPage(page)
     setPhase('open')
     focusSoon(() => closeButton.current, () => phaseRef.current === 'open')
-  }, [cancelFocusFrame, cancelResetFrame, clearCloseTimer, focusSoon, page, pageRef, reducedMotion, setPhase])
+  }, [cancelFocusFrame, cancelResetFrame, clearCloseTimer, focusSoon, pageRef, reducedMotion, setPhase])
 
   const requestClose = useCallback((returnFocus = true) => {
     const element = dialog.current
@@ -499,17 +493,7 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
           </div>
           <div className="exo-menu-body">
             <div className="exo-menu-art" aria-hidden="true">
-              {menuArt.map(({ page: art, src }) => (
-                <img
-                  key={src}
-                  src={src}
-                  alt=""
-                  className={artPage === art ? 'is-active' : undefined}
-                  width="900"
-                  height="1100"
-                  decoding="async"
-                />
-              ))}
+              <img src={menuArt} alt="" className="is-active" width="1024" height="1280" decoding="async" />
             </div>
             <nav aria-label={copy.nav.primary} className="exo-menu-nav">
               {pageNames.map((name, index) => (
@@ -519,10 +503,6 @@ function Header({ pageRef }: { pageRef: RefObject<HTMLDivElement | null> }) {
                   className="exo-menu-link"
                   style={{ '--exo-index': index } as CSSProperties}
                   onClick={(event) => navigateFromMenu(event, name)}
-                  onPointerEnter={() => setArtPage(name)}
-                  onPointerLeave={() => setArtPage(page)}
-                  onFocus={() => setArtPage(name)}
-                  onBlur={() => setArtPage(page)}
                 >
                   <span className="exo-menu-link-mask">
                     <span className="exo-menu-link-inner">{copy.nav[name]}</span>
